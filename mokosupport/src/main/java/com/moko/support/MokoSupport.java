@@ -284,24 +284,33 @@ public class MokoSupport implements MokoResponseCallback {
     public void onCharacteristicChanged(BluetoothGattCharacteristic characteristic, byte[] value) {
         if (!isSyncData()) {
             OrderType orderType = null;
+            if (characteristic.getUuid().toString().equals(OrderType.notifyConfig.getUuid())) {
+                // 写通知命令
+                orderType = OrderType.notifyConfig;
+            }
             // 延时应答
             if (orderType != null) {
                 LogModule.i(orderType.getName());
                 Intent intent = new Intent(MokoConstants.ACTION_CURRENT_DATA);
                 intent.putExtra(MokoConstants.EXTRA_KEY_CURRENT_DATA_TYPE, OrderEnum.OPEN_NOTIFY);
+                intent.putExtra(MokoConstants.EXTRA_KEY_RESPONSE_VALUE, value);
                 mContext.sendBroadcast(intent);
             }
         } else {
+            int key = value[1] & 0xff;
+            if (key == 0x63 && value[4] != 0) {
+                LogModule.i("状态发生改变");
+                return;
+            }
             // 非延时应答
             OrderTask orderTask = mQueue.peek();
             if (value != null && value.length > 0 && orderTask != null) {
-                OrderEnum orderEnum = orderTask.getOrder();
-                switch (orderEnum) {
-                    case OPEN_NOTIFY:
+                switch (orderTask.orderType) {
+                    case writeConfig:
+                    case lockState:
                         formatCommonOrder(orderTask, value);
                         break;
                 }
-                orderTask.parseValue(value);
             }
         }
 
@@ -309,12 +318,51 @@ public class MokoSupport implements MokoResponseCallback {
 
     @Override
     public void onCharacteristicWrite(byte[] value) {
-
+        if (!isSyncData()) {
+            return;
+        }
+        OrderTask orderTask = mQueue.peek();
+        if (value != null && value.length > 0) {
+            switch (orderTask.orderType) {
+                case advSlot:
+                case advInterval:
+                case radioTxPower:
+                case advTxPower:
+                case unLock:
+                case advSlotData:
+                case resetDevice:
+                    formatCommonOrder(orderTask, value);
+                    break;
+            }
+        }
     }
 
     @Override
     public void onCharacteristicRead(byte[] value) {
-
+        if (!isSyncData()) {
+            return;
+        }
+        OrderTask orderTask = mQueue.peek();
+        if (value != null && value.length > 0) {
+            switch (orderTask.orderType) {
+                case manufacturer:
+                case deviceModel:
+                case productDate:
+                case hardwareVersion:
+                case firmwareVersion:
+                case softwareVersion:
+                case battery:
+                case advSlot:
+                case advInterval:
+                case radioTxPower:
+                case advTxPower:
+                case lockState:
+                case unLock:
+                case advSlotData:
+                    formatCommonOrder(orderTask, value);
+                    break;
+            }
+        }
     }
 
     @Override
@@ -323,14 +371,10 @@ public class MokoSupport implements MokoResponseCallback {
             return;
         }
         OrderTask orderTask = mQueue.peek();
-        LogModule.v("device to app CHARACTERISTIC : " + orderTask.orderType.getName());
-        LogModule.d(orderTask.order.getOrderName());
+        LogModule.i("device to app notify : " + orderTask.orderType.getName());
         orderTask.orderStatus = OrderTask.ORDER_STATUS_SUCCESS;
         mQueue.poll();
         executeTask(orderTask.callback);
-        if (mQueue.isEmpty()) {
-            mMokoConnStateCallback.onConnectSuccess();
-        }
     }
 
     private void formatCommonOrder(OrderTask task, byte[] value) {
@@ -379,15 +423,10 @@ public class MokoSupport implements MokoResponseCallback {
         protected void handleMessage(MokoSupport module, Message msg) {
             switch (msg.what) {
                 case HANDLER_MESSAGE_WHAT_CONNECTED:
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            synchronized (INSTANCE) {
-                                LogModule.e("discoverServices!!!");
-                                mBluetoothGatt.discoverServices();
-                            }
-                        }
-                    }, 2000);
+                    synchronized (INSTANCE) {
+                        LogModule.e("discoverServices!!!");
+                        mBluetoothGatt.discoverServices();
+                    }
                     break;
                 case HANDLER_MESSAGE_WHAT_DISCONNECTED:
                     disConnectBle();
@@ -409,13 +448,7 @@ public class MokoSupport implements MokoResponseCallback {
                         disConnectBle();
                         return;
                     }
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            LogModule.d("开启特征通知");
-                            sendOrder(new OpenNotifyTask(OrderType.CHARACTERISTIC, OrderEnum.OPEN_NOTIFY, null));
-                        }
-                    }, 2000);
+                    mMokoConnStateCallback.onConnectSuccess();
                     break;
                 case HANDLER_MESSAGE_WHAT_DISCONNECT:
                     if (mQueue != null && !mQueue.isEmpty()) {

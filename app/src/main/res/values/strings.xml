@@ -30,5 +30,7 @@
     <string name="setting_title">Setting</string>
     <string name="device_title">Device info</string>
     <string name="h_t"><![CDATA[H&T]]></string>
+    <string name="password_null">Password cannot be empty!</string>
+
 
 </resources>

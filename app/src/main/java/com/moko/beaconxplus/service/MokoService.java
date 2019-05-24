@@ -6,6 +6,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.Message;
 
+import com.moko.beaconxplus.utils.Utils;
 import com.moko.support.MokoConstants;
 import com.moko.support.MokoSupport;
 import com.moko.support.callback.MokoConnStateCallback;
@@ -13,7 +14,12 @@ import com.moko.support.callback.MokoOrderTaskCallback;
 import com.moko.support.event.ConnectStatusEvent;
 import com.moko.support.handler.BaseMessageHandler;
 import com.moko.support.log.LogModule;
+import com.moko.support.task.LockStateTask;
+import com.moko.support.task.NotifyConfigTask;
+import com.moko.support.task.OrderTask;
 import com.moko.support.task.OrderTaskResponse;
+import com.moko.support.task.UnLockTask;
+import com.moko.support.utils.MokoUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -134,5 +140,80 @@ public class MokoService extends Service implements MokoConnStateCallback, MokoO
         @Override
         protected void handleMessage(MokoService service, Message msg) {
         }
+    }
+
+    /**
+     * @Description 打开配置通知set config notify
+     */
+    public OrderTask setConfigNotify() {
+        NotifyConfigTask notifyConfigTask = new NotifyConfigTask(this, OrderTask.RESPONSE_TYPE_NOTIFY);
+        return notifyConfigTask;
+    }
+
+    /**
+     * @Description 获取设备锁状态get lock state
+     */
+    public OrderTask getLockState() {
+        LockStateTask lockStateTask = new LockStateTask(this, OrderTask.RESPONSE_TYPE_READ);
+        return lockStateTask;
+    }
+
+    /**
+     * @Description 设置设备锁状态set lock state
+     */
+    public OrderTask setLockState(String newPassword) {
+        if (passwordBytes != null) {
+            LogModule.i("旧密码：" + MokoUtils.bytesToHexString(passwordBytes));
+            byte[] bt1 = newPassword.getBytes();
+            byte[] bt2 = {(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff};
+            byte[] newPasswordBytes = new byte[bt1.length + bt2.length];
+            System.arraycopy(bt1, 0, newPasswordBytes, 0, bt1.length);
+            System.arraycopy(bt2, 0, newPasswordBytes, bt1.length, bt2.length);
+            LogModule.i("新密码：" + MokoUtils.bytesToHexString(newPasswordBytes));
+            // 用旧密码加密新密码
+            byte[] newPasswordEncryptBytes = Utils.encrypt(newPasswordBytes, passwordBytes);
+            if (newPasswordEncryptBytes != null) {
+                LockStateTask lockStateTask = new LockStateTask(this, OrderTask.RESPONSE_TYPE_WRITE);
+                byte[] unLockBytes = new byte[newPasswordEncryptBytes.length + 1];
+                unLockBytes[0] = 0;
+                System.arraycopy(newPasswordEncryptBytes, 0, unLockBytes, 1, newPasswordEncryptBytes.length);
+                lockStateTask.setData(unLockBytes);
+                return lockStateTask;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @Description 获取解锁加密内容get unlock
+     */
+    public OrderTask getUnLock() {
+        UnLockTask unLockTask = new UnLockTask(this, OrderTask.RESPONSE_TYPE_READ);
+        return unLockTask;
+    }
+
+    private byte[] passwordBytes;
+
+    /**
+     * @Description 解锁set unlock
+     */
+    public OrderTask setUnLock(String password, byte[] value) {
+        byte[] bt1 = password.getBytes();
+        passwordBytes = new byte[16];
+        for (int i = 0; i < passwordBytes.length; i++) {
+            if (i < bt1.length) {
+                passwordBytes[i] = bt1[i];
+            } else {
+                passwordBytes[i] = (byte) 0xff;
+            }
+        }
+        LogModule.i("密码：" + MokoUtils.bytesToHexString(passwordBytes));
+        byte[] unLockBytes = Utils.encrypt(value, passwordBytes);
+        if (unLockBytes != null) {
+            UnLockTask unLockTask = new UnLockTask(this, OrderTask.RESPONSE_TYPE_WRITE);
+            unLockTask.setData(unLockBytes);
+            return unLockTask;
+        }
+        return null;
     }
 }
