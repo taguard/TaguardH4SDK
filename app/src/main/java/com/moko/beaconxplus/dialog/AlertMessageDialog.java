@@ -15,7 +15,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class AlertMessageDialog extends BaseDialog {
+public class AlertMessageDialog extends MokoBaseDialog {
     public static final String TAG = AlertMessageDialog.class.getSimpleName();
     @Bind(R.id.tv_alert_title)
     TextView tvAlertTitle;

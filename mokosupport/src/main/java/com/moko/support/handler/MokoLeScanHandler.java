@@ -32,14 +32,16 @@ public class MokoLeScanHandler extends ScanCallback {
             if (TextUtils.isEmpty(device.getName()) || scanRecord.length == 0 || rssi == 127) {
                 return;
             }
-            DeviceInfo deviceInfo = new DeviceInfo();
-            deviceInfo.name = device.getName();
-            deviceInfo.rssi = rssi;
-            deviceInfo.mac = device.getAddress();
-            String scanRecordStr = MokoUtils.bytesToHexString(scanRecord);
-            deviceInfo.scanRecord = scanRecordStr;
-            deviceInfo.scanResult = result;
-            callback.onScanDevice(deviceInfo);
+            if (device.getAddress().contains("FF:02:03:04:05:06")) {
+                DeviceInfo deviceInfo = new DeviceInfo();
+                deviceInfo.name = device.getName();
+                deviceInfo.rssi = rssi;
+                deviceInfo.mac = device.getAddress();
+                String scanRecordStr = MokoUtils.bytesToHexString(scanRecord);
+                deviceInfo.scanRecord = scanRecordStr;
+                deviceInfo.scanResult = result;
+                callback.onScanDevice(deviceInfo);
+            }
         }
     }
 }

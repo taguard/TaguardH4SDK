@@ -10,7 +10,6 @@ import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Message;
-import android.os.ParcelUuid;
 import android.text.TextUtils;
 
 import com.moko.support.callback.MokoConnStateCallback;
@@ -31,7 +30,7 @@ import com.moko.support.utils.BleConnectionCompat;
 import com.moko.support.utils.MokoUtils;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -64,7 +63,8 @@ public class MokoSupport implements MokoResponseCallback {
     private MokoConnStateCallback mMokoConnStateCallback;
     private HashMap<OrderType, MokoCharacteristic> mCharacteristicMap;
     private static final UUID DESCRIPTOR_UUID_NOTIFY = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
-    private static final UUID SERVICE_UUID = UUID.fromString("0000ffc0-0000-1000-8000-00805f9b34fb");
+//    private static final UUID EDDYSTONE_UUID = UUID.fromString("0000feaa-0000-1000-8000-00805f9b34fb");
+//    private static final UUID SERVICE_UUID = UUID.fromString("0000feab-0000-1000-8000-00805f9b34fb");
 
     private static volatile MokoSupport INSTANCE;
 
@@ -100,10 +100,14 @@ public class MokoSupport implements MokoResponseCallback {
                 // Hardware filtering has some issues on selected devices
                 .setUseHardwareFilteringIfSupported(false)
                 .build();
-        List<ScanFilter> scanFilterList = new ArrayList<>();
-        ScanFilter.Builder builder = new ScanFilter.Builder();
-        builder.setServiceUuid(new ParcelUuid(SERVICE_UUID));
-        scanFilterList.add(builder.build());
+        List<ScanFilter> scanFilterList = Collections.singletonList(new ScanFilter.Builder().build());
+//        List<ScanFilter> scanFilterList = new ArrayList<>();
+//        ScanFilter.Builder eddystoneBuilder = new ScanFilter.Builder();
+//        eddystoneBuilder.setServiceUuid(new ParcelUuid(EDDYSTONE_UUID));
+//        scanFilterList.add(eddystoneBuilder.build());
+//        ScanFilter.Builder serviceBuilder = new ScanFilter.Builder();
+//        serviceBuilder.setServiceUuid(new ParcelUuid(SERVICE_UUID));
+//        scanFilterList.add(serviceBuilder.build());
         mMokoLeScanHandler = new MokoLeScanHandler(mokoScanDeviceCallback);
         scanner.startScan(scanFilterList, settings, mMokoLeScanHandler);
         mMokoScanDeviceCallback = mokoScanDeviceCallback;
