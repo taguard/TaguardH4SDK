@@ -27,6 +27,8 @@ public enum OrderType implements Serializable {
     unLock("unLock", "a3c87507-8ed3-4bdf-8a39-a01bebede295"),
     advSlotData("advSlotData", "a3c8750a-8ed3-4bdf-8a39-a01bebede295"),
     resetDevice("resetDevice", "a3c8750b-8ed3-4bdf-8a39-a01bebede295"),
+    deviceType("deviceType", "e62a0001-1362-4f28-9327-f5b74e970801"),
+    slotType("slotType", "e62a0005-1362-4f28-9327-f5b74e970801"),
     ;
 
 

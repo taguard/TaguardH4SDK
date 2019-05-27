@@ -359,6 +359,8 @@ public class MokoSupport implements MokoResponseCallback {
                 case lockState:
                 case unLock:
                 case advSlotData:
+                case slotType:
+                case deviceType:
                     formatCommonOrder(orderTask, value);
                     break;
             }

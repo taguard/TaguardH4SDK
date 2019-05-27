@@ -1,6 +1,7 @@
 package com.moko.support.task;
 
 import com.moko.support.entity.OrderEnum;
+import com.moko.support.entity.OrderType;
 
 import java.io.Serializable;
 
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * @ClassPath com.moko.support.task.OrderTaskResponse
  */
 public class OrderTaskResponse implements Serializable {
+    public OrderType orderType;
     public OrderEnum order;
     public int responseType;
     public byte[] responseValue;

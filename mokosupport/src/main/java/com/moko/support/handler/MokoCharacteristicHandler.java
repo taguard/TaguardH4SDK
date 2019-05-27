@@ -117,6 +117,14 @@ public class MokoCharacteristicHandler {
                         mokoCharacteristicMap.put(OrderType.writeConfig, new MokoCharacteristic(characteristic, OrderType.writeConfig));
                         continue;
                     }
+                    if (characteristicUuid.equals(OrderType.deviceType.getUuid())) {
+                        mokoCharacteristicMap.put(OrderType.deviceType, new MokoCharacteristic(characteristic, OrderType.deviceType));
+                        continue;
+                    }
+                    if (characteristicUuid.equals(OrderType.slotType.getUuid())) {
+                        mokoCharacteristicMap.put(OrderType.slotType, new MokoCharacteristic(characteristic, OrderType.slotType));
+                        continue;
+                    }
                 }
             }
             if (service.getUuid().toString().startsWith(SERVICE_UUID_HEADER_EDDYSTONE)) {

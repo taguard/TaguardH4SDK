@@ -39,6 +39,7 @@ public abstract class OrderTask {
         this.order = order;
         this.callback = callback;
         this.response.order = order;
+        this.response.orderType = orderType;
         this.response.responseType = responseType;
     }
 

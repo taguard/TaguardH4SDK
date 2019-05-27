@@ -14,8 +14,12 @@ public class AppConstants {
     // extra_key
     // 设备列表
     public static final String EXTRA_KEY_RESPONSE_ORDER_TYPE = "EXTRA_KEY_RESPONSE_ORDER_TYPE";
+    public static final String EXTRA_KEY_SLOT_DATA = "EXTRA_KEY_SLOT_DATA";
+    public static final String EXTRA_KEY_PASSWORD = "EXTRA_KEY_PASSWORD";
+
     // request_code
-    public static final int REQUEST_CODE_TEMP_TARGET = 100;
+    public static final int REQUEST_CODE_DEVICE_INFO = 0x10;
+    public static final int REQUEST_CODE_SLOT_DATA = 100;
     public static final int REQUEST_CODE_ENABLE_BT = 1001;
 
 

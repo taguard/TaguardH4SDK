@@ -149,11 +149,11 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                 }
                 if (MokoConstants.ACTION_ORDER_RESULT.equals(action)) {
                     OrderTaskResponse response = (OrderTaskResponse) intent.getSerializableExtra(MokoConstants.EXTRA_KEY_RESPONSE_ORDER_TASK);
-                    OrderEnum orderEnum = response.order;
+                    OrderType orderType = response.orderType;
                     int responseType = response.responseType;
                     byte[] value = response.responseValue;
-                    switch (orderEnum) {
-                        case LOCK_STATE:
+                    switch (orderType) {
+                        case lockState:
                             String valueStr = MokoUtils.bytesToHexString(value);
                             if ("00".equals(valueStr)) {
                                 dismissLoadingMessageDialog();
@@ -188,28 +188,25 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                                     unLockResponse = "";
                                     MokoSupport.getInstance().disConnectBle();
                                     ToastUtils.showToast(MainActivity.this, "Password error");
-                                    if (animation == null) {
-                                        startScan();
-                                    }
                                 }
                             } else if ("02".equals(valueStr)) {
                                 // 不需要密码验证
                                 dismissLoadingMessageDialog();
-//                                Intent deviceInfoIntent = new Intent(MainActivity.this, DeviceInfoActivity.class);
-//                                deviceInfoIntent.putExtra(AppConstants.EXTRA_KEY_PASSWORD, mPassword);
-//                                startActivityForResult(deviceInfoIntent, AppConstants.REQUEST_CODE_DEVICE_INFO);
+                                Intent deviceInfoIntent = new Intent(MainActivity.this, DeviceInfoActivity.class);
+                                deviceInfoIntent.putExtra(AppConstants.EXTRA_KEY_PASSWORD, mPassword);
+                                startActivityForResult(deviceInfoIntent, AppConstants.REQUEST_CODE_DEVICE_INFO);
                             } else {
                                 // 解锁成功
                                 dismissLoadingMessageDialog();
                                 LogModule.i("解锁成功");
                                 unLockResponse = "";
                                 mSavedPassword = mPassword;
-//                                Intent deviceInfoIntent = new Intent(MainActivity.this, DeviceInfoActivity.class);
-//                                deviceInfoIntent.putExtra(AppConstants.EXTRA_KEY_PASSWORD, mPassword);
-//                                startActivityForResult(deviceInfoIntent, AppConstants.REQUEST_CODE_DEVICE_INFO);
+                                Intent deviceInfoIntent = new Intent(MainActivity.this, DeviceInfoActivity.class);
+                                deviceInfoIntent.putExtra(AppConstants.EXTRA_KEY_PASSWORD, mPassword);
+                                startActivityForResult(deviceInfoIntent, AppConstants.REQUEST_CODE_DEVICE_INFO);
                             }
                             break;
-                        case UNLOCK:
+                        case unLock:
                             if (responseType == OrderTask.RESPONSE_TYPE_READ) {
                                 unLockResponse = MokoUtils.bytesToHexString(value);
                                 LogModule.i("返回的随机数：" + unLockResponse);
