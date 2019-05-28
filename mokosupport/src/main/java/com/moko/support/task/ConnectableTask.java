@@ -8,22 +8,22 @@ import com.moko.support.entity.OrderType;
  * @Date 2018/1/20
  * @Author wenzheng.liu
  * @Description
- * @ClassPath com.moko.support.task.LockStateTask
+ * @ClassPath com.moko.support.task.ConnectableTask
  */
-public class LockStateTask extends OrderTask {
+public class ConnectableTask extends OrderTask {
 
     public byte[] data;
 
-    public LockStateTask(MokoOrderTaskCallback callback, int responseType) {
-        super(OrderType.lockState, OrderEnum.LOCK_STATE, callback, responseType);
+    public ConnectableTask(MokoOrderTaskCallback callback, int responseType) {
+        super(OrderType.connectable, OrderEnum.CONNECTABLE, callback, responseType);
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
     }
 
     @Override
     public byte[] assemble() {
         return data;
-    }
-
-    public void setData(byte[] data) {
-        this.data = data;
     }
 }

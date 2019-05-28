@@ -7,9 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.moko.beaconxplus.R;
 import com.moko.beaconxplus.activity.DeviceInfoActivity;
+import com.moko.beaconxplus.dialog.AlertMessageDialog;
+import com.moko.beaconxplus.dialog.ModifyPasswordDialog;
 import com.moko.support.utils.MokoUtils;
 
 import butterknife.Bind;
@@ -23,6 +26,10 @@ public class SettingFragment extends Fragment {
     ImageView ivConnectable;
     @Bind(R.id.iv_power)
     ImageView ivPower;
+    @Bind(R.id.rl_password)
+    RelativeLayout rlPassword;
+    @Bind(R.id.iv_no_password)
+    ImageView ivNoPassowrd;
 
     private DeviceInfoActivity activity;
 
@@ -75,87 +82,71 @@ public class SettingFragment extends Fragment {
         super.onDestroy();
     }
 
-    @OnClick({R.id.rl_password, R.id.rl_update_firmware, R.id.rl_reset_facotry, R.id.iv_connectable, R.id.iv_power})
+    @OnClick({R.id.rl_password, R.id.rl_update_firmware, R.id.rl_reset_facotry, R.id.iv_connectable,
+            R.id.iv_power,R.id.iv_no_password})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.rl_password:
-//                final ModifyPasswordDialog modifyPasswordDialog = new ModifyPasswordDialog(activity);
-//                modifyPasswordDialog.setOnModifyPasswordClicked(new ModifyPasswordDialog.ModifyPasswordClickListener() {
-//                    @Override
-//                    public void onEnsureClicked(String password) {
-//                        activity.modifyPassword(password);
-//                    }
-//
-//                    @Override
-//                    public void onDismiss() {
-//
-//                    }
-//                });
-//                modifyPasswordDialog.show();
-//                Timer modifyTimer = new Timer();
-//                modifyTimer.schedule(new TimerTask() {
-//
-//                    @Override
-//                    public void run() {
-//                        activity.runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                modifyPasswordDialog.showKeyboard();
-//                            }
-//                        });
-//                    }
-//                }, 200);
+                final ModifyPasswordDialog modifyPasswordDialog = new ModifyPasswordDialog();
+                modifyPasswordDialog.setOnModifyPasswordClicked(new ModifyPasswordDialog.ModifyPasswordClickListener() {
+                    @Override
+                    public void onEnsureClicked(String password) {
+                        activity.modifyPassword(password);
+                    }
+                });
+                modifyPasswordDialog.show(activity.getSupportFragmentManager());
                 break;
             case R.id.rl_update_firmware:
                 activity.chooseFirmwareFile();
                 break;
             case R.id.rl_reset_facotry:
-//                final ResetDeviceDialog resetDeviceDialog = new ResetDeviceDialog(activity);
-//                resetDeviceDialog.setResetDeviceClickListener(new ResetDeviceDialog.ResetDeviceClickListener() {
-//                    @Override
-//                    public void onEnsureClicked() {
-//                        activity.resetDevice();
-//                    }
-//
-//                    @Override
-//                    public void onDismiss() {
-//
-//                    }
-//                });
-//                resetDeviceDialog.show();
+                final AlertMessageDialog resetDeviceDialog = new AlertMessageDialog();
+                resetDeviceDialog.setMessage("Are you sure to reset the device？");
+                resetDeviceDialog.setOnAlertConfirmListener(new AlertMessageDialog.OnAlertConfirmListener() {
+                    @Override
+                    public void onClick() {
+                        activity.resetDevice();
+                    }
+                });
+                resetDeviceDialog.show(activity.getSupportFragmentManager());
                 break;
             case R.id.iv_connectable:
-//                final BeaconAlertDialog connectAlertDialog = new BeaconAlertDialog(activity);
-//                connectAlertDialog.setData(isConneacted ? "Are you sure to make device disconnectable?" : "Are you sure to make device connectable?");
-//                connectAlertDialog.setConnectAlertClickListener(new BeaconAlertDialog.ConnectAlertClickListener() {
-//                    @Override
-//                    public void onEnsureClicked() {
-//                        isConneacted = !isConneacted;
-//                        activity.setConnectable(isConneacted);
-//                    }
-//
-//                    @Override
-//                    public void onDismiss() {
-//
-//                    }
-//                });
-//                connectAlertDialog.show();
+                final AlertMessageDialog connectAlertDialog = new AlertMessageDialog();
+                connectAlertDialog.setMessage(isConneacted ? "Are you sure to make device disconnectable?" : "Are you sure to make device connectable?");
+                connectAlertDialog.setOnAlertConfirmListener(new AlertMessageDialog.OnAlertConfirmListener() {
+                    @Override
+                    public void onClick() {
+                        isConneacted = !isConneacted;
+                        activity.setConnectable(isConneacted);
+                    }
+                });
+                connectAlertDialog.show(activity.getSupportFragmentManager());
                 break;
             case R.id.iv_power:
-//                final BeaconAlertDialog powerAlertDialog = new BeaconAlertDialog(activity);
-//                powerAlertDialog.setData("Are you sure to turn off the BeaconX?Please make sure the device has a button to turn on!");
-//                powerAlertDialog.setConnectAlertClickListener(new BeaconAlertDialog.ConnectAlertClickListener() {
-//                    @Override
-//                    public void onEnsureClicked() {
-//                        activity.setClose();
-//                    }
-//
-//                    @Override
-//                    public void onDismiss() {
-//
-//                    }
-//                });
-//                powerAlertDialog.show();
+                final AlertMessageDialog powerAlertDialog = new AlertMessageDialog();
+                powerAlertDialog.setMessage("Are you sure to turn off the device?Please make sure the device has a button to turn on!");
+                powerAlertDialog.setOnAlertConfirmListener(new AlertMessageDialog.OnAlertConfirmListener() {
+                    @Override
+                    public void onClick() {
+                        activity.setClose();
+                    }
+                });
+                powerAlertDialog.show(activity.getSupportFragmentManager());
+                break;
+            case R.id.iv_no_password:
+                final AlertMessageDialog directAlertDialog = new AlertMessageDialog();
+                if (noPassowrd) {
+                    directAlertDialog.setMessage("Are you sure to revert the password？");
+                } else {
+                    directAlertDialog.setMessage("Are you sure to remove the password？");
+                }
+                directAlertDialog.setOnAlertConfirmListener(new AlertMessageDialog.OnAlertConfirmListener() {
+                    @Override
+                    public void onClick() {
+                        activity.setDirectedConnectable(!noPassowrd);
+                    }
+                });
+                directAlertDialog.show(activity.getSupportFragmentManager());
                 break;
         }
     }
@@ -163,7 +154,7 @@ public class SettingFragment extends Fragment {
     boolean isConneacted;
 
     public void setConnectable(byte[] value) {
-        int connectable = Integer.parseInt(MokoUtils.byte2HexString(value[4]), 16);
+        int connectable = Integer.parseInt(MokoUtils.byte2HexString(value[0]), 16);
         isConneacted = connectable == 1;
         if (connectable == 1) {
             ivConnectable.setImageResource(R.drawable.connectable_checked);
@@ -174,5 +165,16 @@ public class SettingFragment extends Fragment {
 
     public void setClose() {
         ivPower.setImageResource(R.drawable.connectable_unchecked);
+    }
+
+    private boolean noPassowrd;
+
+    public void setNoPassword(boolean noPassword) {
+        this.noPassowrd = noPassword;
+        ivNoPassowrd.setImageResource(noPassword ? R.drawable.connectable_checked : R.drawable.connectable_unchecked);
+    }
+
+    public void setModifyPasswordVisiable(boolean isSupportModifyPassword) {
+        rlPassword.setVisibility(isSupportModifyPassword ? View.VISIBLE : View.GONE);
     }
 }

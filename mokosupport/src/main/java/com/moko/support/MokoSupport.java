@@ -331,6 +331,7 @@ public class MokoSupport implements MokoResponseCallback {
                 case unLock:
                 case advSlotData:
                 case resetDevice:
+                case connectable:
                     formatCommonOrder(orderTask, value);
                     break;
             }
@@ -361,6 +362,7 @@ public class MokoSupport implements MokoResponseCallback {
                 case advSlotData:
                 case slotType:
                 case deviceType:
+                case connectable:
                     formatCommonOrder(orderTask, value);
                     break;
             }

@@ -118,7 +118,7 @@ public class DeviceFragment extends Fragment {
     }
 
     public void setBattery(byte[] value) {
-        String battery = Integer.parseInt(MokoUtils.bytesToHexString(value), 16) + "%";
+        String battery = MokoUtils.toInt(value) + "mV";
         tvSoc.setText(battery);
     }
 }

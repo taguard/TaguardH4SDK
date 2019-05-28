@@ -16,7 +16,7 @@ public enum OrderType implements Serializable {
     hardwareVersion("hardwareVersion", "00002a27-0000-1000-8000-00805f9b34fb"),
     firmwareVersion("firmwareVersion", "00002a26-0000-1000-8000-00805f9b34fb"),
     softwareVersion("softwareVersion", "00002a28-0000-1000-8000-00805f9b34fb"),
-    battery("battery", "00002a19-0000-1000-8000-00805f9b34fb"),
+    battery("battery", "e62a0006-1362-4f28-9327-f5b74e970801"),
     notifyConfig("notifyConfig", "e62a0003-1362-4f28-9327-f5b74e970801"),
     writeConfig("writeConfig", "e62a0002-1362-4f28-9327-f5b74e970801"),
     advSlot("advSlot", "a3c87502-8ed3-4bdf-8a39-a01bebede295"),
@@ -27,7 +27,8 @@ public enum OrderType implements Serializable {
     unLock("unLock", "a3c87507-8ed3-4bdf-8a39-a01bebede295"),
     advSlotData("advSlotData", "a3c8750a-8ed3-4bdf-8a39-a01bebede295"),
     resetDevice("resetDevice", "a3c8750b-8ed3-4bdf-8a39-a01bebede295"),
-    deviceType("deviceType", "e62a0001-1362-4f28-9327-f5b74e970801"),
+    connectable("connectable", "a3c8750c-8ed3-4bdf-8a39-a01bebede295"),
+    deviceType("deviceType", "e62a0004-1362-4f28-9327-f5b74e970801"),
     slotType("slotType", "e62a0005-1362-4f28-9327-f5b74e970801"),
     ;
 

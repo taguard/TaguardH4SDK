@@ -28,6 +28,7 @@ public enum OrderEnum implements Serializable {
     DEVICE_TYPE("设备类型", 0),
     RESET_DEVICE("重置设备", 0),
     SLOT_TYPE("通道类型", 0),
+    CONNECTABLE("连接状态", 0),
     ;
 
 

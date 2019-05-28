@@ -88,6 +88,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
     private boolean mIsClose;
     private ValidParams validParams;
     private int validCount;
+    private int lockState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,7 +135,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                         mMokoService.getManufacturer(), mMokoService.getDeviceModel(),
                         mMokoService.getProductDate(), mMokoService.getHardwareVersion(),
                         mMokoService.getFirmwareVersion(), mMokoService.getSoftwareVersion(),
-                        mMokoService.getBattery());
+                        mMokoService.getBattery(), mMokoService.getLockState());
             }
         }
 
@@ -212,7 +213,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                 mMokoService.getManufacturer(), mMokoService.getDeviceModel(),
                 mMokoService.getProductDate(), mMokoService.getHardwareVersion(),
                 mMokoService.getFirmwareVersion(), mMokoService.getSoftwareVersion(),
-                mMokoService.getBattery());
+                mMokoService.getBattery(), mMokoService.getLockState());
     }
 
     private String unLockResponse;
@@ -253,6 +254,17 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                                 slotFragment.updateSlotType(value);
                             }
                             break;
+                        case connectable:
+                            if (responseType == OrderTask.RESPONSE_TYPE_READ) {
+                                if (value.length >= 1) {
+                                    settingFragment.setConnectable(value);
+                                    validParams.connectable = MokoUtils.byte2HexString(value[0]);
+                                }
+                            }
+                            if (responseType == OrderTask.RESPONSE_TYPE_WRITE) {
+                                ToastUtils.showToast(DeviceInfoActivity.this, "Success!");
+                            }
+                            break;
                         case writeConfig:
                             if (value.length >= 2) {
                                 int key = value[1] & 0xff;
@@ -269,7 +281,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                                     case GET_DEVICE_MAC:
                                         if (value.length >= 10) {
                                             String valueStr = MokoUtils.bytesToHexString(value);
-                                            String mac = valueStr.substring(8, valueStr.length()).toUpperCase();
+                                            String mac = valueStr.substring(valueStr.length() - 12).toUpperCase();
                                             String macShow = String.format("%s:%s:%s:%s:%s:%s", mac.substring(0, 2), mac.substring(2, 4), mac.substring(4, 6), mac.substring(6, 8), mac.substring(8, 10), mac.substring(10, 12));
                                             deviceFragment.setDeviceMac(macShow);
                                             mDeviceMac = macShow;
@@ -292,18 +304,8 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                                             slotFragment.setiBeaconInfo(value);
                                         }
                                         break;
-                                    case SET_DEVICE_NAME:
-                                        if ("eb58000100".equals(MokoUtils.bytesToHexString(value).toLowerCase())) {
-                                            ToastUtils.showToast(DeviceInfoActivity.this, "Success!");
-                                        }
-                                        break;
-                                    case SET_CONNECTABLE:
-                                        if ("eb62000100".equals(MokoUtils.bytesToHexString(value).toLowerCase())) {
-                                            ToastUtils.showToast(DeviceInfoActivity.this, "Success!");
-                                        }
-                                        break;
                                     case SET_CLOSE:
-                                        if ("eb60000100".equals(MokoUtils.bytesToHexString(value).toLowerCase())) {
+                                        if ("eb260000".equals(MokoUtils.bytesToHexString(value).toLowerCase())) {
                                             ToastUtils.showToast(DeviceInfoActivity.this, "Success!");
                                             settingFragment.setClose();
                                             back();
@@ -357,39 +359,26 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                             break;
                         case lockState:
                             String valueStr = MokoUtils.bytesToHexString(value);
-                            if ("eb63000100".equals(valueStr.toLowerCase())) {
-                                // 设备上锁
-                                if (isModifyPassword) {
-                                    isModifyPassword = false;
-                                    dismissSyncProgressDialog();
-                                    ToastUtils.showToast(DeviceInfoActivity.this, "Modify successfully!");
-                                    back();
+                            if (responseType == OrderTask.RESPONSE_TYPE_WRITE) {
+                                if ("eb63000100".equals(valueStr.toLowerCase())) {
+                                    // 设备上锁
+                                    if (isModifyPassword) {
+                                        isModifyPassword = false;
+                                        dismissSyncProgressDialog();
+                                        ToastUtils.showToast(DeviceInfoActivity.this, "Modify successfully!");
+                                        back();
+                                    }
                                 }
-                            } else if ("00".equals(valueStr)) {
-                                if (!TextUtils.isEmpty(unLockResponse)) {
-                                    dismissVerifyProgressDialog();
-                                    unLockResponse = "";
-                                    ToastUtils.showToast(DeviceInfoActivity.this, "Password error");
-                                    back();
-                                } else {
-                                    LogModule.i("锁定状态，获取unLock，解锁");
-                                    MokoSupport.getInstance().sendOrder(mMokoService.getUnLock());
+                            }
+                            if (responseType == OrderTask.RESPONSE_TYPE_READ) {
+                                if ("01".equals(valueStr.toLowerCase())) {
+                                    lockState = MokoUtils.toInt(value);
+                                    settingFragment.setNoPassword(false);
+                                } else if ("02".equals(valueStr.toLowerCase())) {
+                                    lockState = MokoUtils.toInt(value);
+                                    settingFragment.setNoPassword(true);
                                 }
-                            } else if ("01".equals(valueStr)) {
-                                dismissVerifyProgressDialog();
-                                LogModule.i("解锁成功");
-                                unLockResponse = "";
-                                if (mMokoService == null) {
-                                    return;
-                                }
-                                showSyncingProgressDialog();
-                                MokoSupport.getInstance().sendOrder(mMokoService.getSlotType(),
-                                        mMokoService.getDeviceMac(),
-                                        mMokoService.getDeviceName(), mMokoService.getConnectable(),
-                                        mMokoService.getManufacturer(), mMokoService.getDeviceModel(),
-                                        mMokoService.getProductDate(), mMokoService.getHardwareVersion(),
-                                        mMokoService.getFirmwareVersion(), mMokoService.getSoftwareVersion(),
-                                        mMokoService.getBattery());
+                                settingFragment.setModifyPasswordVisiable(!TextUtils.isEmpty(mPassword));
                             }
                             break;
                         case unLock:
@@ -403,7 +392,11 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                             }
                             break;
                         case resetDevice:
-                            ToastUtils.showToast(DeviceInfoActivity.this, "Reset successfully!");
+                            if (lockState == 2) {
+                                ToastUtils.showToast(DeviceInfoActivity.this, "Communication Timeout!");
+                            } else {
+                                ToastUtils.showToast(DeviceInfoActivity.this, "Reset successfully!");
+                            }
                             break;
                     }
                 }
@@ -600,6 +593,11 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
     public void setConnectable(boolean isConneacted) {
         showSyncingProgressDialog();
         MokoSupport.getInstance().sendOrder(mMokoService.setConnectable(isConneacted), mMokoService.getConnectable());
+    }
+
+    public void setDirectedConnectable(boolean noPassword) {
+        showSyncingProgressDialog();
+        MokoSupport.getInstance().sendOrder(mMokoService.setLockStateDirected(noPassword), mMokoService.getLockState());
     }
 
     public void setClose() {

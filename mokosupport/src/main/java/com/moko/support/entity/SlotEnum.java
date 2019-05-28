@@ -8,7 +8,9 @@ public enum SlotEnum implements Serializable {
     SLOT_2(1, "SLOT2"),
     SLOT_3(2, "SLOT3"),
     SLOT_4(3, "SLOT4"),
-    SLOT_5(4, "SLOT5");
+    SLOT_5(4, "SLOT5"),
+    SLOT_6(5, "SLOT6"),
+    ;
     private String title;
     private int slot;
 

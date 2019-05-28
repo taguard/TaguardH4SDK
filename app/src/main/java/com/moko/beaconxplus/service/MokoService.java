@@ -21,6 +21,7 @@ import com.moko.support.task.AdvSlotDataTask;
 import com.moko.support.task.AdvSlotTask;
 import com.moko.support.task.AdvTxPowerTask;
 import com.moko.support.task.BatteryTask;
+import com.moko.support.task.ConnectableTask;
 import com.moko.support.task.DeviceModelTask;
 import com.moko.support.task.DeviceTypeTask;
 import com.moko.support.task.FirmwareVersionTask;
@@ -177,16 +178,29 @@ public class MokoService extends Service implements MokoConnStateCallback, MokoO
     }
 
     /**
+     * @Description 设置设备锁方式
+     */
+    public OrderTask setLockStateDirected(boolean isDirected) {
+        LockStateTask lockStateTask = new LockStateTask(this, OrderTask.RESPONSE_TYPE_WRITE);
+        lockStateTask.setData(isDirected ? new byte[]{0x02} : new byte[]{0x01});
+        return lockStateTask;
+    }
+
+    /**
      * @Description 设置设备锁状态set lock state
      */
     public OrderTask setLockState(String newPassword) {
         if (passwordBytes != null) {
             LogModule.i("旧密码：" + MokoUtils.bytesToHexString(passwordBytes));
             byte[] bt1 = newPassword.getBytes();
-            byte[] bt2 = {(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff};
-            byte[] newPasswordBytes = new byte[bt1.length + bt2.length];
-            System.arraycopy(bt1, 0, newPasswordBytes, 0, bt1.length);
-            System.arraycopy(bt2, 0, newPasswordBytes, bt1.length, bt2.length);
+            byte[] newPasswordBytes = new byte[16];
+            for (int i = 0; i < newPasswordBytes.length; i++) {
+                if (i < bt1.length) {
+                    newPasswordBytes[i] = bt1[i];
+                } else {
+                    newPasswordBytes[i] = (byte) 0xff;
+                }
+            }
             LogModule.i("新密码：" + MokoUtils.bytesToHexString(newPasswordBytes));
             // 用旧密码加密新密码
             byte[] newPasswordEncryptBytes = Utils.encrypt(newPasswordBytes, passwordBytes);
@@ -274,18 +288,17 @@ public class MokoService extends Service implements MokoConnStateCallback, MokoO
      * @Description 获取连接状态
      */
     public OrderTask getConnectable() {
-        WriteConfigTask writeConfigTask = new WriteConfigTask(this);
-        writeConfigTask.setData(ConfigKeyEnum.GET_CONNECTABLE);
-        return writeConfigTask;
+        ConnectableTask connectableTask = new ConnectableTask(this, OrderTask.RESPONSE_TYPE_READ);
+        return connectableTask;
     }
 
     /**
      * @Description 设置连接状态
      */
     public OrderTask setConnectable(boolean isConnectable) {
-        WriteConfigTask writeConfigTask = new WriteConfigTask(this);
-        writeConfigTask.setConneactable(isConnectable);
-        return writeConfigTask;
+        ConnectableTask connectableTask = new ConnectableTask(this, OrderTask.RESPONSE_TYPE_WRITE);
+        connectableTask.setData(isConnectable ? MokoUtils.toByteArray(1, 1) : MokoUtils.toByteArray(0, 1));
+        return connectableTask;
     }
 
     /**
