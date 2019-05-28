@@ -192,27 +192,9 @@ public class SlotFragment extends Fragment {
         changeView((int) value[1] & 0xff, tvSlot2, ivSlot2, rlSlot2);
         changeView((int) value[2] & 0xff, tvSlot3, ivSlot3, rlSlot3);
         changeView((int) value[3] & 0xff, tvSlot4, ivSlot4, rlSlot4);
-        if (deviceType == 0) {
-            changeView((int) value[4] & 0xff, tvSlot5, ivSlot5, rlSlot5);
-            changeView((int) value[5] & 0xff, tvSlot6, ivSlot6, rlSlot6);
-        } else if (deviceType == 1) {
-            changeView((int) value[4] & 0xff, tvSlot5, ivSlot5, rlSlot5);
-            ivSlot6.setImageResource(R.drawable.axis_icon);
-            tvSlot6.setText(SlotFrameTypeEnum.AXIS.getShowName());
-            rlSlot6.setTag(SlotFrameTypeEnum.AXIS);
-        } else if (deviceType == 2) {
-            changeView((int) value[4] & 0xff, tvSlot5, ivSlot5, rlSlot5);
-            ivSlot6.setImageResource(R.drawable.th_icon);
-            tvSlot6.setText(SlotFrameTypeEnum.TH.getShowName());
-            rlSlot6.setTag(SlotFrameTypeEnum.TH);
-        } else if (deviceType == 3) {
-            ivSlot5.setImageResource(R.drawable.axis_icon);
-            tvSlot5.setText(SlotFrameTypeEnum.AXIS.getShowName());
-            rlSlot5.setTag(SlotFrameTypeEnum.AXIS);
-            ivSlot6.setImageResource(R.drawable.th_icon);
-            tvSlot6.setText(SlotFrameTypeEnum.TH.getShowName());
-            rlSlot6.setTag(SlotFrameTypeEnum.TH);
-        }
+        changeView((int) value[4] & 0xff, tvSlot5, ivSlot5, rlSlot5);
+        changeView((int) value[5] & 0xff, tvSlot6, ivSlot6, rlSlot6);
+
     }
 
     private void changeView(int frameType, TextView tvSlot, ImageView ivSlot, RelativeLayout rlSlot) {
@@ -238,6 +220,12 @@ public class SlotFragment extends Fragment {
                 break;
             case NO_DATA:
                 ivSlot.setImageResource(R.drawable.no_data_icon);
+                break;
+            case TH:
+                ivSlot.setImageResource(R.drawable.th_icon);
+                break;
+            case AXIS:
+                ivSlot.setImageResource(R.drawable.axis_icon);
                 break;
 
         }

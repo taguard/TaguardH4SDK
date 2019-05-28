@@ -76,12 +76,12 @@ public class MokoService extends Service implements MokoConnStateCallback, MokoO
     public void onOrderTimeout(OrderTaskResponse response) {
         Intent intent = new Intent(new Intent(MokoConstants.ACTION_ORDER_TIMEOUT));
         intent.putExtra(MokoConstants.EXTRA_KEY_RESPONSE_ORDER_TASK, response);
-        sendBroadcast(intent);
+        sendOrderedBroadcast(intent, null);
     }
 
     @Override
     public void onOrderFinish() {
-        sendBroadcast(new Intent(MokoConstants.ACTION_ORDER_FINISH));
+        sendOrderedBroadcast(new Intent(MokoConstants.ACTION_ORDER_FINISH), null);
     }
 
     @Override
@@ -272,15 +272,6 @@ public class MokoService extends Service implements MokoConnStateCallback, MokoO
     public OrderTask getDeviceMac() {
         WriteConfigTask writeConfigTask = new WriteConfigTask(this);
         writeConfigTask.setData(ConfigKeyEnum.GET_DEVICE_MAC);
-        return writeConfigTask;
-    }
-
-    /**
-     * @Description 获取设备名称
-     */
-    public OrderTask getDeviceName() {
-        WriteConfigTask writeConfigTask = new WriteConfigTask(this);
-        writeConfigTask.setData(ConfigKeyEnum.GET_DEVICE_NAME);
         return writeConfigTask;
     }
 

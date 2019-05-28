@@ -28,7 +28,7 @@ public class WriteConfigTask extends OrderTask {
         switch (key) {
 //            case GET_SLOT_TYPE:
             case GET_DEVICE_MAC:
-            case GET_DEVICE_NAME:
+//            case GET_DEVICE_NAME:
             case GET_CONNECTABLE:
             case GET_IBEACON_UUID:
             case GET_IBEACON_INFO:
@@ -51,13 +51,6 @@ public class WriteConfigTask extends OrderTask {
     public void setiBeaconUUID(String uuidHex) {
         String value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_IBEACON_UUID.getConfigKey()) + "0010"
                 + uuidHex;
-        data = MokoUtils.hex2bytes(value);
-    }
-
-    public void setDeviceName(String deviceName) {
-        String deviceNameHex = MokoUtils.string2Hex(deviceName);
-        String value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_DEVICE_NAME.getConfigKey()) + "00"
-                + MokoUtils.int2HexString(deviceNameHex.length() / 2) + deviceNameHex;
         data = MokoUtils.hex2bytes(value);
     }
 

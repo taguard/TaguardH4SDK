@@ -15,6 +15,9 @@ import com.moko.beaconxplus.dialog.AlertMessageDialog;
 import com.moko.beaconxplus.dialog.ModifyPasswordDialog;
 import com.moko.support.utils.MokoUtils;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -83,18 +86,31 @@ public class SettingFragment extends Fragment {
     }
 
     @OnClick({R.id.rl_password, R.id.rl_update_firmware, R.id.rl_reset_facotry, R.id.iv_connectable,
-            R.id.iv_power,R.id.iv_no_password})
+            R.id.iv_power, R.id.iv_no_password})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.rl_password:
-                final ModifyPasswordDialog modifyPasswordDialog = new ModifyPasswordDialog();
+                final ModifyPasswordDialog modifyPasswordDialog = new ModifyPasswordDialog(activity);
                 modifyPasswordDialog.setOnModifyPasswordClicked(new ModifyPasswordDialog.ModifyPasswordClickListener() {
                     @Override
                     public void onEnsureClicked(String password) {
                         activity.modifyPassword(password);
                     }
                 });
-                modifyPasswordDialog.show(activity.getSupportFragmentManager());
+                modifyPasswordDialog.show();
+                Timer modifyTimer = new Timer();
+                modifyTimer.schedule(new TimerTask() {
+
+                    @Override
+                    public void run() {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                modifyPasswordDialog.showKeyboard();
+                            }
+                        });
+                    }
+                }, 200);
                 break;
             case R.id.rl_update_firmware:
                 activity.chooseFirmwareFile();

@@ -3,7 +3,6 @@ package com.moko.beaconxplus.entity;
 import android.text.TextUtils;
 
 public class ValidParams {
-    public String name;
     public String connectable;
     public String battery;
     public String mac;
@@ -15,7 +14,6 @@ public class ValidParams {
     public String manufacture;
 
     public void reset() {
-        name = "";
         connectable = "";
         battery = "";
         mac = "";
@@ -28,7 +26,7 @@ public class ValidParams {
     }
 
     public boolean isEmpty() {
-        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(connectable)
+        if (TextUtils.isEmpty(connectable)
                 || TextUtils.isEmpty(battery)
                 || TextUtils.isEmpty(mac)
                 || TextUtils.isEmpty(manufactureDate)

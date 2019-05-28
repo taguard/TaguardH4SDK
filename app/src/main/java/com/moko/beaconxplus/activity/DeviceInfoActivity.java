@@ -131,7 +131,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                 showSyncingProgressDialog();
                 MokoSupport.getInstance().sendOrder(mMokoService.getDeviceType(),
                         mMokoService.getSlotType(), mMokoService.getDeviceMac(),
-                        mMokoService.getDeviceName(), mMokoService.getConnectable(),
+                        mMokoService.getConnectable(),
                         mMokoService.getManufacturer(), mMokoService.getDeviceModel(),
                         mMokoService.getProductDate(), mMokoService.getHardwareVersion(),
                         mMokoService.getFirmwareVersion(), mMokoService.getSoftwareVersion(),
@@ -209,7 +209,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
         showSyncingProgressDialog();
         validParams.reset();
         MokoSupport.getInstance().sendOrder(mMokoService.getDeviceMac(),
-                mMokoService.getDeviceName(), mMokoService.getConnectable(),
+                mMokoService.getConnectable(),
                 mMokoService.getManufacturer(), mMokoService.getDeviceModel(),
                 mMokoService.getProductDate(), mMokoService.getHardwareVersion(),
                 mMokoService.getFirmwareVersion(), mMokoService.getSoftwareVersion(),
@@ -273,11 +273,6 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                                     return;
                                 }
                                 switch (configKeyEnum) {
-//                                    case GET_SLOT_TYPE:
-//                                        if (value.length >= 9) {
-//                                            slotFragment.updateSlotType(value);
-//                                        }
-//                                        break;
                                     case GET_DEVICE_MAC:
                                         if (value.length >= 10) {
                                             String valueStr = MokoUtils.bytesToHexString(value);
@@ -437,8 +432,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                             }
                             showSyncingProgressDialog();
                             MokoSupport.getInstance().sendOrder(mMokoService.getSlotType(),
-                                    mMokoService.getDeviceMac(),
-                                    mMokoService.getDeviceName(), mMokoService.getConnectable(),
+                                    mMokoService.getDeviceMac(), mMokoService.getConnectable(),
                                     mMokoService.getManufacturer(), mMokoService.getDeviceModel(),
                                     mMokoService.getProductDate(), mMokoService.getHardwareVersion(),
                                     mMokoService.getFirmwareVersion(), mMokoService.getSoftwareVersion(),
