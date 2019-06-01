@@ -418,6 +418,14 @@ public class MokoService extends Service implements MokoConnStateCallback, MokoO
     }
 
     /**
+     * @Description 设置广播强度
+     */
+    public OrderTask getAdvTxPower() {
+        AdvTxPowerTask advTxPowerTask = new AdvTxPowerTask(this, OrderTask.RESPONSE_TYPE_READ);
+        return advTxPowerTask;
+    }
+
+    /**
      * @Description 获取iBeaconUUID
      */
     public OrderTask getiBeaconUUID() {

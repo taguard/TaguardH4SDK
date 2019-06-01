@@ -14,12 +14,15 @@ import android.widget.TextView;
 import com.moko.beaconxplus.AppConstants;
 import com.moko.beaconxplus.R;
 import com.moko.beaconxplus.activity.DeviceInfoActivity;
+import com.moko.beaconxplus.activity.SlotDataActivity;
 import com.moko.beaconxplus.utils.BeaconXParser;
 import com.moko.support.MokoSupport;
 import com.moko.support.entity.SlotData;
 import com.moko.support.entity.SlotEnum;
 import com.moko.support.entity.SlotFrameTypeEnum;
 import com.moko.support.utils.MokoUtils;
+
+import java.util.Arrays;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -150,41 +153,44 @@ public class SlotFragment extends Fragment {
         slotData.slotEnum = slot;
         switch (frameType) {
             case NO_DATA:
-//                Intent intent = new Intent(getActivity(), SlotDataActivity.class);
-//                intent.putExtra(AppConstants.EXTRA_KEY_SLOT_DATA, slotData);
-//                startActivityForResult(intent, AppConstants.REQUEST_CODE_SLOT_DATA);
+                Intent intent = new Intent(getActivity(), SlotDataActivity.class);
+                intent.putExtra(AppConstants.EXTRA_KEY_SLOT_DATA, slotData);
+                intent.putExtra(AppConstants.EXTRA_KEY_DEVICE_TYPE, deviceType);
+                startActivityForResult(intent, AppConstants.REQUEST_CODE_SLOT_DATA);
                 break;
             case IBEACON:
-                getiBeaconData(slot);
-                break;
             case TLM:
             case URL:
             case UID:
-                getEddystoneData(slot);
+            case DEVICE:
+            case TH:
+            case AXIS:
+                getSlotData(slot);
                 break;
         }
     }
 
-    private void getEddystoneData(SlotEnum slotEnum) {
+    private void getSlotData(SlotEnum slotEnum) {
         activity.showSyncingProgressDialog();
         MokoSupport.getInstance().sendOrder(
                 activity.mMokoService.setSlot(slotEnum),
                 activity.mMokoService.getSlotData(),
+                activity.mMokoService.getAdvTxPower(),
                 activity.mMokoService.getRadioTxPower(),
                 activity.mMokoService.getAdvInterval()
         );
     }
 
-    private void getiBeaconData(SlotEnum slotEnum) {
-        activity.showSyncingProgressDialog();
-        MokoSupport.getInstance().sendOrder(
-                activity.mMokoService.setSlot(slotEnum),
-                activity.mMokoService.getiBeaconUUID(),
-                activity.mMokoService.getiBeaconInfo(),
-                activity.mMokoService.getRadioTxPower(),
-                activity.mMokoService.getAdvInterval()
-        );
-    }
+//    private void getiBeaconData(SlotEnum slotEnum) {
+//        activity.showSyncingProgressDialog();
+//        MokoSupport.getInstance().sendOrder(
+//                activity.mMokoService.setSlot(slotEnum),
+//                activity.mMokoService.getiBeaconUUID(),
+//                activity.mMokoService.getiBeaconInfo(),
+//                activity.mMokoService.getRadioTxPower(),
+//                activity.mMokoService.getAdvInterval()
+//        );
+//    }
 
     // 10 20 50 40 FF FF
     public void updateSlotType(byte[] value) {
@@ -233,30 +239,30 @@ public class SlotFragment extends Fragment {
         rlSlot.setTag(slotFrameTypeEnum);
     }
 
-    private String iBeaconUUID;
-    private String major;
-    private String minor;
-    private int rssi_1m;
+    //    private String iBeaconUUID;
+//    private String major;
+//    private String minor;
+//    private int rssi_1m;
     private int txPower;
     private int advInterval;
 
     // eb640010e2c56db5dffb48d2b060d0f5a71096e0
-    public void setiBeaconUUID(byte[] value) {
-        String valueHex = MokoUtils.bytesToHexString(value);
-        iBeaconUUID = valueHex.substring(8);
-        slotData.iBeaconUUID = iBeaconUUID;
-    }
+//    public void setiBeaconUUID(byte[] value) {
+//        String valueHex = MokoUtils.bytesToHexString(value);
+//        iBeaconUUID = valueHex.substring(8);
+//        slotData.iBeaconUUID = iBeaconUUID;
+//    }
 
     // eb6600050000000000
-    public void setiBeaconInfo(byte[] value) {
-        String valueHex = MokoUtils.bytesToHexString(value);
-        major = valueHex.substring(8, 12);
-        minor = valueHex.substring(12, 16);
-        rssi_1m = Integer.parseInt(valueHex.substring(16), 16);
-        slotData.major = major;
-        slotData.minor = minor;
-        slotData.rssi_1m = 0 - rssi_1m;
-    }
+//    public void setiBeaconInfo(byte[] value) {
+//        String valueHex = MokoUtils.bytesToHexString(value);
+//        major = valueHex.substring(8, 12);
+//        minor = valueHex.substring(12, 16);
+//        rssi_1m = Integer.parseInt(valueHex.substring(16), 16);
+//        slotData.major = major;
+//        slotData.minor = minor;
+//        slotData.rssi_1m = 0 - rssi_1m;
+//    }
 
     // 00
     public void setTxPower(byte[] value) {
@@ -264,13 +270,26 @@ public class SlotFragment extends Fragment {
         slotData.txPower = txPower;
     }
 
+    // 00
+    public void setAdvTxPower(byte[] value) {
+        switch (mSlotFrameTypeEnum) {
+            case IBEACON:
+                slotData.rssi_1m = value[0];
+                break;
+            default:
+                slotData.rssi_0m = value[0];
+                break;
+        }
+    }
+
     // 0064
     public void setAdvInterval(byte[] value) {
         advInterval = Integer.parseInt(MokoUtils.bytesToHexString(value), 16);
         slotData.advInterval = advInterval;
-//        Intent intent = new Intent(getActivity(), SlotDataActivity.class);
-//        intent.putExtra(AppConstants.EXTRA_KEY_SLOT_DATA, slotData);
-//        startActivityForResult(intent, AppConstants.REQUEST_CODE_SLOT_DATA);
+        Intent intent = new Intent(getActivity(), SlotDataActivity.class);
+        intent.putExtra(AppConstants.EXTRA_KEY_SLOT_DATA, slotData);
+        intent.putExtra(AppConstants.EXTRA_KEY_DEVICE_TYPE, deviceType);
+        startActivityForResult(intent, AppConstants.REQUEST_CODE_SLOT_DATA);
     }
 
     @Override
@@ -284,11 +303,14 @@ public class SlotFragment extends Fragment {
         }
     }
 
+    private SlotFrameTypeEnum mSlotFrameTypeEnum;
+
     // 不同类型的数据长度不同
     public void setSlotData(byte[] value) {
         int frameType = value[0];
         SlotFrameTypeEnum slotFrameTypeEnum = SlotFrameTypeEnum.fromFrameType(frameType);
         if (slotFrameTypeEnum != null) {
+            mSlotFrameTypeEnum = slotFrameTypeEnum;
             switch (slotFrameTypeEnum) {
                 case URL:
                     // URL：10cf014c6f766500
@@ -296,8 +318,24 @@ public class SlotFragment extends Fragment {
                     break;
                 case TLM:
                     break;
+                case TH:
+                    break;
+                case AXIS:
+                    break;
                 case UID:
                     BeaconXParser.parseUidData(slotData, value);
+                    break;
+                case DEVICE:
+                    byte[] deviceName = Arrays.copyOfRange(value, 1, value.length);
+                    slotData.deviceName = new String(deviceName);
+                    break;
+                case IBEACON:
+                    byte[] uuid = Arrays.copyOfRange(value, 1, 17);
+                    byte[] major = Arrays.copyOfRange(value, 17, 19);
+                    byte[] minor = Arrays.copyOfRange(value, 19, 21);
+                    slotData.iBeaconUUID = MokoUtils.bytesToHexString(uuid);
+                    slotData.major = MokoUtils.bytesToHexString(major);
+                    slotData.minor = MokoUtils.bytesToHexString(minor);
                     break;
             }
         }

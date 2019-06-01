@@ -31,6 +31,40 @@
     <string name="device_title">Device info</string>
     <string name="h_t"><![CDATA[H&T]]></string>
     <string name="password_null">Password cannot be empty!</string>
-
-
+    <string-array name="slot_type_no_sensor">
+        <item>TLM</item>
+        <item>UID</item>
+        <item>URL</item>
+        <item>iBeacon</item>
+        <item>Device Info</item>
+        <item>NO DATA</item>
+    </string-array>
+    <string-array name="slot_type_axis">
+        <item>TLM</item>
+        <item>UID</item>
+        <item>URL</item>
+        <item>iBeacon</item>
+        <item>Device Info</item>
+        <item>NO DATA</item>
+        <item>3-axis</item>
+    </string-array>
+    <string-array name="slot_type_th">
+        <item>TLM</item>
+        <item>UID</item>
+        <item>URL</item>
+        <item>iBeacon</item>
+        <item>Device Info</item>
+        <item>NO DATA</item>
+        <item><![CDATA[H&T]]></item>
+    </string-array>
+    <string-array name="slot_type_all">
+        <item>TLM</item>
+        <item>UID</item>
+        <item>URL</item>
+        <item>iBeacon</item>
+        <item>Device Info</item>
+        <item>NO DATA</item>
+        <item>3-axis</item>
+        <item><![CDATA[H&T]]></item>
+    </string-array>
 </resources>

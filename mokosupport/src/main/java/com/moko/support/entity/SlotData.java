@@ -19,6 +19,8 @@ public class SlotData implements Serializable {
     public String instanceId;
     // TLM
     // NO DATA
+    // Device
+    public String deviceName;
 
     // BaseParam
     public int rssi_0m;

@@ -15,7 +15,7 @@ public class AdvTxPowerTask extends OrderTask {
     public byte[] data;
 
     public AdvTxPowerTask(MokoOrderTaskCallback callback, int responseType) {
-        super(OrderType.advTxPower, OrderEnum.ADV_TX_POWER, callback, OrderTask.RESPONSE_TYPE_WRITE);
+        super(OrderType.advTxPower, OrderEnum.ADV_TX_POWER, callback, responseType);
     }
 
     @Override

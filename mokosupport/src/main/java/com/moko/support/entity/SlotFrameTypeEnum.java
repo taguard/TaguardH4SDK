@@ -3,14 +3,15 @@ package com.moko.support.entity;
 import java.io.Serializable;
 
 public enum SlotFrameTypeEnum implements Serializable {
-    UID("Eddystone-UID", "00"),
-    URL("Eddystone-URL", "10"),
-    TLM("Eddystone-TLM", "20"),
-    DEVICE("Device Info", "40"),
+    TLM("TLM", "20"),
+    UID("UID", "00"),
+    URL("URL", "10"),
     IBEACON("iBeacon", "50"),
-    AXIS("3-axis Accelerometer", "60"),
+    DEVICE("Device Info", "40"),
+    NO_DATA("NO DATA", "FF"),
+    AXIS("3-axis", "60"),
     TH("H&T", "70"),
-    NO_DATA("NO DATA", "FF");
+    ;
     private String frameType;
     private String showName;
 

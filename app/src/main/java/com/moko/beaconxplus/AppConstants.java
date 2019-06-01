@@ -16,6 +16,7 @@ public class AppConstants {
     public static final String EXTRA_KEY_RESPONSE_ORDER_TYPE = "EXTRA_KEY_RESPONSE_ORDER_TYPE";
     public static final String EXTRA_KEY_SLOT_DATA = "EXTRA_KEY_SLOT_DATA";
     public static final String EXTRA_KEY_PASSWORD = "EXTRA_KEY_PASSWORD";
+    public static final String EXTRA_KEY_DEVICE_TYPE = "EXTRA_KEY_DEVICE_TYPE";
 
     // request_code
     public static final int REQUEST_CODE_DEVICE_INFO = 0x10;

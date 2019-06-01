@@ -33,6 +33,10 @@ public class SettingFragment extends Fragment {
     RelativeLayout rlPassword;
     @Bind(R.id.iv_no_password)
     ImageView ivNoPassowrd;
+    @Bind(R.id.rl_axis)
+    RelativeLayout rlAxis;
+    @Bind(R.id.rl_th)
+    RelativeLayout rlTh;
 
     private DeviceInfoActivity activity;
 
@@ -86,7 +90,7 @@ public class SettingFragment extends Fragment {
     }
 
     @OnClick({R.id.rl_password, R.id.rl_update_firmware, R.id.rl_reset_facotry, R.id.iv_connectable,
-            R.id.iv_power, R.id.iv_no_password})
+            R.id.iv_power, R.id.iv_no_password, R.id.rl_axis, R.id.rl_th})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.rl_password:
@@ -164,6 +168,12 @@ public class SettingFragment extends Fragment {
                 });
                 directAlertDialog.show(activity.getSupportFragmentManager());
                 break;
+            case R.id.rl_axis:
+                // TODO: 2019/5/30 3轴配置
+                break;
+            case R.id.rl_th:
+                // TODO: 2019/5/30 温湿度
+                break;
         }
     }
 
@@ -192,5 +202,26 @@ public class SettingFragment extends Fragment {
 
     public void setModifyPasswordVisiable(boolean isSupportModifyPassword) {
         rlPassword.setVisibility(isSupportModifyPassword ? View.VISIBLE : View.GONE);
+    }
+
+    public void setDeviceType(int deviceType) {
+        switch (deviceType) {
+            case 0:
+                rlAxis.setVisibility(View.GONE);
+                rlTh.setVisibility(View.GONE);
+                break;
+            case 1:
+                rlAxis.setVisibility(View.VISIBLE);
+                rlTh.setVisibility(View.GONE);
+                break;
+            case 2:
+                rlAxis.setVisibility(View.GONE);
+                rlTh.setVisibility(View.VISIBLE);
+                break;
+            case 3:
+                rlAxis.setVisibility(View.VISIBLE);
+                rlTh.setVisibility(View.VISIBLE);
+                break;
+        }
     }
 }

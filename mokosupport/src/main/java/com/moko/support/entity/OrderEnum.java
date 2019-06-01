@@ -16,7 +16,7 @@ public enum OrderEnum implements Serializable {
     ADV_TX_POWER("广播强度", 0),
     ADV_SLOT("通道类型", 0),
     ADV_SLOT_DATA("通道数据", 0),
-    RADIO_TX_POWER("信号强度", 0),
+    RADIO_TX_POWER("发射功率", 0),
     BATTERY("电池电量", 0),
     DEVICE_MODE("设备型号", 0),
     FIRMWARE_VERSION("固件版本", 0),

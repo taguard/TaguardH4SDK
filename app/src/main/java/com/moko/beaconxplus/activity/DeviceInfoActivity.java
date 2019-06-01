@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.moko.beaconxplus.AppConstants;
 import com.moko.beaconxplus.R;
+import com.moko.beaconxplus.dialog.AlertMessageDialog;
 import com.moko.beaconxplus.entity.ValidParams;
 import com.moko.beaconxplus.fragment.DeviceFragment;
 import com.moko.beaconxplus.fragment.SettingFragment;
@@ -89,6 +90,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
     private ValidParams validParams;
     private int validCount;
     private int lockState;
+    private boolean mReceiverTag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +107,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
         showSlotFragment();
         rgOptions.setOnCheckedChangeListener(this);
         radioBtnSlot.setChecked(true);
+        EventBus.getDefault().register(this);
     }
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -120,6 +123,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
             filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
             filter.setPriority(200);
             registerReceiver(mReceiver, filter);
+            mReceiverTag = true;
             if (!MokoSupport.getInstance().isBluetoothOpen()) {
                 // 蓝牙未打开，开启蓝牙
                 MokoSupport.getInstance().enableBluetooth();
@@ -158,24 +162,19 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                     }
                     dismissLoadingProgressDialog();
                     if (MokoSupport.getInstance().isBluetoothOpen() && !isUpgrade) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(DeviceInfoActivity.this);
-                        builder.setTitle("Dismiss");
-                        builder.setCancelable(false);
-                        builder.setMessage("The device disconnected!");
-                        builder.setPositiveButton("Reconnect", new DialogInterface.OnClickListener() {
+                        AlertMessageDialog dialog = new AlertMessageDialog();
+                        dialog.setTitle("Dismiss");
+                        dialog.setMessage("The device disconnected!");
+                        dialog.setConfirm("Exit");
+                        dialog.setCancelGone();
+                        dialog.setOnAlertConfirmListener(new AlertMessageDialog.OnAlertConfirmListener() {
                             @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                mMokoService.connectBluetoothDevice(mDeviceMac);
-                                showLoadingProgressDialog();
+                            public void onClick() {
+                                setResult(RESULT_OK);
+                                finish();
                             }
                         });
-                        builder.setNegativeButton("Exit", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                back();
-                            }
-                        });
-                        builder.show();
+                        dialog.show(getSupportFragmentManager());
                     }
                 }
                 if (MokoConstants.ACTION_DISCOVER_SUCCESS.equals(action)) {
@@ -246,7 +245,9 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                     switch (orderType) {
                         case deviceType:
                             if (value.length >= 1) {
-                                slotFragment.setDeviceType(value[0] & 0xff);
+                                int deviceType = value[0] & 0xff;
+                                slotFragment.setDeviceType(deviceType);
+                                settingFragment.setDeviceType(deviceType);
                             }
                             break;
                         case slotType:
@@ -289,16 +290,16 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                                             validParams.connectable = MokoUtils.byte2HexString(value[4]);
                                         }
                                         break;
-                                    case GET_IBEACON_UUID:
-                                        if (value.length >= 20) {
-                                            slotFragment.setiBeaconUUID(value);
-                                        }
-                                        break;
-                                    case GET_IBEACON_INFO:
-                                        if (value.length >= 9) {
-                                            slotFragment.setiBeaconInfo(value);
-                                        }
-                                        break;
+//                                    case GET_IBEACON_UUID:
+//                                        if (value.length >= 20) {
+//                                            slotFragment.setiBeaconUUID(value);
+//                                        }
+//                                        break;
+//                                    case GET_IBEACON_INFO:
+//                                        if (value.length >= 9) {
+//                                            slotFragment.setiBeaconInfo(value);
+//                                        }
+//                                        break;
                                     case SET_CLOSE:
                                         if ("eb260000".equals(MokoUtils.bytesToHexString(value).toLowerCase())) {
                                             ToastUtils.showToast(DeviceInfoActivity.this, "Success!");
@@ -350,6 +351,11 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                         case advInterval:
                             if (value.length >= 2) {
                                 slotFragment.setAdvInterval(value);
+                            }
+                            break;
+                        case advTxPower:
+                            if (value.length >= 1) {
+                                slotFragment.setAdvTxPower(value);
                             }
                             break;
                         case lockState:
@@ -473,8 +479,13 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(mReceiver);
+        if (mReceiverTag) {
+            mReceiverTag = false;
+            // 注销广播
+            unregisterReceiver(mReceiver);
+        }
         unbindService(mServiceConnection);
+        EventBus.getDefault().unregister(this);
     }
 
     private ProgressDialog syncingDialog;
@@ -509,8 +520,6 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
     private void back() {
         MokoSupport.getInstance().disConnectBle();
         mIsClose = false;
-        setResult(RESULT_OK);
-        finish();
     }
 
     @Override

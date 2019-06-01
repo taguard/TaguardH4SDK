@@ -129,9 +129,7 @@ public class BeaconXParser {
 
     public static void parseUrlData(SlotData slotData, byte[] value) {
         if (value.length > 3) {
-            int rssi_0m = value[1];
             int urlType = (int) value[2] & 0xff;
-            slotData.rssi_0m = rssi_0m;
             slotData.urlSchemeEnum = UrlSchemeEnum.fromUrlType(urlType);
             slotData.urlContent = MokoUtils.bytesToHexString(value).substring(6);
         }
@@ -139,8 +137,6 @@ public class BeaconXParser {
 
     public static void parseUidData(SlotData slotData, byte[] value) {
         if (value.length >= 18) {
-            int rssi_0m = value[1];
-            slotData.rssi_0m = rssi_0m;
             slotData.namespace = MokoUtils.bytesToHexString(value).substring(4, 24);
             slotData.instanceId = MokoUtils.bytesToHexString(value).substring(24);
         }

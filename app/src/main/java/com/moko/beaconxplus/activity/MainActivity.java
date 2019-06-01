@@ -304,17 +304,12 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
-                case AppConstants.REQUEST_CODE_ENABLE_BT:
-
+                case AppConstants.REQUEST_CODE_DEVICE_INFO:
+                    if (animation == null) {
+                        startScan();
+                    }
                     break;
 
-            }
-        } else {
-            switch (requestCode) {
-                case AppConstants.REQUEST_CODE_ENABLE_BT:
-                    // 未打开蓝牙
-                    MainActivity.this.finish();
-                    break;
             }
         }
     }

@@ -1,0 +1,464 @@
+package com.moko.beaconxplus.activity;
+
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.support.v4.app.FragmentActivity;
+import android.view.View;
+import android.view.Window;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.moko.beaconxplus.AppConstants;
+import com.moko.beaconxplus.R;
+import com.moko.beaconxplus.able.ISlotDataAction;
+import com.moko.beaconxplus.fragment.AxisFragment;
+import com.moko.beaconxplus.fragment.DeviceInfoFragment;
+import com.moko.beaconxplus.fragment.IBeaconFragment;
+import com.moko.beaconxplus.fragment.THFragment;
+import com.moko.beaconxplus.fragment.TlmFragment;
+import com.moko.beaconxplus.fragment.UidFragment;
+import com.moko.beaconxplus.fragment.UrlFragment;
+import com.moko.beaconxplus.service.MokoService;
+import com.moko.beaconxplus.utils.ToastUtils;
+import com.moko.support.MokoConstants;
+import com.moko.support.MokoSupport;
+import com.moko.support.entity.OrderType;
+import com.moko.support.entity.SlotData;
+import com.moko.support.entity.SlotFrameTypeEnum;
+import com.moko.support.event.ConnectStatusEvent;
+import com.moko.support.log.LogModule;
+import com.moko.support.task.OrderTaskResponse;
+import com.moko.support.utils.MokoUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.HashMap;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import cn.carbswang.android.numberpickerview.library.NumberPickerView;
+
+public class SlotDataActivity extends FragmentActivity implements NumberPickerView.OnValueChangeListener {
+    public MokoService mMokoService;
+    @Bind(R.id.tv_slot_title)
+    TextView tvSlotTitle;
+    @Bind(R.id.iv_save)
+    ImageView ivSave;
+    @Bind(R.id.frame_slot_container)
+    FrameLayout frameSlotContainer;
+    @Bind(R.id.npv_slot_type)
+    NumberPickerView npvSlotType;
+    private FragmentManager fragmentManager;
+    private UidFragment uidFragment;
+    private UrlFragment urlFragment;
+    private TlmFragment tlmFragment;
+    private IBeaconFragment iBeaconFragment;
+    private DeviceInfoFragment deviceInfoFragment;
+    private AxisFragment axisFragment;
+    private THFragment thFragment;
+    public SlotData slotData;
+    private ISlotDataAction slotDataActionImpl;
+    private HashMap<Integer, Integer> seekBarProgressHashMap;
+    public int deviceType;
+    private boolean mReceiverTag = false;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_slot_data);
+        ButterKnife.bind(this);
+        if (getIntent() != null && getIntent().getExtras() != null) {
+            slotData = (SlotData) getIntent().getSerializableExtra(AppConstants.EXTRA_KEY_SLOT_DATA);
+            deviceType = getIntent().getIntExtra(AppConstants.EXTRA_KEY_DEVICE_TYPE, 0);
+            LogModule.i(slotData.toString());
+        }
+        Intent intent = new Intent(this, MokoService.class);
+        bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
+        fragmentManager = getFragmentManager();
+        createFragments();
+        if (deviceType == 0) {
+            npvSlotType.setDisplayedValues(getResources().getStringArray(R.array.slot_type_no_sensor));
+            npvSlotType.setMinValue(0);
+            npvSlotType.setMaxValue(5);
+        } else if (deviceType == 1) {
+            npvSlotType.setDisplayedValues(getResources().getStringArray(R.array.slot_type_axis));
+            npvSlotType.setMinValue(0);
+            npvSlotType.setMaxValue(6);
+        } else if (deviceType == 2) {
+            npvSlotType.setDisplayedValues(getResources().getStringArray(R.array.slot_type_th));
+            npvSlotType.setMinValue(0);
+            npvSlotType.setMaxValue(6);
+        } else if (deviceType == 3) {
+            npvSlotType.setDisplayedValues(getResources().getStringArray(R.array.slot_type_all));
+            npvSlotType.setMinValue(0);
+            npvSlotType.setMaxValue(7);
+        }
+        npvSlotType.setOnValueChangedListener(this);
+
+        npvSlotType.setValue(slotData.frameTypeEnum.ordinal());
+        tvSlotTitle.setText(slotData.slotEnum.getTitle());
+        showFragment(slotData.frameTypeEnum.ordinal());
+        seekBarProgressHashMap = new HashMap<>();
+        EventBus.getDefault().register(this);
+    }
+
+    private void createFragments() {
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        if (deviceType == 0) {
+            uidFragment = UidFragment.newInstance();
+            fragmentTransaction.add(R.id.frame_slot_container, uidFragment);
+            urlFragment = UrlFragment.newInstance();
+            fragmentTransaction.add(R.id.frame_slot_container, urlFragment);
+            tlmFragment = TlmFragment.newInstance();
+            fragmentTransaction.add(R.id.frame_slot_container, tlmFragment);
+            iBeaconFragment = IBeaconFragment.newInstance();
+            fragmentTransaction.add(R.id.frame_slot_container, iBeaconFragment);
+            deviceInfoFragment = DeviceInfoFragment.newInstance();
+            fragmentTransaction.add(R.id.frame_slot_container, deviceInfoFragment);
+        } else if (deviceType == 1) {
+            uidFragment = UidFragment.newInstance();
+            fragmentTransaction.add(R.id.frame_slot_container, uidFragment);
+            urlFragment = UrlFragment.newInstance();
+            fragmentTransaction.add(R.id.frame_slot_container, urlFragment);
+            tlmFragment = TlmFragment.newInstance();
+            fragmentTransaction.add(R.id.frame_slot_container, tlmFragment);
+            iBeaconFragment = IBeaconFragment.newInstance();
+            fragmentTransaction.add(R.id.frame_slot_container, iBeaconFragment);
+            deviceInfoFragment = DeviceInfoFragment.newInstance();
+            fragmentTransaction.add(R.id.frame_slot_container, deviceInfoFragment);
+            axisFragment = AxisFragment.newInstance();
+            fragmentTransaction.add(R.id.frame_slot_container, axisFragment);
+        } else if (deviceType == 2) {
+            uidFragment = UidFragment.newInstance();
+            fragmentTransaction.add(R.id.frame_slot_container, uidFragment);
+            urlFragment = UrlFragment.newInstance();
+            fragmentTransaction.add(R.id.frame_slot_container, urlFragment);
+            tlmFragment = TlmFragment.newInstance();
+            fragmentTransaction.add(R.id.frame_slot_container, tlmFragment);
+            iBeaconFragment = IBeaconFragment.newInstance();
+            fragmentTransaction.add(R.id.frame_slot_container, iBeaconFragment);
+            deviceInfoFragment = DeviceInfoFragment.newInstance();
+            fragmentTransaction.add(R.id.frame_slot_container, deviceInfoFragment);
+            thFragment = THFragment.newInstance();
+            fragmentTransaction.add(R.id.frame_slot_container, thFragment);
+        } else if (deviceType == 3) {
+            uidFragment = UidFragment.newInstance();
+            fragmentTransaction.add(R.id.frame_slot_container, uidFragment);
+            urlFragment = UrlFragment.newInstance();
+            fragmentTransaction.add(R.id.frame_slot_container, urlFragment);
+            tlmFragment = TlmFragment.newInstance();
+            fragmentTransaction.add(R.id.frame_slot_container, tlmFragment);
+            iBeaconFragment = IBeaconFragment.newInstance();
+            fragmentTransaction.add(R.id.frame_slot_container, iBeaconFragment);
+            deviceInfoFragment = DeviceInfoFragment.newInstance();
+            fragmentTransaction.add(R.id.frame_slot_container, deviceInfoFragment);
+            axisFragment = AxisFragment.newInstance();
+            fragmentTransaction.add(R.id.frame_slot_container, axisFragment);
+            thFragment = THFragment.newInstance();
+            fragmentTransaction.add(R.id.frame_slot_container, thFragment);
+        }
+        fragmentTransaction.commit();
+
+    }
+
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mMokoService = ((MokoService.LocalBinder) service).getService();
+            // 注册广播接收器
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(MokoConstants.ACTION_ORDER_RESULT);
+            filter.addAction(MokoConstants.ACTION_ORDER_TIMEOUT);
+            filter.addAction(MokoConstants.ACTION_ORDER_FINISH);
+            filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+            filter.setPriority(300);
+            registerReceiver(mReceiver, filter);
+            mReceiverTag = true;
+            if (!MokoSupport.getInstance().isBluetoothOpen()) {
+                // 蓝牙未打开，开启蓝牙
+                MokoSupport.getInstance().enableBluetooth();
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
+    };
+
+    @Subscribe(threadMode = ThreadMode.POSTING, priority = 200)
+    public void onConnectStatusEvent(ConnectStatusEvent event) {
+        final String action = event.getAction();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (MokoConstants.ACTION_CONN_STATUS_DISCONNECTED.equals(action)) {
+                    // 设备断开，通知页面更新
+                    SlotDataActivity.this.finish();
+                }
+            }
+        });
+
+    }
+
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null) {
+                String action = intent.getAction();
+                if (MokoConstants.ACTION_ORDER_TIMEOUT.equals(action)) {
+                    abortBroadcast();
+                }
+                if (MokoConstants.ACTION_ORDER_FINISH.equals(action)) {
+                    abortBroadcast();
+                    ToastUtils.showToast(SlotDataActivity.this, "Successfully configure");
+                    dismissSyncProgressDialog();
+                    SlotDataActivity.this.setResult(SlotDataActivity.this.RESULT_OK);
+                    SlotDataActivity.this.finish();
+                }
+                if (MokoConstants.ACTION_ORDER_RESULT.equals(action)) {
+                    abortBroadcast();
+                    OrderTaskResponse response = (OrderTaskResponse) intent.getSerializableExtra(MokoConstants.EXTRA_KEY_RESPONSE_ORDER_TASK);
+                    OrderType orderType = response.orderType;
+                    byte[] value = response.responseValue;
+                    switch (orderType) {
+                        case advInterval:
+                            break;
+                    }
+
+                }
+                if (MokoConstants.ACTION_CURRENT_DATA.equals(action)) {
+                    abortBroadcast();
+                    OrderType orderType = (OrderType) intent.getSerializableExtra(MokoConstants.EXTRA_KEY_CURRENT_DATA_TYPE);
+                    byte[] value = intent.getByteArrayExtra(MokoConstants.EXTRA_KEY_RESPONSE_VALUE);
+                    switch (orderType) {
+                        case notifyConfig:
+                            String valueHexStr = MokoUtils.bytesToHexString(value);
+                            if ("eb63000100".equals(valueHexStr.toLowerCase())) {
+                                // 设备上锁
+                                ToastUtils.showToast(SlotDataActivity.this, "Locked");
+                                SlotDataActivity.this.finish();
+                            }
+                            break;
+                    }
+                }
+                if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
+                    int blueState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
+                    switch (blueState) {
+                        case BluetoothAdapter.STATE_TURNING_OFF:
+                            // 蓝牙断开
+                            SlotDataActivity.this.finish();
+                            break;
+
+                    }
+                }
+            }
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mReceiverTag) {
+            mReceiverTag = false;
+            // 注销广播
+            unregisterReceiver(mReceiver);
+        }
+        unbindService(mServiceConnection);
+        EventBus.getDefault().unregister(this);
+    }
+
+    private ProgressDialog syncingDialog;
+
+    public void showSyncingProgressDialog() {
+        syncingDialog = new ProgressDialog(this);
+        syncingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        syncingDialog.setCanceledOnTouchOutside(false);
+        syncingDialog.setCancelable(false);
+        syncingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        syncingDialog.setMessage("Syncing...");
+        if (!isFinishing() && syncingDialog != null && !syncingDialog.isShowing()) {
+            syncingDialog.show();
+        }
+    }
+
+    public void dismissSyncProgressDialog() {
+        if (!isFinishing() && syncingDialog != null && syncingDialog.isShowing()) {
+            syncingDialog.dismiss();
+        }
+    }
+
+    @OnClick({R.id.tv_back, R.id.iv_save})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.tv_back:
+                finish();
+                break;
+            case R.id.iv_save:
+                if (slotDataActionImpl == null) {
+                    byte[] noData = new byte[]{0};
+                    MokoSupport.getInstance().sendOrder(
+                            // 切换通道，保证通道是在当前设置通道里
+                            mMokoService.setSlot(slotData.slotEnum),
+                            mMokoService.setSlotData(noData)
+                    );
+                    return;
+                }
+                if (!slotDataActionImpl.isValid()) {
+                    return;
+                }
+                showSyncingProgressDialog();
+                slotDataActionImpl.sendData();
+                break;
+        }
+    }
+
+    @Override
+    public void onValueChange(NumberPickerView picker, int oldVal, int newVal) {
+        LogModule.i(newVal + "");
+        LogModule.i(picker.getContentByCurrValue());
+        showFragment(newVal);
+        if (!seekBarProgressHashMap.isEmpty() && slotDataActionImpl != null) {
+            for (int key : seekBarProgressHashMap.keySet()) {
+                slotDataActionImpl.upgdateProgress(key, seekBarProgressHashMap.get(key));
+            }
+        }
+    }
+
+    private void showFragment(int newVal) {
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        switch (newVal) {
+            case 0:
+                if (deviceType == 0) {
+                    fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(iBeaconFragment).hide(deviceInfoFragment).show(tlmFragment).commit();
+                    slotDataActionImpl = tlmFragment;
+                } else if (deviceType == 1) {
+                    fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(iBeaconFragment).hide(deviceInfoFragment).hide(axisFragment).show(tlmFragment).commit();
+                    slotDataActionImpl = tlmFragment;
+                } else if (deviceType == 2) {
+                    fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(iBeaconFragment).hide(deviceInfoFragment).hide(thFragment).show(tlmFragment).commit();
+                    slotDataActionImpl = tlmFragment;
+                } else if (deviceType == 3) {
+                    fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(iBeaconFragment).hide(deviceInfoFragment).hide(axisFragment).hide(thFragment).show(tlmFragment).commit();
+                    slotDataActionImpl = tlmFragment;
+                }
+                break;
+            case 1:
+                if (deviceType == 0) {
+                    fragmentTransaction.hide(urlFragment).hide(iBeaconFragment).hide(tlmFragment).hide(deviceInfoFragment).show(uidFragment).commit();
+                    slotDataActionImpl = uidFragment;
+                } else if (deviceType == 1) {
+                    fragmentTransaction.hide(urlFragment).hide(iBeaconFragment).hide(tlmFragment).hide(deviceInfoFragment).hide(axisFragment).show(uidFragment).commit();
+                    slotDataActionImpl = uidFragment;
+                } else if (deviceType == 2) {
+                    fragmentTransaction.hide(urlFragment).hide(iBeaconFragment).hide(tlmFragment).hide(deviceInfoFragment).hide(thFragment).show(uidFragment).commit();
+                    slotDataActionImpl = uidFragment;
+                } else if (deviceType == 3) {
+                    fragmentTransaction.hide(urlFragment).hide(iBeaconFragment).hide(tlmFragment).hide(deviceInfoFragment).hide(axisFragment).hide(thFragment).show(uidFragment).commit();
+                    slotDataActionImpl = uidFragment;
+                }
+                break;
+            case 2:
+                if (deviceType == 0) {
+                    fragmentTransaction.hide(uidFragment).hide(iBeaconFragment).hide(tlmFragment).hide(deviceInfoFragment).show(urlFragment).commit();
+                    slotDataActionImpl = urlFragment;
+                } else if (deviceType == 1) {
+                    fragmentTransaction.hide(uidFragment).hide(iBeaconFragment).hide(tlmFragment).hide(deviceInfoFragment).hide(axisFragment).show(urlFragment).commit();
+                    slotDataActionImpl = urlFragment;
+                } else if (deviceType == 2) {
+                    fragmentTransaction.hide(uidFragment).hide(iBeaconFragment).hide(tlmFragment).hide(deviceInfoFragment).hide(thFragment).show(urlFragment).commit();
+                    slotDataActionImpl = urlFragment;
+                } else if (deviceType == 3) {
+                    fragmentTransaction.hide(uidFragment).hide(iBeaconFragment).hide(tlmFragment).hide(deviceInfoFragment).hide(axisFragment).hide(thFragment).show(urlFragment).commit();
+                    slotDataActionImpl = urlFragment;
+                }
+                break;
+            case 3:
+                if (deviceType == 0) {
+                    fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(tlmFragment).hide(deviceInfoFragment).show(iBeaconFragment).commit();
+                    slotDataActionImpl = iBeaconFragment;
+                } else if (deviceType == 1) {
+                    fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(tlmFragment).hide(deviceInfoFragment).show(iBeaconFragment).hide(axisFragment).commit();
+                    slotDataActionImpl = iBeaconFragment;
+                } else if (deviceType == 2) {
+                    fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(tlmFragment).hide(deviceInfoFragment).show(iBeaconFragment).hide(thFragment).commit();
+                    slotDataActionImpl = iBeaconFragment;
+                } else if (deviceType == 3) {
+                    fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(tlmFragment).hide(deviceInfoFragment).show(iBeaconFragment).hide(axisFragment).hide(thFragment).commit();
+                    slotDataActionImpl = iBeaconFragment;
+                }
+                break;
+            case 4:
+                if (deviceType == 0) {
+                    fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(tlmFragment).hide(iBeaconFragment).show(deviceInfoFragment).commit();
+                    slotDataActionImpl = deviceInfoFragment;
+                } else if (deviceType == 1) {
+                    fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(tlmFragment).hide(iBeaconFragment).show(deviceInfoFragment).hide(axisFragment).commit();
+                    slotDataActionImpl = deviceInfoFragment;
+                } else if (deviceType == 2) {
+                    fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(tlmFragment).hide(iBeaconFragment).show(deviceInfoFragment).hide(thFragment).commit();
+                    slotDataActionImpl = deviceInfoFragment;
+                } else if (deviceType == 3) {
+                    fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(tlmFragment).hide(iBeaconFragment).show(deviceInfoFragment).hide(axisFragment).hide(thFragment).commit();
+                    slotDataActionImpl = deviceInfoFragment;
+                }
+                break;
+            case 5:
+                if (deviceType == 0) {
+                    fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(tlmFragment).hide(iBeaconFragment).hide(deviceInfoFragment).commit();
+                    slotDataActionImpl = null;
+                } else if (deviceType == 1) {
+                    fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(tlmFragment).hide(iBeaconFragment).hide(deviceInfoFragment).hide(axisFragment).commit();
+                    slotDataActionImpl = null;
+                } else if (deviceType == 2) {
+                    fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(tlmFragment).hide(iBeaconFragment).hide(deviceInfoFragment).hide(thFragment).commit();
+                    slotDataActionImpl = null;
+                } else if (deviceType == 3) {
+                    fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(tlmFragment).hide(iBeaconFragment).hide(deviceInfoFragment).hide(axisFragment).hide(thFragment).commit();
+                    slotDataActionImpl = null;
+                }
+                break;
+            case 6:
+                if (deviceType == 1) {
+                    fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(tlmFragment).hide(iBeaconFragment).hide(deviceInfoFragment).show(axisFragment).commit();
+                    slotDataActionImpl = axisFragment;
+                } else if (deviceType == 3) {
+                    fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(tlmFragment).hide(iBeaconFragment).hide(deviceInfoFragment).show(axisFragment).hide(thFragment).commit();
+                    slotDataActionImpl = axisFragment;
+                }
+                break;
+            case 7:
+                if (deviceType == 2) {
+                    fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(tlmFragment).hide(iBeaconFragment).hide(deviceInfoFragment).show(thFragment).commit();
+                    slotDataActionImpl = thFragment;
+                } else if (deviceType == 3) {
+                    fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(tlmFragment).hide(iBeaconFragment).hide(deviceInfoFragment).show(thFragment).hide(axisFragment).commit();
+                    slotDataActionImpl = thFragment;
+                }
+                break;
+
+        }
+        slotData.frameTypeEnum = SlotFrameTypeEnum.fromEnumOrdinal(newVal);
+    }
+
+
+    public void onProgressChanged(int viewId, int progress) {
+        seekBarProgressHashMap.put(viewId, progress);
+    }
+}

@@ -27,6 +27,8 @@ public class AlertMessageDialog extends MokoBaseDialog {
     TextView tvAlertCancel;
     @Bind(R.id.tv_alert_confirm)
     TextView tvAlertConfirm;
+    @Bind(R.id.view_divider)
+    TextView viewDivider;
 
     private String cancel;
 
@@ -43,6 +45,8 @@ public class AlertMessageDialog extends MokoBaseDialog {
     private int titleId = -1;
 
     private int messageId = -1;
+
+    private boolean cancelGone;
 
 
     @Override
@@ -78,6 +82,10 @@ public class AlertMessageDialog extends MokoBaseDialog {
         }
         if (!TextUtils.isEmpty(confirm)) {
             tvAlertConfirm.setText(confirm);
+        }
+        if (cancelGone) {
+            tvAlertCancel.setVisibility(View.GONE);
+            viewDivider.setVisibility(View.GONE);
         }
     }
 
@@ -167,6 +175,10 @@ public class AlertMessageDialog extends MokoBaseDialog {
 
     public void setCancel(@StringRes int cancelId) {
         this.cancelId = cancelId;
+    }
+
+    public void setCancelGone(){
+        cancelGone = true;
     }
 
     @OnClick({R.id.tv_alert_cancel, R.id.tv_alert_confirm})
