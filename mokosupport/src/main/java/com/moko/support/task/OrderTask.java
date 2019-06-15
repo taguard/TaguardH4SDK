@@ -16,6 +16,7 @@ public abstract class OrderTask {
     public static final int RESPONSE_TYPE_READ = 0;
     public static final int RESPONSE_TYPE_WRITE = 1;
     public static final int RESPONSE_TYPE_NOTIFY = 2;
+    public static final int RESPONSE_TYPE_DISABLE_NOTIFY = 4;
     public static final int RESPONSE_TYPE_WRITE_NO_RESPONSE = 3;
     public static final int ORDER_STATUS_SUCCESS = 1;
     public OrderType orderType;

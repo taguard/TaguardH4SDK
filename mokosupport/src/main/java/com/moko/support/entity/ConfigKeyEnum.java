@@ -6,6 +6,8 @@ import java.io.Serializable;
 public enum ConfigKeyEnum implements Serializable {
     GET_SLOT_TYPE(0x61),
     GET_DEVICE_MAC(0x20),
+    GET_AXIX_PARAMS(0x21),
+    SET_AXIX_PARAMS(0x31),
     GET_IBEACON_UUID(0x64),
     SET_IBEACON_UUID(0x65),
     GET_IBEACON_INFO(0x66),

@@ -10,6 +10,7 @@ import java.io.Serializable;
  */
 public enum OrderEnum implements Serializable {
     OPEN_NOTIFY("打开设备通知", 0),
+    AXIS_NOTIFY("三轴数据通知", 0),
     LOCK_STATE("读取锁状态", 0),
     UNLOCK("解锁", 0),
     ADV_INTERVAL("广播间隔", 0),

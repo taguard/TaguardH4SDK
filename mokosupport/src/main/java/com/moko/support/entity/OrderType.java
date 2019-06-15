@@ -30,6 +30,7 @@ public enum OrderType implements Serializable {
     connectable("connectable", "a3c8750c-8ed3-4bdf-8a39-a01bebede295"),
     deviceType("deviceType", "e62a0004-1362-4f28-9327-f5b74e970801"),
     slotType("slotType", "e62a0005-1362-4f28-9327-f5b74e970801"),
+    axisData("axisData", "e62a0008-1362-4f28-9327-f5b74e970801"),
     ;
 
 

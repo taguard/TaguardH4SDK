@@ -7,6 +7,7 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.StyleRes;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -106,5 +107,12 @@ public abstract class MokoBaseDialog extends DialogFragment {
 
     public void show(FragmentManager fragmentManager) {
         show(fragmentManager, getFragmentTag());
+    }
+
+    @Override
+    public void show(FragmentManager manager, String tag) {
+        FragmentTransaction ft = manager.beginTransaction();
+        ft.add(this, tag);
+        ft.commitAllowingStateLoss();
     }
 }

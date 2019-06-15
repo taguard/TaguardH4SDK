@@ -1,6 +1,7 @@
 package com.moko.beaconxplus.fragment;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.moko.beaconxplus.R;
+import com.moko.beaconxplus.activity.AxisDataActivity;
 import com.moko.beaconxplus.activity.DeviceInfoActivity;
 import com.moko.beaconxplus.dialog.AlertMessageDialog;
 import com.moko.beaconxplus.dialog.ModifyPasswordDialog;
@@ -169,7 +171,8 @@ public class SettingFragment extends Fragment {
                 directAlertDialog.show(activity.getSupportFragmentManager());
                 break;
             case R.id.rl_axis:
-                // TODO: 2019/5/30 3轴配置
+                // 3轴配置
+                startActivity(new Intent(getActivity(), AxisDataActivity.class));
                 break;
             case R.id.rl_th:
                 // TODO: 2019/5/30 温湿度

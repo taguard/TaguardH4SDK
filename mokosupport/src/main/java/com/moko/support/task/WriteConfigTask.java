@@ -16,7 +16,7 @@ public class WriteConfigTask extends OrderTask {
     public byte[] data;
 
     public WriteConfigTask(MokoOrderTaskCallback callback) {
-        super(OrderType.writeConfig, OrderEnum.WRITE_CONFIG, callback,  OrderTask.RESPONSE_TYPE_WRITE_NO_RESPONSE);
+        super(OrderType.writeConfig, OrderEnum.WRITE_CONFIG, callback, OrderTask.RESPONSE_TYPE_WRITE_NO_RESPONSE);
     }
 
     @Override
@@ -33,6 +33,7 @@ public class WriteConfigTask extends OrderTask {
             case GET_IBEACON_UUID:
             case GET_IBEACON_INFO:
             case SET_CLOSE:
+            case GET_AXIX_PARAMS:
                 createGetConfigData(key.getConfigKey());
                 break;
         }
@@ -57,6 +58,12 @@ public class WriteConfigTask extends OrderTask {
     public void setConneactable(boolean isConnectable) {
         String value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_CONNECTABLE.getConfigKey()) + "0001"
                 + (isConnectable ? "01" : "00");
+        data = MokoUtils.hex2bytes(value);
+    }
+
+    public void setAxisParams(int rate, int scale, int sensitivity) {
+        String value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_AXIX_PARAMS.getConfigKey()) + "0003"
+                + String.format("%02X", rate) + String.format("%02X", scale) + String.format("%02X", sensitivity);
         data = MokoUtils.hex2bytes(value);
     }
 }

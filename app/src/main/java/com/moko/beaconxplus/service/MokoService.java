@@ -28,6 +28,7 @@ import com.moko.support.task.FirmwareVersionTask;
 import com.moko.support.task.HardwareVersionTask;
 import com.moko.support.task.LockStateTask;
 import com.moko.support.task.ManufacturerTask;
+import com.moko.support.task.NotifyAxisTask;
 import com.moko.support.task.NotifyConfigTask;
 import com.moko.support.task.OrderTask;
 import com.moko.support.task.OrderTaskResponse;
@@ -169,6 +170,17 @@ public class MokoService extends Service implements MokoConnStateCallback, MokoO
         return notifyConfigTask;
     }
 
+    public OrderTask setAxisNotifyOpen() {
+        NotifyAxisTask notifyAxisTask = new NotifyAxisTask(this, OrderTask.RESPONSE_TYPE_NOTIFY);
+        return notifyAxisTask;
+    }
+
+    public OrderTask setAxisNotifyClose() {
+        NotifyAxisTask notifyAxisTask = new NotifyAxisTask(this, OrderTask.RESPONSE_TYPE_DISABLE_NOTIFY);
+        return notifyAxisTask;
+    }
+
+
     /**
      * @Description 获取设备锁状态get lock state
      */
@@ -264,6 +276,24 @@ public class MokoService extends Service implements MokoConnStateCallback, MokoO
     public OrderTask getDeviceType() {
         DeviceTypeTask deviceTypeTask = new DeviceTypeTask(this);
         return deviceTypeTask;
+    }
+
+    /**
+     * @Description 获取3轴参数
+     */
+    public OrderTask getAxisParams() {
+        WriteConfigTask writeConfigTask = new WriteConfigTask(this);
+        writeConfigTask.setData(ConfigKeyEnum.GET_AXIX_PARAMS);
+        return writeConfigTask;
+    }
+
+    /**
+     * @Description 设置3轴参数
+     */
+    public OrderTask setAxisParams(int rate, int scale, int sensitivity) {
+        WriteConfigTask writeConfigTask = new WriteConfigTask(this);
+        writeConfigTask.setAxisParams(rate, scale, sensitivity);
+        return writeConfigTask;
     }
 
     /**

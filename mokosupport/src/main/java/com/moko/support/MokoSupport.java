@@ -17,14 +17,12 @@ import com.moko.support.callback.MokoOrderTaskCallback;
 import com.moko.support.callback.MokoResponseCallback;
 import com.moko.support.callback.MokoScanDeviceCallback;
 import com.moko.support.entity.MokoCharacteristic;
-import com.moko.support.entity.OrderEnum;
 import com.moko.support.entity.OrderType;
 import com.moko.support.handler.BaseMessageHandler;
 import com.moko.support.handler.MokoCharacteristicHandler;
 import com.moko.support.handler.MokoConnStateHandler;
 import com.moko.support.handler.MokoLeScanHandler;
 import com.moko.support.log.LogModule;
-import com.moko.support.task.OpenNotifyTask;
 import com.moko.support.task.OrderTask;
 import com.moko.support.utils.BleConnectionCompat;
 import com.moko.support.utils.MokoUtils;
@@ -228,6 +226,9 @@ public class MokoSupport implements MokoResponseCallback {
         if (orderTask.response.responseType == OrderTask.RESPONSE_TYPE_NOTIFY) {
             sendNotifyOrder(orderTask, mokoCharacteristic);
         }
+        if (orderTask.response.responseType == OrderTask.RESPONSE_TYPE_DISABLE_NOTIFY) {
+            sendDisableNotifyOrder(orderTask, mokoCharacteristic);
+        }
         timeoutHandler(orderTask);
     }
 
@@ -288,11 +289,15 @@ public class MokoSupport implements MokoResponseCallback {
                 // 写通知命令
                 orderType = OrderType.notifyConfig;
             }
+            if (characteristic.getUuid().toString().equals(OrderType.axisData.getUuid())) {
+                // 3轴通知命令
+                orderType = OrderType.axisData;
+            }
             // 延时应答
             if (orderType != null) {
                 LogModule.i(orderType.getName());
                 Intent intent = new Intent(MokoConstants.ACTION_CURRENT_DATA);
-                intent.putExtra(MokoConstants.EXTRA_KEY_CURRENT_DATA_TYPE, OrderEnum.OPEN_NOTIFY);
+                intent.putExtra(MokoConstants.EXTRA_KEY_CURRENT_DATA_TYPE, orderType);
                 intent.putExtra(MokoConstants.EXTRA_KEY_RESPONSE_VALUE, value);
                 mContext.sendBroadcast(intent);
             }
@@ -492,6 +497,27 @@ public class MokoSupport implements MokoResponseCallback {
             descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
         } else if ((mokoCharacteristic.characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_INDICATE) != 0) {
             descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
+        }
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                mBluetoothGatt.writeDescriptor(descriptor);
+            }
+        });
+    }
+
+    // 发送可监听命令
+    private void sendDisableNotifyOrder(OrderTask orderTask, final MokoCharacteristic mokoCharacteristic) {
+        LogModule.i("app set device notify : " + orderTask.orderType.getName());
+        mokoCharacteristic.characteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
+        final BluetoothGattDescriptor descriptor = mokoCharacteristic.characteristic.getDescriptor(DESCRIPTOR_UUID_NOTIFY);
+        if (descriptor == null) {
+            return;
+        }
+        if ((mokoCharacteristic.characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY) != 0) {
+            descriptor.setValue(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
+        } else if ((mokoCharacteristic.characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_INDICATE) != 0) {
+            descriptor.setValue(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
         }
         mHandler.post(new Runnable() {
             @Override
