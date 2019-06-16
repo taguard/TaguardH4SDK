@@ -8,7 +8,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="55dp"
-        android:background="@color/blue_5691fc">
+        android:background="@color/blue_2f84d0">
 
         <TextView
             android:id="@+id/tv_back"
@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text=""
+            android:text="3-Axis"
             android:textColor="@color/white_ffffff"
             android:textSize="17sp" />
 

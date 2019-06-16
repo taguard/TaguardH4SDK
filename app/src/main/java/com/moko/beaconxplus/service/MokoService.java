@@ -30,6 +30,7 @@ import com.moko.support.task.LockStateTask;
 import com.moko.support.task.ManufacturerTask;
 import com.moko.support.task.NotifyAxisTask;
 import com.moko.support.task.NotifyConfigTask;
+import com.moko.support.task.NotifyHTTask;
 import com.moko.support.task.OrderTask;
 import com.moko.support.task.OrderTaskResponse;
 import com.moko.support.task.ProductDateTask;
@@ -180,6 +181,16 @@ public class MokoService extends Service implements MokoConnStateCallback, MokoO
         return notifyAxisTask;
     }
 
+    public OrderTask setTHNotifyOpen() {
+        NotifyHTTask notifyHTTask = new NotifyHTTask(this, OrderTask.RESPONSE_TYPE_NOTIFY);
+        return notifyHTTask;
+    }
+
+    public OrderTask setTHNotifyClose() {
+        NotifyHTTask notifyHTTask = new NotifyHTTask(this, OrderTask.RESPONSE_TYPE_DISABLE_NOTIFY);
+        return notifyHTTask;
+    }
+
 
     /**
      * @Description 获取设备锁状态get lock state
@@ -293,6 +304,60 @@ public class MokoService extends Service implements MokoConnStateCallback, MokoO
     public OrderTask setAxisParams(int rate, int scale, int sensitivity) {
         WriteConfigTask writeConfigTask = new WriteConfigTask(this);
         writeConfigTask.setAxisParams(rate, scale, sensitivity);
+        return writeConfigTask;
+    }
+
+    /**
+     * @Description 获取温湿度采样率
+     */
+    public OrderTask getTHPeriod() {
+        WriteConfigTask writeConfigTask = new WriteConfigTask(this);
+        writeConfigTask.setData(ConfigKeyEnum.GET_TH_PERIOD);
+        return writeConfigTask;
+    }
+
+    /**
+     * @Description 设置温湿度采样率
+     */
+    public OrderTask setTHPeriod(int period) {
+        WriteConfigTask writeConfigTask = new WriteConfigTask(this);
+        writeConfigTask.setTHPriod(period);
+        return writeConfigTask;
+    }
+
+    /**
+     * @Description 获取存储条件
+     */
+    public OrderTask getStorageCondition() {
+        WriteConfigTask writeConfigTask = new WriteConfigTask(this);
+        writeConfigTask.setData(ConfigKeyEnum.GET_STORAGE_CONDITION);
+        return writeConfigTask;
+    }
+
+    /**
+     * @Description 设置存储条件
+     */
+    public OrderTask setStorageCondition(int storageType, String storageData) {
+        WriteConfigTask writeConfigTask = new WriteConfigTask(this);
+        writeConfigTask.setStorageCondition(storageType, storageData);
+        return writeConfigTask;
+    }
+
+    /**
+     * @Description 获取设备时间
+     */
+    public OrderTask getDeviceTime() {
+        WriteConfigTask writeConfigTask = new WriteConfigTask(this);
+        writeConfigTask.setData(ConfigKeyEnum.GET_DEVICE_TIME);
+        return writeConfigTask;
+    }
+
+    /**
+     * @Description 设置设备时间
+     */
+    public OrderTask setDeviceTime(int year, int month, int day, int hour, int minute, int second) {
+        WriteConfigTask writeConfigTask = new WriteConfigTask(this);
+        writeConfigTask.setDeviceTime(year, month, day, hour, minute, second);
         return writeConfigTask;
     }
 

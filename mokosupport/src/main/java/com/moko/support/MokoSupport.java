@@ -293,6 +293,10 @@ public class MokoSupport implements MokoResponseCallback {
                 // 3轴通知命令
                 orderType = OrderType.axisData;
             }
+            if (characteristic.getUuid().toString().equals(OrderType.htData.getUuid())) {
+                // 温湿度通知命令
+                orderType = OrderType.htData;
+            }
             // 延时应答
             if (orderType != null) {
                 LogModule.i(orderType.getName());

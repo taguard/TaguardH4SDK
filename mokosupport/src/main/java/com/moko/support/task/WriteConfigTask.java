@@ -34,6 +34,9 @@ public class WriteConfigTask extends OrderTask {
             case GET_IBEACON_INFO:
             case SET_CLOSE:
             case GET_AXIX_PARAMS:
+            case GET_TH_PERIOD:
+            case GET_STORAGE_CONDITION:
+            case GET_DEVICE_TIME:
                 createGetConfigData(key.getConfigKey());
                 break;
         }
@@ -64,6 +67,43 @@ public class WriteConfigTask extends OrderTask {
     public void setAxisParams(int rate, int scale, int sensitivity) {
         String value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_AXIX_PARAMS.getConfigKey()) + "0003"
                 + String.format("%02X", rate) + String.format("%02X", scale) + String.format("%02X", sensitivity);
+        data = MokoUtils.hex2bytes(value);
+    }
+
+    public void setTHPriod(int period) {
+        String value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_TH_PERIOD.getConfigKey()) + "0002"
+                + String.format("%04X", period);
+        data = MokoUtils.hex2bytes(value);
+    }
+
+    public void setStorageCondition(int storageType, String storageData) {
+        String value = "00";
+        switch (storageType) {
+            case 0:
+                value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_STORAGE_CONDITION.getConfigKey()) + "0003"
+                        + String.format("%02X", storageType) + storageData;
+                break;
+            case 1:
+                value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_STORAGE_CONDITION.getConfigKey()) + "0003"
+                        + String.format("%02X", storageType) + storageData;
+                break;
+            case 2:
+                value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_STORAGE_CONDITION.getConfigKey()) + "0005"
+                        + String.format("%02X", storageType) + storageData;
+                break;
+            case 3:
+                value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_STORAGE_CONDITION.getConfigKey()) + "0002"
+                        + String.format("%02X", storageType) + storageData;
+                break;
+        }
+
+        data = MokoUtils.hex2bytes(value);
+    }
+
+    public void setDeviceTime(int year, int month, int day, int hour, int minute, int second) {
+        String value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_TH_PERIOD.getConfigKey()) + "0006"
+                + String.format("%02X", year) + String.format("%02X", month) + String.format("%02X", day)
+                + String.format("%02X", hour) + String.format("%02X", minute) + String.format("%02X", second);
         data = MokoUtils.hex2bytes(value);
     }
 }

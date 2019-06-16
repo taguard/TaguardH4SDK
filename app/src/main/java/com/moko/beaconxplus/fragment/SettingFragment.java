@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import com.moko.beaconxplus.R;
 import com.moko.beaconxplus.activity.AxisDataActivity;
 import com.moko.beaconxplus.activity.DeviceInfoActivity;
+import com.moko.beaconxplus.activity.THDataActivity;
 import com.moko.beaconxplus.dialog.AlertMessageDialog;
 import com.moko.beaconxplus.dialog.ModifyPasswordDialog;
 import com.moko.support.utils.MokoUtils;
@@ -175,7 +176,8 @@ public class SettingFragment extends Fragment {
                 startActivity(new Intent(getActivity(), AxisDataActivity.class));
                 break;
             case R.id.rl_th:
-                // TODO: 2019/5/30 温湿度
+                // 温湿度
+                startActivity(new Intent(getActivity(), THDataActivity.class));
                 break;
         }
     }

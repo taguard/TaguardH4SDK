@@ -10,8 +10,11 @@ import android.os.Environment;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Locale;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -125,5 +128,17 @@ public class Utils {
             return true;
         }
         return false;
+    }
+
+    /**
+     * calendar转换成字符串时间
+     *
+     * @param calendar
+     * @param pattern
+     * @return
+     */
+    public static String calendar2strDate(Calendar calendar, String pattern) {
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern, Locale.US);
+        return sdf.format(calendar.getTime());
     }
 }

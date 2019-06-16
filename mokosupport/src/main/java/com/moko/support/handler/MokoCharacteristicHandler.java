@@ -105,6 +105,11 @@ public class MokoCharacteristicHandler {
                         mokoCharacteristicMap.put(OrderType.axisData, new MokoCharacteristic(characteristic, OrderType.axisData));
                         continue;
                     }
+                    if (characteristicUuid.equals(OrderType.htData.getUuid())) {
+                        gatt.setCharacteristicNotification(characteristic, true);
+                        mokoCharacteristicMap.put(OrderType.htData, new MokoCharacteristic(characteristic, OrderType.htData));
+                        continue;
+                    }
                     if (characteristicUuid.equals(OrderType.writeConfig.getUuid())) {
                         mokoCharacteristicMap.put(OrderType.writeConfig, new MokoCharacteristic(characteristic, OrderType.writeConfig));
                         continue;

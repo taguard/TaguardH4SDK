@@ -29,8 +29,20 @@
     <string name="options_title">Options</string>
     <string name="setting_title">Setting</string>
     <string name="device_title">Device info</string>
-    <string name="h_t"><![CDATA[H&T]]></string>
+    <string name="h_t"><![CDATA[T&H]]></string>
+    <string name="storage_condition"><![CDATA[T&H Storage Condition]]></string>
+    <string name="update_date"><![CDATA[Update Date&Time]]></string>
+    <string name="export_data"><![CDATA[Export T&H Data]]></string>
     <string name="password_null">Password cannot be empty!</string>
+    <string name="temp_only_tips_1"><![CDATA[*The device records H&T data when the temperature changes by more than 1 ℃.]]></string>
+    <string name="temp_only_tips_0"><![CDATA[*The device records T&H data when the temperature changes arbitrarily.]]></string>
+    <string name="humidity_only_tips_1"><![CDATA[*The device records T&H data when the humidity changes by more than 5%.]]></string>
+    <string name="humidity_only_tips_0"><![CDATA[*The device records T&H data when the humidity changes arbitrarily.]]></string>
+    <string name="time_only_tips"><![CDATA[*The device records T&H data every 3 minute(s).]]></string>
+    <string name="t_h_tips_0"><![CDATA[*The device records T&H data when the temperature changes by more than 1 ℃ or humidity changes by more than 5%.]]></string>
+    <string name="t_h_tips_1"><![CDATA[*The device records T&H data when the temperature changes arbitrarily or humidity changes by more than 5%.]]></string>
+    <string name="t_h_tips_2"><![CDATA[*The device records T&H data when the temperature changes by more than 1 ℃ or humidity changes arbitrarily.]]></string>
+    <string name="t_h_tips_3"><![CDATA[*The device records T&H data when the temperature or humidity changes arbitrarily.]]></string>
     <string-array name="slot_type_no_sensor">
         <item>TLM</item>
         <item>UID</item>
@@ -79,5 +91,11 @@
         <item>±4g</item>
         <item>±8g</item>
         <item>±16g</item>
+    </string-array>
+    <string-array name="storage_condition">
+        <item>Temperature</item>
+        <item>Humidity</item>
+        <item><![CDATA[T&H]]></item>
+        <item>Time</item>
     </string-array>
 </resources>
