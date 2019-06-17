@@ -198,7 +198,7 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
 
             if (intent != null) {
                 String action = intent.getAction();
-                if (!BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
+                if (!BluetoothAdapter.ACTION_STATE_CHANGED.equals(action) && !MokoConstants.ACTION_CURRENT_DATA.equals(action)) {
                     abortBroadcast();
                 }
                 if (MokoConstants.ACTION_ORDER_TIMEOUT.equals(action)) {
@@ -307,7 +307,7 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
                                 back();
                             }
                             break;
-                        case axisData:
+                        case htData:
                             if (value.length > 3) {
                                 byte[] tempBytes = Arrays.copyOfRange(value, 0, 2);
                                 float temp = MokoUtils.toInt(tempBytes) * 0.1f;
@@ -374,7 +374,7 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
         }
     }
 
-    @OnClick({R.id.tv_back, R.id.iv_save, R.id.tv_update_date})
+    @OnClick({R.id.tv_back, R.id.iv_save, R.id.tv_update_date, R.id.rl_export_data})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_back:
@@ -415,6 +415,10 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
                 Calendar calendar = Calendar.getInstance();
                 MokoSupport.getInstance().sendOrder(mMokoService.setDeviceTime(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1,
                         calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), calendar.get(Calendar.SECOND)));
+                break;
+            case R.id.rl_export_data:
+                // 跳转导出数据页面
+                startActivity(new Intent(this, ExportDataActivity.class));
                 break;
         }
     }

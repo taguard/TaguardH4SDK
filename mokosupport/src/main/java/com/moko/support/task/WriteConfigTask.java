@@ -37,6 +37,7 @@ public class WriteConfigTask extends OrderTask {
             case GET_TH_PERIOD:
             case GET_STORAGE_CONDITION:
             case GET_DEVICE_TIME:
+            case SET_TH_EMPTY:
                 createGetConfigData(key.getConfigKey());
                 break;
         }

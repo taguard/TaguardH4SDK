@@ -31,6 +31,7 @@ import com.moko.support.task.ManufacturerTask;
 import com.moko.support.task.NotifyAxisTask;
 import com.moko.support.task.NotifyConfigTask;
 import com.moko.support.task.NotifyHTTask;
+import com.moko.support.task.NotifySavedHTTask;
 import com.moko.support.task.OrderTask;
 import com.moko.support.task.OrderTaskResponse;
 import com.moko.support.task.ProductDateTask;
@@ -189,6 +190,16 @@ public class MokoService extends Service implements MokoConnStateCallback, MokoO
     public OrderTask setTHNotifyClose() {
         NotifyHTTask notifyHTTask = new NotifyHTTask(this, OrderTask.RESPONSE_TYPE_DISABLE_NOTIFY);
         return notifyHTTask;
+    }
+
+    public OrderTask setSavedTHNotifyOpen() {
+        NotifySavedHTTask notifySavedHTTask = new NotifySavedHTTask(this, OrderTask.RESPONSE_TYPE_NOTIFY);
+        return notifySavedHTTask;
+    }
+
+    public OrderTask setSavedTHNotifyClose() {
+        NotifySavedHTTask notifySavedHTTask = new NotifySavedHTTask(this, OrderTask.RESPONSE_TYPE_DISABLE_NOTIFY);
+        return notifySavedHTTask;
     }
 
 
@@ -358,6 +369,12 @@ public class MokoService extends Service implements MokoConnStateCallback, MokoO
     public OrderTask setDeviceTime(int year, int month, int day, int hour, int minute, int second) {
         WriteConfigTask writeConfigTask = new WriteConfigTask(this);
         writeConfigTask.setDeviceTime(year, month, day, hour, minute, second);
+        return writeConfigTask;
+    }
+
+    public OrderTask setTHEmpty() {
+        WriteConfigTask writeConfigTask = new WriteConfigTask(this);
+        writeConfigTask.setData(ConfigKeyEnum.SET_TH_EMPTY);
         return writeConfigTask;
     }
 

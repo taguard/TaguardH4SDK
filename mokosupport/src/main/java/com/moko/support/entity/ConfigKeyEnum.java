@@ -12,6 +12,7 @@ public enum ConfigKeyEnum implements Serializable {
     SET_STORAGE_CONDITION(0x32),
     GET_TH_PERIOD(0x23),
     SET_TH_PERIOD(0x33),
+    SET_TH_EMPTY(0x24),
     GET_DEVICE_TIME(0x25),
     SET_DEVICE_TIME(0x25),
     GET_IBEACON_UUID(0x64),

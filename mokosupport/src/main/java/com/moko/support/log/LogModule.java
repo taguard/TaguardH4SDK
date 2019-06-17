@@ -13,6 +13,8 @@ import com.elvishew.xlog.printer.file.FilePrinter;
 import com.elvishew.xlog.printer.file.naming.ChangelessFileNameGenerator;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * @Date 2017/12/7 0007
@@ -23,6 +25,7 @@ import java.io.File;
 public class LogModule {
     private static final String TAG = "mokoBeaconXPlus";
     private static final String LOG_FILE = "mokoBeaconXPlus.txt";
+    private static final String TH_FILE = "th.txt";
     private static final String LOG_FOLDER = "mokoBeaconXPlus";
     private static String PATH_LOGCAT;
 
@@ -65,5 +68,33 @@ public class LogModule {
 
     public static void e(String msg) {
         XLog.e(msg);
+    }
+
+
+    public static void writeTHFile(String thLog) {
+        File file = new File(PATH_LOGCAT + File.separator + TH_FILE);
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fileWriter = new FileWriter(file);
+            fileWriter.write(thLog);
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static File getTHFile() {
+        File file = new File(PATH_LOGCAT + File.separator + TH_FILE);
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return file;
     }
 }
