@@ -44,8 +44,10 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.sql.Array;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -111,6 +113,7 @@ public class ExportDataActivity extends BaseActivity {
                 Animation animation = AnimationUtils.loadAnimation(ExportDataActivity.this, R.anim.rotate_refresh);
                 ivSync.startAnimation(animation);
                 tvSync.setText("Stop");
+                isSync = true;
             }
         }
 
@@ -220,7 +223,7 @@ public class ExportDataActivity extends BaseActivity {
                                 byte[] humidityBytes1 = Arrays.copyOfRange(value1, 8, 10);
                                 float humidity1 = MokoUtils.toInt(humidityBytes1) * 0.1f;
                                 Calendar calendar1 = Calendar.getInstance();
-                                calendar1.set(Calendar.YEAR, year1);
+                                calendar1.set(Calendar.YEAR, 2000 + year1);
                                 calendar1.set(Calendar.MONTH, month1 - 1);
                                 calendar1.set(Calendar.DAY_OF_MONTH, day1);
                                 calendar1.set(Calendar.HOUR_OF_DAY, hour1);
@@ -231,8 +234,8 @@ public class ExportDataActivity extends BaseActivity {
                                 TextView tvTemp1 = ButterKnife.findById(v1, R.id.tv_temp);
                                 TextView tvHumidity1 = ButterKnife.findById(v1, R.id.tv_humidity);
                                 String time1 = Utils.calendar2strDate(calendar1, AppConstants.PATTERN_YYYY_MM_DD_HH_MM_SS);
-                                String tempStr1 = MokoUtils.getDecimalFormat("#.0").format(temp1);
-                                String humidityStr1 = MokoUtils.getDecimalFormat("#.0").format(humidity1);
+                                String tempStr1 = MokoUtils.getDecimalFormat("0.0").format(temp1);
+                                String humidityStr1 = MokoUtils.getDecimalFormat("0.0").format(humidity1);
                                 tvTime1.setText(time1);
                                 tvTemp1.setText(tempStr1);
                                 tvHumidity1.setText(humidityStr1);
@@ -251,7 +254,7 @@ public class ExportDataActivity extends BaseActivity {
                                 byte[] humidityBytes2 = Arrays.copyOfRange(value2, 8, 10);
                                 float humidity2 = MokoUtils.toInt(humidityBytes2) * 0.1f;
                                 Calendar calendar2 = Calendar.getInstance();
-                                calendar2.set(Calendar.YEAR, year2);
+                                calendar2.set(Calendar.YEAR, 2000 + year2);
                                 calendar2.set(Calendar.MONTH, month2 - 1);
                                 calendar2.set(Calendar.DAY_OF_MONTH, day2);
                                 calendar2.set(Calendar.HOUR_OF_DAY, hour2);
@@ -262,8 +265,8 @@ public class ExportDataActivity extends BaseActivity {
                                 TextView tvTemp2 = ButterKnife.findById(v2, R.id.tv_temp);
                                 TextView tvHumidity2 = ButterKnife.findById(v2, R.id.tv_humidity);
                                 String time2 = Utils.calendar2strDate(calendar2, AppConstants.PATTERN_YYYY_MM_DD_HH_MM_SS);
-                                String tempStr2 = MokoUtils.getDecimalFormat("#.0").format(temp2);
-                                String humidityStr2 = MokoUtils.getDecimalFormat("#.0").format(humidity2);
+                                String tempStr2 = MokoUtils.getDecimalFormat("0.0").format(temp2);
+                                String humidityStr2 = MokoUtils.getDecimalFormat("0.0").format(humidity2);
                                 tvTime2.setText(time2);
                                 tvTemp2.setText(tempStr2);
                                 tvHumidity2.setText(humidityStr2);
@@ -282,7 +285,7 @@ public class ExportDataActivity extends BaseActivity {
                                 byte[] humidityBytes = Arrays.copyOfRange(value, 8, 10);
                                 float humidity = MokoUtils.toInt(humidityBytes) * 0.1f;
                                 Calendar calendar = Calendar.getInstance();
-                                calendar.set(Calendar.YEAR, year);
+                                calendar.set(Calendar.YEAR, 2000 + year);
                                 calendar.set(Calendar.MONTH, month - 1);
                                 calendar.set(Calendar.DAY_OF_MONTH, day);
                                 calendar.set(Calendar.HOUR_OF_DAY, hour);
@@ -293,8 +296,8 @@ public class ExportDataActivity extends BaseActivity {
                                 TextView tvTemp = ButterKnife.findById(v, R.id.tv_temp);
                                 TextView tvHumidity = ButterKnife.findById(v, R.id.tv_humidity);
                                 String time = Utils.calendar2strDate(calendar, AppConstants.PATTERN_YYYY_MM_DD_HH_MM_SS);
-                                String tempStr = MokoUtils.getDecimalFormat("#.0").format(temp);
-                                String humidityStr = MokoUtils.getDecimalFormat("#.0").format(humidity);
+                                String tempStr = MokoUtils.getDecimalFormat("0.0").format(temp);
+                                String humidityStr = MokoUtils.getDecimalFormat("0.0").format(humidity);
                                 tvTime.setText(time);
                                 tvTemp.setText(tempStr);
                                 tvHumidity.setText(humidityStr);

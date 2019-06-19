@@ -88,7 +88,7 @@ public class StorageTempFragment extends Fragment {
                 if (mSelected == 0) {
                     tvTempOnlyTips.setText(R.string.temp_only_tips_0);
                 } else {
-                    tvTempOnlyTips.setText(R.string.temp_only_tips_1);
+                    tvTempOnlyTips.setText(getString(R.string.temp_only_tips_1, data));
                 }
                 tvStorageTempOnly.setText(data);
                 activity.setSelectedTemp(mSelected);
@@ -102,11 +102,12 @@ public class StorageTempFragment extends Fragment {
 
     public void setTempData(int data) {
         mSelected = data / 5;
+        String tempStr = MokoUtils.getDecimalFormat("0.0").format(mSelected * 0.5);
+        tvStorageTempOnly.setText(tempStr);
         if (mSelected == 0) {
             tvTempOnlyTips.setText(R.string.temp_only_tips_0);
         } else {
-            tvTempOnlyTips.setText(R.string.temp_only_tips_1);
+            tvTempOnlyTips.setText(getString(R.string.temp_only_tips_1, tempStr));
         }
-        tvStorageTempOnly.setText(MokoUtils.getDecimalFormat("#.0").format(mSelected * 0.5));
     }
 }

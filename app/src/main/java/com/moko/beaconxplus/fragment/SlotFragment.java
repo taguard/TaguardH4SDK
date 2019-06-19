@@ -123,7 +123,7 @@ public class SlotFragment extends Fragment {
         super.onDestroy();
     }
 
-    @OnClick({R.id.rl_slot1, R.id.rl_slot2, R.id.rl_slot3, R.id.rl_slot4, R.id.rl_slot5})
+    @OnClick({R.id.rl_slot1, R.id.rl_slot2, R.id.rl_slot3, R.id.rl_slot4, R.id.rl_slot5, R.id.rl_slot6})
     public void onViewClicked(View view) {
         slotData = new SlotData();
         SlotFrameTypeEnum frameType = (SlotFrameTypeEnum) view.getTag();
@@ -158,8 +158,6 @@ public class SlotFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), SlotDataActivity.class);
                 intent.putExtra(AppConstants.EXTRA_KEY_SLOT_DATA, slotData);
                 intent.putExtra(AppConstants.EXTRA_KEY_DEVICE_TYPE, deviceType);
-                intent.putExtra(AppConstants.EXTRA_KEY_TRIGGER_TYPE, triggerType);
-                intent.putExtra(AppConstants.EXTRA_KEY_TRIGGER_DATA, triggerData);
                 startActivityForResult(intent, AppConstants.REQUEST_CODE_SLOT_DATA);
                 break;
             case IBEACON:

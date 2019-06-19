@@ -32,7 +32,7 @@ public enum OrderType implements Serializable {
     slotType("slotType", "e62a0005-1362-4f28-9327-f5b74e970801"),
     axisData("axisData", "e62a0008-1362-4f28-9327-f5b74e970801"),
     htData("htData", "e62a0009-1362-4f28-9327-f5b74e970801"),
-    htSavedData("htSavedData", "e62a000A-1362-4f28-9327-f5b74e970801"),
+    htSavedData("htSavedData", "e62a000a-1362-4f28-9327-f5b74e970801"),
     ;
 
 

@@ -58,10 +58,11 @@
 
                 <EditText
                     android:id="@+id/et_start"
-                    android:layout_width="70dp"
+                    android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:inputType="number"
+                    android:maxLength="5"
                     android:text="30" />
 
                 <TextView
@@ -85,10 +86,11 @@
 
                 <EditText
                     android:id="@+id/et_stop"
-                    android:layout_width="70dp"
+                    android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:inputType="number"
+                    android:maxLength="5"
                     android:text="30" />
 
                 <TextView

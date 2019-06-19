@@ -2,7 +2,9 @@ package com.moko.beaconxplus.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,7 +68,79 @@ public class TriggerTappedFragment extends Fragment implements RadioGroup.OnChec
         View view = inflater.inflate(R.layout.fragment_trigger_tapped, container, false);
         ButterKnife.bind(this, view);
         activity = (SlotDataActivity) getActivity();
+        if (mDuration == 0) {
+            if (mIsStart) {
+                rbAlwaysStart.setChecked(true);
+                etStart.setText(mDuration + "");
+                etStart.setSelection((mDuration + "").length());
+            } else {
+                rbAlwaysStop.setChecked(true);
+                etStop.setText(mDuration + "");
+                etStop.setSelection((mDuration + "").length());
+            }
+        } else {
+            if (mIsStart) {
+                rbStartAdvertising.setChecked(true);
+                etStart.setText(mDuration + "");
+                etStart.setSelection((mDuration + "").length());
+            } else {
+                rbStopAdvertising.setChecked(true);
+                etStop.setText(mDuration + "");
+                etStop.setSelection((mDuration + "").length());
+            }
+        }
         rgTapped.setOnCheckedChangeListener(this);
+        if (rbAlwaysStart.isChecked()) {
+            tvTriggerTips.setText(getString(R.string.trigger_tapped_tips_1, mIsDouble ? "double" : "triple"));
+        } else if (rbStartAdvertising.isChecked()) {
+            mDuration = Integer.parseInt(etStart.getText().toString());
+            tvTriggerTips.setText(getString(R.string.trigger_tapped_tips_2, "start", String.format("%ds", mDuration), mIsDouble ? "double" : "triple"));
+        } else if (rbAlwaysStop.isChecked()) {
+            tvTriggerTips.setText(getString(R.string.trigger_tapped_tips_3, mIsDouble ? "double" : "triple"));
+        } else {
+            mDuration = Integer.parseInt(etStop.getText().toString());
+            tvTriggerTips.setText(getString(R.string.trigger_tapped_tips_2, "stop", String.format("%ds", mDuration), mIsDouble ? "double" : "triple"));
+        }
+        etStart.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String duration = s.toString();
+                if (rbStartAdvertising.isChecked() && !TextUtils.isEmpty(duration)) {
+                    mDuration = Integer.parseInt(duration);
+                    tvTriggerTips.setText(getString(R.string.trigger_tapped_tips_2, "start", String.format("%ds", mDuration), mIsDouble ? "double" : "triple"));
+                }
+            }
+        });
+        etStop.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String duration = s.toString();
+                if (rbStopAdvertising.isChecked() && !TextUtils.isEmpty(duration)) {
+                    mDuration = Integer.parseInt(duration);
+                    tvTriggerTips.setText(getString(R.string.trigger_tapped_tips_2, "stop", String.format("%ds", mDuration), mIsDouble ? "double" : "triple"));
+                }
+            }
+        });
         return view;
     }
 
@@ -96,8 +170,8 @@ public class TriggerTappedFragment extends Fragment implements RadioGroup.OnChec
     }
 
     private boolean mIsStart = true;
-    private int mDuration;
-    private boolean mIsDouble;
+    private int mDuration = 30;
+    private boolean mIsDouble = true;
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -108,6 +182,12 @@ public class TriggerTappedFragment extends Fragment implements RadioGroup.OnChec
                 break;
             case R.id.rb_start_advertising:
                 mIsStart = true;
+                String startDuration = etStart.getText().toString();
+                if (TextUtils.isEmpty(startDuration)) {
+                    mDuration = 0;
+                } else {
+                    mDuration = Integer.parseInt(startDuration);
+                }
                 tvTriggerTips.setText(getString(R.string.trigger_tapped_tips_2, "start", String.format("%ds", mDuration), mIsDouble ? "double" : "triple"));
                 break;
             case R.id.rb_always_stop:
@@ -116,6 +196,12 @@ public class TriggerTappedFragment extends Fragment implements RadioGroup.OnChec
                 break;
             case R.id.rb_stop_advertising:
                 mIsStart = false;
+                String stopDuration = etStart.getText().toString();
+                if (TextUtils.isEmpty(stopDuration)) {
+                    mDuration = 0;
+                } else {
+                    mDuration = Integer.parseInt(stopDuration);
+                }
                 tvTriggerTips.setText(getString(R.string.trigger_tapped_tips_2, "stop", String.format("%ds", mDuration), mIsDouble ? "double" : "triple"));
                 break;
         }
@@ -132,23 +218,6 @@ public class TriggerTappedFragment extends Fragment implements RadioGroup.OnChec
 
     public void setData(int data) {
         mDuration = data;
-        if (data == 0) {
-            if (mIsStart) {
-                rbAlwaysStart.setChecked(true);
-                etStart.setText(mDuration + "");
-            } else {
-                rbAlwaysStop.setChecked(true);
-                etStop.setText(mDuration + "");
-            }
-        } else {
-            if (mIsStart) {
-                rbStartAdvertising.setChecked(true);
-                etStart.setText(mDuration + "");
-            } else {
-                rbStopAdvertising.setChecked(true);
-                etStop.setText(mDuration + "");
-            }
-        }
     }
 
     public int getData() {

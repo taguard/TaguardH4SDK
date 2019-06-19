@@ -141,17 +141,11 @@ public class MokoUtils {
     /**
      * @Date 2017/8/15
      * @Author wenzheng.liu
-     * @Description 将byte数组bRefArr转为一个整数, 字节数组的低位是整型的低字节位
+     * @Description byte数组中取int数值，本方法适用于(低位在后，高位在前)的顺序
      */
     public static int toInt(byte[] bRefArr) {
-        int iOutcome = 0;
-        byte bLoop;
-
-        for (int i = 0; i < bRefArr.length; i++) {
-            bLoop = bRefArr[i];
-            iOutcome += (bLoop & 0xFF) << (8 * i);
-        }
-        return iOutcome;
+        int value = (((bRefArr[0] & 0xFF) << 8) | (bRefArr[1] & 0xFF));
+        return value;
     }
 
     /**

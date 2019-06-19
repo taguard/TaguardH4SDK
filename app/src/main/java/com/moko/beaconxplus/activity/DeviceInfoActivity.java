@@ -198,7 +198,12 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
             return;
         }
         showSyncingProgressDialog();
-        MokoSupport.getInstance().sendOrder(mMokoService.getSlotType());
+        tvTitle.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                MokoSupport.getInstance().sendOrder(mMokoService.getSlotType());
+            }
+        }, 1000);
     }
 
     private void getDeviceInfo() {
@@ -378,10 +383,10 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                             }
                             if (responseType == OrderTask.RESPONSE_TYPE_READ) {
                                 if ("01".equals(valueStr.toLowerCase())) {
-                                    lockState = MokoUtils.toInt(value);
+                                    lockState = 1;
                                     settingFragment.setNoPassword(false);
                                 } else if ("02".equals(valueStr.toLowerCase())) {
-                                    lockState = MokoUtils.toInt(value);
+                                    lockState = 2;
                                     settingFragment.setNoPassword(true);
                                 }
                                 settingFragment.setModifyPasswordVisiable(!TextUtils.isEmpty(mPassword));

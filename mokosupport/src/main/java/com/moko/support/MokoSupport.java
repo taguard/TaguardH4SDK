@@ -297,6 +297,10 @@ public class MokoSupport implements MokoResponseCallback {
                 // 温湿度通知命令
                 orderType = OrderType.htData;
             }
+            if (characteristic.getUuid().toString().equals(OrderType.htSavedData.getUuid())) {
+                // 温湿度通知命令
+                orderType = OrderType.htSavedData;
+            }
             // 延时应答
             if (orderType != null) {
                 LogModule.i(orderType.getName());

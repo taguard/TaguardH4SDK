@@ -97,6 +97,8 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
         createFragments();
         npvStorageCondition.setOnValueChangedListener(this);
         npvStorageCondition.setValue(0);
+        npvStorageCondition.setMinValue(0);
+        npvStorageCondition.setMaxValue(3);
         EventBus.getDefault().register(this);
     }
 
@@ -116,6 +118,7 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
     @Override
     public void onValueChange(NumberPickerView picker, int oldVal, int newVal) {
         LogModule.i(newVal + "");
+        mStorageType = newVal;
         LogModule.i(picker.getContentByCurrValue());
         showFragment(newVal);
     }
@@ -162,8 +165,10 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
                     return;
                 }
                 showSyncingProgressDialog();
-                MokoSupport.getInstance().sendOrder(mMokoService.setTHNotifyOpen(),
-                        mMokoService.getTHPeriod(), mMokoService.getStorageCondition(), mMokoService.getDeviceTime());
+                MokoSupport.getInstance().sendOrder(mMokoService.getTHPeriod(),
+                        mMokoService.getStorageCondition(),
+                        mMokoService.getDeviceTime(),
+                        mMokoService.setTHNotifyOpen());
             }
         }
 
@@ -222,8 +227,10 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
                                 switch (configKeyEnum) {
                                     case GET_TH_PERIOD:
                                         if (value.length > 4) {
-                                            byte[] period = Arrays.copyOfRange(value, 3, 5);
-                                            etPeriod.setText(MokoUtils.toInt(period) + "");
+                                            byte[] period = Arrays.copyOfRange(value, 4, 6);
+                                            String periodStr = MokoUtils.toInt(period) + "";
+                                            etPeriod.setText(periodStr);
+                                            etPeriod.setSelection(periodStr.length());
                                         }
                                         break;
                                     case GET_STORAGE_CONDITION:
@@ -249,6 +256,7 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
                                             npvStorageCondition.setValue(3);
                                             timeFragment.setTimeData(value[5] & 0xff);
                                         }
+                                        showFragment(mStorageType);
                                         break;
                                     case GET_DEVICE_TIME:
                                         if (value.length > 9) {
@@ -259,7 +267,7 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
                                             int minute = value[8] & 0xff;
                                             int second = value[9] & 0xff;
                                             Calendar calendar = Calendar.getInstance();
-                                            calendar.set(Calendar.YEAR, year);
+                                            calendar.set(Calendar.YEAR, 2000 + year);
                                             calendar.set(Calendar.MONTH, month - 1);
                                             calendar.set(Calendar.DAY_OF_MONTH, day);
                                             calendar.set(Calendar.HOUR_OF_DAY, hour);
@@ -311,10 +319,10 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
                             if (value.length > 3) {
                                 byte[] tempBytes = Arrays.copyOfRange(value, 0, 2);
                                 float temp = MokoUtils.toInt(tempBytes) * 0.1f;
-                                tvTemp.setText(MokoUtils.getDecimalFormat("#.0").format(temp));
+                                tvTemp.setText(MokoUtils.getDecimalFormat("0.0").format(temp));
                                 byte[] humidityBytes = Arrays.copyOfRange(value, 2, 4);
                                 float humidity = MokoUtils.toInt(humidityBytes) * 0.1f;
-                                tvHumidity.setText(MokoUtils.getDecimalFormat("#.0").format(humidity));
+                                tvHumidity.setText(MokoUtils.getDecimalFormat("0.0").format(humidity));
                             }
                             break;
                     }
@@ -374,7 +382,7 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
         }
     }
 
-    @OnClick({R.id.tv_back, R.id.iv_save, R.id.tv_update_date, R.id.rl_export_data})
+    @OnClick({R.id.tv_back, R.id.iv_save, R.id.tv_update, R.id.rl_export_data})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_back:
@@ -396,13 +404,13 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
                 String storageData = "";
                 switch (mStorageType) {
                     case 0:
-                        storageData = String.format("%04X", mSelectedTemp);
+                        storageData = String.format("%04X", mSelectedTemp * 5);
                         break;
                     case 1:
-                        storageData = String.format("%04X", mSelectedHumidity);
+                        storageData = String.format("%04X", mSelectedHumidity * 10);
                         break;
                     case 2:
-                        storageData = String.format("%04X", mSelectedTemp) + String.format("%04X", mSelectedHumidity);
+                        storageData = String.format("%04X", mSelectedTemp * 5) + String.format("%04X", mSelectedHumidity * 10);
                         break;
                     case 3:
                         storageData = String.format("%02X", mSelectedTime);
@@ -410,11 +418,12 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
                 }
                 MokoSupport.getInstance().sendOrder(mMokoService.setTHPeriod(period), mMokoService.setStorageCondition(mStorageType, storageData));
                 break;
-            case R.id.tv_update_date:
+            case R.id.tv_update:
                 showSyncingProgressDialog();
                 Calendar calendar = Calendar.getInstance();
-                MokoSupport.getInstance().sendOrder(mMokoService.setDeviceTime(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1,
-                        calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), calendar.get(Calendar.SECOND)));
+                MokoSupport.getInstance().sendOrder(mMokoService.setDeviceTime(calendar.get(Calendar.YEAR) - 2000, calendar.get(Calendar.MONTH) + 1,
+                        calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), calendar.get(Calendar.SECOND)),
+                        mMokoService.getDeviceTime());
                 break;
             case R.id.rl_export_data:
                 // 跳转导出数据页面

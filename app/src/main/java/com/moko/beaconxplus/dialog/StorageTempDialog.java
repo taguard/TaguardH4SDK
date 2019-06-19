@@ -35,7 +35,7 @@ public class StorageTempDialog extends MokoBaseDialog {
     private ArrayList<String> createData() {
         ArrayList<String> data = new ArrayList<>();
         for (int i = 0; i <= 200; i++) {
-            data.add(MokoUtils.getDecimalFormat("#.0").format(i * 0.5));
+            data.add(MokoUtils.getDecimalFormat("0.0").format(i * 0.5));
         }
         return data;
     }

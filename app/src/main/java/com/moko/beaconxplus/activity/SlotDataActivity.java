@@ -54,6 +54,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 import butterknife.Bind;
@@ -79,6 +80,8 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
     FrameLayout frameTriggerContainer;
     @Bind(R.id.rl_trigger)
     RelativeLayout rlTrigger;
+    @Bind(R.id.rl_trigger_switch)
+    RelativeLayout rlTriggerSwitch;
     private FragmentManager fragmentManager;
     private UidFragment uidFragment;
     private UrlFragment urlFragment;
@@ -98,7 +101,7 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
     private boolean mReceiverTag = false;
     private int triggerType;
     private byte[] triggerData;
-    private String[] triggerSelected;
+    private String[] triggerArray;
     private int triggerTypeSelected;
 
     @Override
@@ -116,7 +119,6 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
             }
             LogModule.i(slotData.toString());
         }
-        triggerSelected = getResources().getStringArray(R.array.trigger_type);
         Intent intent = new Intent(this, MokoService.class);
         bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
         fragmentManager = getFragmentManager();
@@ -125,18 +127,22 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
             npvSlotType.setDisplayedValues(getResources().getStringArray(R.array.slot_type_no_sensor));
             npvSlotType.setMinValue(0);
             npvSlotType.setMaxValue(5);
+            triggerArray = getResources().getStringArray(R.array.trigger_type_0);
         } else if (deviceType == 1) {
             npvSlotType.setDisplayedValues(getResources().getStringArray(R.array.slot_type_axis));
             npvSlotType.setMinValue(0);
             npvSlotType.setMaxValue(6);
+            triggerArray = getResources().getStringArray(R.array.trigger_type_1);
         } else if (deviceType == 2) {
             npvSlotType.setDisplayedValues(getResources().getStringArray(R.array.slot_type_th));
             npvSlotType.setMinValue(0);
             npvSlotType.setMaxValue(6);
+            triggerArray = getResources().getStringArray(R.array.trigger_type_2);
         } else if (deviceType == 3) {
             npvSlotType.setDisplayedValues(getResources().getStringArray(R.array.slot_type_all));
             npvSlotType.setMinValue(0);
             npvSlotType.setMaxValue(7);
+            triggerArray = getResources().getStringArray(R.array.trigger_type_3);
         }
         npvSlotType.setOnValueChangedListener(this);
 
@@ -144,6 +150,11 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
         tvSlotTitle.setText(slotData.slotEnum.getTitle());
         showFragment(slotData.frameTypeEnum.ordinal());
         seekBarProgressHashMap = new HashMap<>();
+        if (slotData.frameTypeEnum != SlotFrameTypeEnum.NO_DATA) {
+            rlTriggerSwitch.setVisibility(View.VISIBLE);
+        } else {
+            rlTriggerSwitch.setVisibility(View.GONE);
+        }
         if (triggerType > 0) {
             ivTrigger.setImageResource(R.drawable.connectable_checked);
             rlTrigger.setVisibility(View.VISIBLE);
@@ -162,43 +173,51 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
         switch (triggerType) {
             case 1:
                 boolean isTempAbove = (triggerData[0] & 0xff) == 1;
-                tvTriggerType.setText(isTempAbove ? triggerSelected[0] : triggerSelected[1]);
+                tvTriggerType.setText(isTempAbove ? triggerArray[2] : triggerArray[3]);
 
-                triggerTypeSelected = isTempAbove ? 0 : 1;
+                triggerTypeSelected = isTempAbove ? 2 : 3;
                 tempFragment.setTempType(isTempAbove);
                 tempFragment.setData(MokoUtils.byte2short(Arrays.copyOfRange(triggerData, 1, 3)));
                 tempFragment.setStart((triggerData[3] & 0xff) == 1);
                 break;
             case 2:
                 boolean isHumidityAbove = (triggerData[0] & 0xff) == 1;
-                tvTriggerType.setText(isHumidityAbove ? triggerSelected[2] : triggerSelected[3]);
+                tvTriggerType.setText(isHumidityAbove ? triggerArray[4] : triggerArray[5]);
 
-                triggerTypeSelected = isHumidityAbove ? 2 : 3;
+                triggerTypeSelected = isHumidityAbove ? 4 : 5;
                 humidityFragment.setHumidityType(isHumidityAbove);
-                humidityFragment.setData(MokoUtils.toInt(Arrays.copyOfRange(triggerData, 1, 3)));
+                byte[] humidityBytes = Arrays.copyOfRange(triggerData, 1, 3);
+                humidityFragment.setData((MokoUtils.toInt(humidityBytes)));
                 humidityFragment.setStart((triggerData[3] & 0xff) == 1);
                 break;
             case 3:
-                tvTriggerType.setText(triggerSelected[4]);
+                tvTriggerType.setText(triggerArray[0]);
 
-                triggerTypeSelected = 4;
+                triggerTypeSelected = 0;
                 tappedFragment.setIsDouble(true);
-                tappedFragment.setData(MokoUtils.toInt(Arrays.copyOfRange(triggerData, 0, 2)));
+                byte[] tappedDoubleBytes = Arrays.copyOfRange(triggerData, 0, 2);
+                tappedFragment.setData(MokoUtils.toInt(tappedDoubleBytes));
                 tappedFragment.setStart((triggerData[2] & 0xff) == 1);
                 break;
             case 4:
-                tvTriggerType.setText(triggerSelected[5]);
+                tvTriggerType.setText(triggerArray[1]);
 
-                triggerTypeSelected = 5;
+                triggerTypeSelected = 1;
                 tappedFragment.setIsDouble(false);
-                tappedFragment.setData(MokoUtils.toInt(Arrays.copyOfRange(triggerData, 0, 2)));
+                byte[] tappedTrapleBytes = Arrays.copyOfRange(triggerData, 0, 2);
+                tappedFragment.setData(MokoUtils.toInt(tappedTrapleBytes));
                 tappedFragment.setStart((triggerData[2] & 0xff) == 1);
                 break;
             case 5:
-                tvTriggerType.setText(triggerSelected[6]);
-
-                triggerTypeSelected = 6;
-                movesFragment.setData(MokoUtils.toInt(Arrays.copyOfRange(triggerData, 0, 2)));
+                if (deviceType == 1) {
+                    tvTriggerType.setText(triggerArray[2]);
+                    triggerTypeSelected = 2;
+                } else {
+                    tvTriggerType.setText(triggerArray[6]);
+                    triggerTypeSelected = 6;
+                }
+                byte[] movesBytes = Arrays.copyOfRange(triggerData, 0, 2);
+                movesFragment.setData(MokoUtils.toInt(movesBytes));
                 movesFragment.setStart((triggerData[2] & 0xff) == 1);
                 break;
         }
@@ -487,22 +506,26 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
                         triggerTypeSelected = data;
                         switch (triggerTypeSelected) {
                             case 0:
-                                triggerType = 1;
-                                break;
-                            case 1:
-                                triggerType = 1;
-                                break;
-                            case 2:
-                                triggerType = 2;
-                                break;
-                            case 3:
-                                triggerType = 2;
-                                break;
-                            case 4:
                                 triggerType = 3;
                                 break;
-                            case 5:
+                            case 1:
                                 triggerType = 4;
+                                break;
+                            case 2:
+                                if (deviceType == 1) {
+                                    triggerType = 5;
+                                } else {
+                                    triggerType = 1;
+                                }
+                                break;
+                            case 3:
+                                triggerType = 1;
+                                break;
+                            case 4:
+                                triggerType = 2;
+                                break;
+                            case 5:
+                                triggerType = 2;
                                 break;
                             case 6:
                                 triggerType = 5;
@@ -511,28 +534,31 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
                         showTriggerFragment();
                         switch (triggerTypeSelected) {
                             case 0:
-                                tempFragment.setTempType(true);
-                                break;
-                            case 1:
-                                tempFragment.setTempType(false);
-                                break;
-                            case 2:
-                                humidityFragment.setHumidityType(true);
-                                break;
-                            case 3:
-                                humidityFragment.setHumidityType(false);
-                                break;
-                            case 4:
                                 tappedFragment.setIsDouble(true);
                                 break;
-                            case 5:
+                            case 1:
                                 tappedFragment.setIsDouble(false);
                                 break;
+                            case 2:
+                                if (deviceType != 1) {
+                                    tempFragment.setTempType(true);
+                                }
+                                break;
+                            case 3:
+                                tempFragment.setTempType(false);
+                                break;
+                            case 4:
+                                humidityFragment.setHumidityType(true);
+                                break;
+                            case 5:
+                                humidityFragment.setHumidityType(false);
+                                break;
                         }
-                        tvTriggerType.setText(triggerSelected[triggerTypeSelected]);
+                        tvTriggerType.setText(triggerArray[triggerTypeSelected]);
 
                     }
                 });
+                dialog.setTriggerArray(triggerArray);
                 dialog.setSelected(triggerTypeSelected);
                 dialog.show(getSupportFragmentManager());
                 break;
@@ -544,7 +570,7 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
                 } else {
                     ivTrigger.setImageResource(R.drawable.connectable_checked);
                     rlTrigger.setVisibility(View.VISIBLE);
-                    triggerType = 1;
+                    triggerType = 3;
                     showTriggerFragment();
                 }
                 break;
@@ -556,6 +582,11 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
         LogModule.i(newVal + "");
         LogModule.i(picker.getContentByCurrValue());
         showFragment(newVal);
+        if (SlotFrameTypeEnum.fromEnumOrdinal(newVal) != SlotFrameTypeEnum.NO_DATA) {
+            rlTriggerSwitch.setVisibility(View.VISIBLE);
+        } else {
+            rlTriggerSwitch.setVisibility(View.GONE);
+        }
         if (!seekBarProgressHashMap.isEmpty() && slotDataActionImpl != null) {
             for (int key : seekBarProgressHashMap.keySet()) {
                 slotDataActionImpl.upgdateProgress(key, seekBarProgressHashMap.get(key));

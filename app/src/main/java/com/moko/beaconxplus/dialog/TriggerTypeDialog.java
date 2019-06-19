@@ -17,6 +17,7 @@ public class TriggerTypeDialog extends MokoBaseDialog {
     @Bind(R.id.wv_trigger_type)
     WheelView wvTriggerType;
     private int selected;
+    private String[] datas;
 
     @Override
     public int getLayoutRes() {
@@ -26,7 +27,7 @@ public class TriggerTypeDialog extends MokoBaseDialog {
     @Override
     public void bindView(View v) {
         ButterKnife.bind(this, v);
-        wvTriggerType.setData(new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.trigger_type))));
+        wvTriggerType.setData(new ArrayList<>(Arrays.asList(datas)));
         wvTriggerType.setDefault(selected);
     }
 
@@ -66,6 +67,10 @@ public class TriggerTypeDialog extends MokoBaseDialog {
 
     public void setListener(OnDataSelectedListener listener) {
         this.listener = listener;
+    }
+
+    public void setTriggerArray(String[] triggerArray) {
+        datas = triggerArray;
     }
 
     public interface OnDataSelectedListener {

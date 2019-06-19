@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.moko.beaconxplus.R;
 import com.moko.beaconxplus.activity.THDataActivity;
-import com.moko.beaconxplus.dialog.StorageHumidityDialog;
 import com.moko.beaconxplus.dialog.StorageTimeDialog;
 
 import butterknife.Bind;
@@ -22,6 +21,8 @@ public class StorageTimeFragment extends Fragment {
     private static final String TAG = "StorageTimeFragment";
     @Bind(R.id.tv_storage_time_only)
     TextView tvStorageTimeOnly;
+    @Bind(R.id.tv_time_tips)
+    TextView tvTimeTips;
 
     private THDataActivity activity;
 
@@ -75,7 +76,7 @@ public class StorageTimeFragment extends Fragment {
         super.onDestroy();
     }
 
-    @OnClick(R.id.tv_storage_temp_only)
+    @OnClick(R.id.tv_storage_time_only)
     public void onViewClicked() {
         StorageTimeDialog dialog = new StorageTimeDialog();
         dialog.setListener(new StorageTimeDialog.OnDataSelectedListener() {
@@ -83,6 +84,7 @@ public class StorageTimeFragment extends Fragment {
             public void onDataSelected(String data) {
                 mSelected = Integer.parseInt(data);
                 tvStorageTimeOnly.setText(data);
+                tvTimeTips.setText(getString(R.string.time_only_tips, mSelected));
                 activity.setSelectedTime(mSelected);
             }
         });
@@ -90,10 +92,11 @@ public class StorageTimeFragment extends Fragment {
         dialog.show(activity.getSupportFragmentManager());
     }
 
-    private int mSelected;
+    private int mSelected = 1;
 
     public void setTimeData(int data) {
         mSelected = data;
         tvStorageTimeOnly.setText(mSelected + "");
+        tvTimeTips.setText(getString(R.string.time_only_tips, mSelected));
     }
 }

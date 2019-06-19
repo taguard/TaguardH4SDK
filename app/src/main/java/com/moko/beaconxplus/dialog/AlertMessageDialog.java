@@ -28,7 +28,7 @@ public class AlertMessageDialog extends MokoBaseDialog {
     @Bind(R.id.tv_alert_confirm)
     TextView tvAlertConfirm;
     @Bind(R.id.view_divider)
-    TextView viewDivider;
+    View viewDivider;
 
     private String cancel;
 

@@ -34,14 +34,14 @@
     <string name="update_date"><![CDATA[Update Date&Time]]></string>
     <string name="export_data"><![CDATA[Export T&H Data]]></string>
     <string name="password_null">Password cannot be empty!</string>
-    <string name="temp_only_tips_1"><![CDATA[*The device records H&T data when the temperature changes by more than 1 ℃.]]></string>
+    <string name="temp_only_tips_1"><![CDATA[*The device records H&T data when the temperature changes by more than %s ℃.]]></string>
     <string name="temp_only_tips_0"><![CDATA[*The device records T&H data when the temperature changes arbitrarily.]]></string>
-    <string name="humidity_only_tips_1"><![CDATA[*The device records T&H data when the humidity changes by more than 5%.]]></string>
+    <string name="humidity_only_tips_1"><![CDATA[*The device records T&H data when the humidity changes by more than %d%%.]]></string>
     <string name="humidity_only_tips_0"><![CDATA[*The device records T&H data when the humidity changes arbitrarily.]]></string>
-    <string name="time_only_tips"><![CDATA[*The device records T&H data every 3 minute(s).]]></string>
-    <string name="t_h_tips_0"><![CDATA[*The device records T&H data when the temperature changes by more than 1 ℃ or humidity changes by more than 5%.]]></string>
-    <string name="t_h_tips_1"><![CDATA[*The device records T&H data when the temperature changes arbitrarily or humidity changes by more than 5%.]]></string>
-    <string name="t_h_tips_2"><![CDATA[*The device records T&H data when the temperature changes by more than 1 ℃ or humidity changes arbitrarily.]]></string>
+    <string name="time_only_tips"><![CDATA[*The device records T&H data every %d minute(s).]]></string>
+    <string name="t_h_tips_0"><![CDATA[*The device records T&H data when the temperature changes by more than %s ℃ or humidity changes by more than %d%%.]]></string>
+    <string name="t_h_tips_1"><![CDATA[*The device records T&H data when the temperature changes arbitrarily or humidity changes by more than %d%%.]]></string>
+    <string name="t_h_tips_2"><![CDATA[*The device records T&H data when the temperature changes by more than %s ℃ or humidity changes arbitrarily.]]></string>
     <string name="t_h_tips_3"><![CDATA[*The device records T&H data when the temperature or humidity changes arbitrarily.]]></string>
     <string name="trigger_t_h_tips">*The device will %1$s advertising if the %2$s is %3$s %4$s.</string>
     <string name="trigger_tapped_tips_1">*The device will always advertise if the button %s tapped.</string>
@@ -105,13 +105,30 @@
         <item><![CDATA[T&H]]></item>
         <item>Time</item>
     </string-array>
-    <string-array name="trigger_type">
+    <string-array name="trigger_type_0">
+        <item>Button double tapped</item>
+        <item>Button triple tapped</item>
+    </string-array>
+    <string-array name="trigger_type_1">
+        <item>Button double tapped</item>
+        <item>Button triple tapped</item>
+        <item>Device moves</item>
+    </string-array>
+    <string-array name="trigger_type_2">
+        <item>Button double tapped</item>
+        <item>Button triple tapped</item>
         <item>Temperature above</item>
         <item>Temperature below</item>
         <item>Humidity above</item>
         <item>Humidity below</item>
+    </string-array>
+    <string-array name="trigger_type_3">
         <item>Button double tapped</item>
         <item>Button triple tapped</item>
+        <item>Temperature above</item>
+        <item>Temperature below</item>
+        <item>Humidity above</item>
+        <item>Humidity below</item>
         <item>Device moves</item>
     </string-array>
 </resources>

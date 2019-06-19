@@ -62,6 +62,16 @@ public class TriggerTempFragment extends Fragment implements SeekBar.OnSeekBarCh
         activity = (SlotDataActivity) getActivity();
         rgAdvertising.setOnCheckedChangeListener(this);
         sbTriggerTemp.setOnSeekBarChangeListener(this);
+        if (mIsStart) {
+            rbStart.setChecked(true);
+        } else {
+            rbStop.setChecked(true);
+        }
+        sbTriggerTemp.setProgress(mProgress);
+        String tempStr = String.format("%d℃", mProgress - 20);
+        tvTriggerTips.setText(getString(R.string.trigger_t_h_tips,
+                mIsStart ? "start" : "stop", "temperature", mIsAbove ? "above" : "below", tempStr));
+        triggerTemp.setText(mIsAbove ? "Temperature Above" : "Temperature Below");
         return view;
     }
 
@@ -131,11 +141,6 @@ public class TriggerTempFragment extends Fragment implements SeekBar.OnSeekBarCh
 
     public void setStart(boolean isStart) {
         mIsStart = isStart;
-        if (isStart) {
-            rbStart.setChecked(true);
-        } else {
-            rbStop.setChecked(true);
-        }
     }
 
     public boolean isStart() {
@@ -144,16 +149,14 @@ public class TriggerTempFragment extends Fragment implements SeekBar.OnSeekBarCh
 
     public void setData(int data) {
         mProgress = (int) (data * 0.1f) + 20;
-        sbTriggerTemp.setProgress(mProgress);
     }
 
-    public short getData() {
-        return (short) ((mProgress - 20) * 10);
+    public int getData() {
+        return (mProgress - 20) * 10;
     }
 
     public void setTempType(boolean isAbove) {
         mIsAbove = isAbove;
-        triggerTemp.setText(mIsAbove ? "Temperature Above" : "Temperature Below");
     }
 
     public boolean getTempType() {

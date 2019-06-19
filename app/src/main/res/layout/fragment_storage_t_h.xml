@@ -2,9 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white_ffffff"
-    android:paddingTop="20dp"
-    android:paddingBottom="20dp">
+    android:background="@color/white_ffffff">
 
     <RelativeLayout
         android:id="@+id/rl_temp"
@@ -21,29 +19,29 @@
             android:textSize="15sp" />
 
         <TextView
-            android:id="@+id/tv_storage_temp"
+            android:id="@+id/storage_temp_unit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/shape_radius_blue_frame"
-            android:paddingLeft="20dp"
-            android:paddingTop="5dp"
-            android:paddingRight="20dp"
-            android:paddingBottom="5dp"
-            android:text="0"
+            android:layout_alignParentRight="true"
+            android:text="℃"
             android:textColor="@color/black_333333"
             android:textSize="15sp" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/tv_storage_temp"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@id/tv_storage_temp"
-            android:layout_alignBottom="@id/tv_storage_temp"
-            android:layout_marginLeft="20dp"
-            android:layout_toRightOf="@id/tv_storage_temp"
-            android:text="℃"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="40dp"
+            android:background="@drawable/shape_radius_blue_frame"
+            android:gravity="center"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="0.0"
             android:textColor="@color/black_333333"
             android:textSize="15sp" />
+
+
     </RelativeLayout>
 
     <RelativeLayout
@@ -62,29 +60,29 @@
             android:textSize="15sp" />
 
         <TextView
-            android:id="@+id/tv_storage_humidity"
+            android:id="@+id/storage_humidity_unit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
+            android:layout_alignParentRight="true"
+            android:text="%"
+            android:textColor="@color/black_333333"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tv_storage_humidity"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="40dp"
             android:background="@drawable/shape_radius_blue_frame"
-            android:paddingLeft="20dp"
+            android:gravity="center"
             android:paddingTop="5dp"
-            android:paddingRight="20dp"
             android:paddingBottom="5dp"
             android:text="0"
             android:textColor="@color/black_333333"
             android:textSize="15sp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@id/tv_storage_humidity"
-            android:layout_alignBottom="@id/tv_storage_humidity"
-            android:layout_marginLeft="20dp"
-            android:layout_toRightOf="@id/tv_storage_humidity"
-            android:text="%"
-            android:textColor="@color/black_333333"
-            android:textSize="15sp" />
+
     </RelativeLayout>
 
     <TextView
@@ -95,5 +93,5 @@
         android:layout_centerHorizontal="true"
         android:text="@string/t_h_tips_3"
         android:textColor="@color/black_333333"
-        android:textSize="15sp" />
+        android:textSize="10sp" />
 </RelativeLayout>

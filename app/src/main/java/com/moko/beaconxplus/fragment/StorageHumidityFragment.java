@@ -76,7 +76,7 @@ public class StorageHumidityFragment extends Fragment {
         super.onDestroy();
     }
 
-    @OnClick(R.id.tv_storage_temp_only)
+    @OnClick(R.id.tv_storage_humidity_only)
     public void onViewClicked() {
         StorageHumidityDialog dialog = new StorageHumidityDialog();
         dialog.setListener(new StorageHumidityDialog.OnDataSelectedListener() {
@@ -86,7 +86,7 @@ public class StorageHumidityFragment extends Fragment {
                 if (mSelected == 0) {
                     tvHumidityOnlyTips.setText(R.string.humidity_only_tips_0);
                 } else {
-                    tvHumidityOnlyTips.setText(R.string.humidity_only_tips_1);
+                    tvHumidityOnlyTips.setText(getString(R.string.humidity_only_tips_1, mSelected));
                 }
                 tvStorageHumidityOnly.setText(data);
                 activity.setSelectedHumidity(mSelected);
@@ -103,7 +103,7 @@ public class StorageHumidityFragment extends Fragment {
         if (mSelected == 0) {
             tvHumidityOnlyTips.setText(R.string.humidity_only_tips_0);
         } else {
-            tvHumidityOnlyTips.setText(R.string.humidity_only_tips_1);
+            tvHumidityOnlyTips.setText(getString(R.string.humidity_only_tips_1, mSelected));
         }
         tvStorageHumidityOnly.setText(mSelected + "");
     }

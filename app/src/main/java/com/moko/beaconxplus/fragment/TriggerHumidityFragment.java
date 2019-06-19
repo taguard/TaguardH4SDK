@@ -63,6 +63,16 @@ public class TriggerHumidityFragment extends Fragment implements SeekBar.OnSeekB
         activity = (SlotDataActivity) getActivity();
         rgAdvertising.setOnCheckedChangeListener(this);
         sbTriggerHumidity.setOnSeekBarChangeListener(this);
+        if (mIsStart) {
+            rbStart.setChecked(true);
+        } else {
+            rbStop.setChecked(true);
+        }
+        sbTriggerHumidity.setProgress(mProgress);
+        String humidityStr = String.format("%d%%", mProgress);
+        tvTriggerTips.setText(getString(R.string.trigger_t_h_tips,
+                mIsStart ? "start" : "stop", "humidity", mIsAbove ? "above" : "below", humidityStr));
+        triggerHumidiy.setText(mIsAbove ? "Humidity Above" : "Humidity Below");
         return view;
     }
 
@@ -95,10 +105,10 @@ public class TriggerHumidityFragment extends Fragment implements SeekBar.OnSeekB
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         mProgress = progress;
-        String tempStr = String.format("%d%%", progress);
-        tvTriggerHumidiy.setText(tempStr);
+        String humidityStr = String.format("%d%%", progress);
+        tvTriggerHumidiy.setText(humidityStr);
         tvTriggerTips.setText(getString(R.string.trigger_t_h_tips,
-                mIsStart ? "start" : "stop", "temperature", mIsAbove ? "above" : "below", tempStr));
+                mIsStart ? "start" : "stop", "humidity", mIsAbove ? "above" : "below", humidityStr));
     }
 
     @Override
@@ -125,18 +135,13 @@ public class TriggerHumidityFragment extends Fragment implements SeekBar.OnSeekB
                 mIsStart = false;
                 break;
         }
-        String tempStr = String.format("%d%%", mProgress);
+        String humidityStr = String.format("%d%%", mProgress);
         tvTriggerTips.setText(getString(R.string.trigger_t_h_tips,
-                mIsStart ? "start" : "stop", "humidity", mIsAbove ? "above" : "below", tempStr));
+                mIsStart ? "start" : "stop", "humidity", mIsAbove ? "above" : "below", humidityStr));
     }
 
     public void setStart(boolean isStart) {
         mIsStart = isStart;
-        if (isStart) {
-            rbStart.setChecked(true);
-        } else {
-            rbStop.setChecked(true);
-        }
     }
 
     public boolean isStart() {
@@ -145,7 +150,6 @@ public class TriggerHumidityFragment extends Fragment implements SeekBar.OnSeekB
 
     public void setData(int data) {
         mProgress = (int) (data * 0.1f);
-        sbTriggerHumidity.setProgress(mProgress);
     }
 
     public int getData() {
@@ -154,7 +158,6 @@ public class TriggerHumidityFragment extends Fragment implements SeekBar.OnSeekB
 
     public void setHumidityType(boolean isAbove) {
         mIsAbove = isAbove;
-        triggerHumidiy.setText(mIsAbove ? "Humidity Above" : "Humidity Below");
     }
 
     public boolean getHumidityType() {

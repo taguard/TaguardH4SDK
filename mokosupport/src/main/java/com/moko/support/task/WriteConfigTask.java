@@ -103,7 +103,7 @@ public class WriteConfigTask extends OrderTask {
     }
 
     public void setDeviceTime(int year, int month, int day, int hour, int minute, int second) {
-        String value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_TH_PERIOD.getConfigKey()) + "0006"
+        String value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_DEVICE_TIME.getConfigKey()) + "0006"
                 + String.format("%02X", year) + String.format("%02X", month) + String.format("%02X", day)
                 + String.format("%02X", hour) + String.format("%02X", minute) + String.format("%02X", second);
         data = MokoUtils.hex2bytes(value);
@@ -118,8 +118,9 @@ public class WriteConfigTask extends OrderTask {
         String value = "00";
         switch (triggerType) {
             case 1:
+                byte[] paramsBytes = MokoUtils.short2Byte((short) params);
                 value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_TRIGGER_DATA.getConfigKey()) + "0005"
-                        + "01" + (isAbove ? "01" : "02") + String.format("%04X", params) + (isStart ? "01" : "02");
+                        + "01" + (isAbove ? "01" : "02") + MokoUtils.bytesToHexString(paramsBytes) + (isStart ? "01" : "02");
                 break;
             case 2:
                 value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_TRIGGER_DATA.getConfigKey()) + "0005"

@@ -28,7 +28,7 @@ public class StorageTimeDialog extends MokoBaseDialog {
         ButterKnife.bind(this, v);
 
         wvStorageTime.setData(createData());
-        wvStorageTime.setDefault(selected);
+        wvStorageTime.setDefault(selected - 1);
     }
 
     private ArrayList<String> createData() {

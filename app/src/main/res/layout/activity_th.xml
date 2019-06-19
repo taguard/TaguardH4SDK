@@ -201,7 +201,6 @@
                         android:id="@+id/npv_storage_condition"
                         android:layout_width="100dp"
                         android:layout_height="130dp"
-                        android:layout_alignParentRight="true"
                         android:background="@drawable/shape_stroke_blue_bg"
                         app:npv_DividerColor="@color/blue_2f84d0"
                         app:npv_DividerMarginLeft="15dp"
@@ -216,7 +215,7 @@
                     <FrameLayout
                         android:id="@+id/frame_storage_condition"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_marginLeft="20dp" />
                 </LinearLayout>
 
@@ -245,6 +244,7 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tv_update"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
