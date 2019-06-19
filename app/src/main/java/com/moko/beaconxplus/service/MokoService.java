@@ -589,4 +589,28 @@ public class MokoService extends Service implements MokoConnStateCallback, MokoO
         ResetDeviceTask resetDeviceTask = new ResetDeviceTask(this);
         return resetDeviceTask;
     }
+
+    public OrderTask getTrigger() {
+        WriteConfigTask writeConfigTask = new WriteConfigTask(this);
+        writeConfigTask.setData(ConfigKeyEnum.GET_TRIGGER_DATA);
+        return writeConfigTask;
+    }
+
+    public OrderTask setTriggerClose() {
+        WriteConfigTask writeConfigTask = new WriteConfigTask(this);
+        writeConfigTask.setTriggerData();
+        return writeConfigTask;
+    }
+
+    public OrderTask setTHTrigger(int triggerType, boolean isAbove, int params, boolean isStart) {
+        WriteConfigTask writeConfigTask = new WriteConfigTask(this);
+        writeConfigTask.setTriggerData(triggerType, isAbove, params, isStart);
+        return writeConfigTask;
+    }
+
+    public OrderTask setTappedMovesTrigger(int triggerType, int params, boolean isStart) {
+        WriteConfigTask writeConfigTask = new WriteConfigTask(this);
+        writeConfigTask.setTriggerData(triggerType, params, isStart);
+        return writeConfigTask;
+    }
 }

@@ -307,6 +307,11 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                                             back();
                                         }
                                         break;
+                                    case GET_TRIGGER_DATA:
+                                        if (value.length >= 4) {
+                                            slotFragment.setTriggerData(value);
+                                        }
+                                        break;
                                 }
                             }
                             break;

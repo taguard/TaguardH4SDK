@@ -43,6 +43,13 @@
     <string name="t_h_tips_1"><![CDATA[*The device records T&H data when the temperature changes arbitrarily or humidity changes by more than 5%.]]></string>
     <string name="t_h_tips_2"><![CDATA[*The device records T&H data when the temperature changes by more than 1 ℃ or humidity changes arbitrarily.]]></string>
     <string name="t_h_tips_3"><![CDATA[*The device records T&H data when the temperature or humidity changes arbitrarily.]]></string>
+    <string name="trigger_t_h_tips">*The device will %1$s advertising if the %2$s is %3$s %4$s.</string>
+    <string name="trigger_tapped_tips_1">*The device will always advertise if the button %s tapped.</string>
+    <string name="trigger_tapped_tips_2">*The device will %1$s advertising for %2$s if the button %3$s tapped.</string>
+    <string name="trigger_tapped_tips_3">*The device will always stop advertising if the button %s tapped.</string>
+    <string name="trigger_moved_tips_always">*Please set the 3-axis Accelerometer parameters to Scale = ±4g and data rate = 25hz. Other values will cause the trigger effect to be inaccurate.</string>
+    <string name="trigger_moved_tips_1">*The device will always %s if the device moves.</string>
+    <string name="trigger_moved_tips_2">*The device will %1$s advertising after a static period of %2$s and it starts advertising again if the device moves.</string>
     <string-array name="slot_type_no_sensor">
         <item>TLM</item>
         <item>UID</item>
@@ -97,5 +104,14 @@
         <item>Humidity</item>
         <item><![CDATA[T&H]]></item>
         <item>Time</item>
+    </string-array>
+    <string-array name="trigger_type">
+        <item>Temperature above</item>
+        <item>Temperature below</item>
+        <item>Humidity above</item>
+        <item>Humidity below</item>
+        <item>Button double tapped</item>
+        <item>Button triple tapped</item>
+        <item>Device moves</item>
     </string-array>
 </resources>

@@ -20,7 +20,7 @@ import butterknife.OnClick;
 
 public class StorageTHFragment extends Fragment {
 
-    private static final String TAG = "StorageTempFragment";
+    private static final String TAG = "StorageTHFragment";
     @Bind(R.id.tv_storage_temp)
     TextView tvStorageTemp;
     @Bind(R.id.tv_storage_humidity)

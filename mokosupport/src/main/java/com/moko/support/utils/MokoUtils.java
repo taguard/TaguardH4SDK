@@ -227,4 +227,20 @@ public class MokoUtils {
         decimalFormat.setDecimalFormatSymbols(dfs);
         return decimalFormat;
     }
+
+    public static short byte2short(byte[] bytes) {
+        byte high = bytes[0];
+        byte low = bytes[1];
+        short z = (short) (((high & 0x00FF) << 8) | (0x00FF & low));
+        return z;
+    }
+
+    public static byte[] short2Byte(short x) {
+        byte high = (byte) (0x00FF & (x >> 8));//定义第一个byte
+        byte low = (byte) (0x00FF & x);//定义第二个byte
+        byte[] bytes = new byte[2];
+        bytes[0] = high;
+        bytes[1] = low;
+        return bytes;
+    }
 }

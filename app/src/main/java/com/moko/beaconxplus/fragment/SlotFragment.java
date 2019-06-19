@@ -71,6 +71,8 @@ public class SlotFragment extends Fragment {
     private DeviceInfoActivity activity;
     private SlotData slotData;
     private int deviceType;
+    private int triggerType;
+    private String triggerData;
 
     public SlotFragment() {
     }
@@ -156,6 +158,8 @@ public class SlotFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), SlotDataActivity.class);
                 intent.putExtra(AppConstants.EXTRA_KEY_SLOT_DATA, slotData);
                 intent.putExtra(AppConstants.EXTRA_KEY_DEVICE_TYPE, deviceType);
+                intent.putExtra(AppConstants.EXTRA_KEY_TRIGGER_TYPE, triggerType);
+                intent.putExtra(AppConstants.EXTRA_KEY_TRIGGER_DATA, triggerData);
                 startActivityForResult(intent, AppConstants.REQUEST_CODE_SLOT_DATA);
                 break;
             case IBEACON:
@@ -175,6 +179,7 @@ public class SlotFragment extends Fragment {
         MokoSupport.getInstance().sendOrder(
                 activity.mMokoService.setSlot(slotEnum),
                 activity.mMokoService.getSlotData(),
+                activity.mMokoService.getTrigger(),
                 activity.mMokoService.getAdvTxPower(),
                 activity.mMokoService.getRadioTxPower(),
                 activity.mMokoService.getAdvInterval()
@@ -289,6 +294,8 @@ public class SlotFragment extends Fragment {
         Intent intent = new Intent(getActivity(), SlotDataActivity.class);
         intent.putExtra(AppConstants.EXTRA_KEY_SLOT_DATA, slotData);
         intent.putExtra(AppConstants.EXTRA_KEY_DEVICE_TYPE, deviceType);
+        intent.putExtra(AppConstants.EXTRA_KEY_TRIGGER_TYPE, triggerType);
+        intent.putExtra(AppConstants.EXTRA_KEY_TRIGGER_DATA, triggerData);
         startActivityForResult(intent, AppConstants.REQUEST_CODE_SLOT_DATA);
     }
 
@@ -343,5 +350,13 @@ public class SlotFragment extends Fragment {
 
     public void setDeviceType(int deviceType) {
         this.deviceType = deviceType;
+    }
+
+
+    public void setTriggerData(byte[] value) {
+        triggerType = value[4] & 0xff;
+        if (deviceType != 0) {
+            triggerData = MokoUtils.bytesToHexString(Arrays.copyOfRange(value, 5, value.length));
+        }
     }
 }

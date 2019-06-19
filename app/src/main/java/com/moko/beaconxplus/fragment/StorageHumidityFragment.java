@@ -18,7 +18,7 @@ import butterknife.OnClick;
 
 public class StorageHumidityFragment extends Fragment {
 
-    private static final String TAG = "StorageTempFragment";
+    private static final String TAG = "StorageHumidityFragment";
     @Bind(R.id.tv_storage_humidity_only)
     TextView tvStorageHumidityOnly;
     @Bind(R.id.tv_humidity_only_tips)

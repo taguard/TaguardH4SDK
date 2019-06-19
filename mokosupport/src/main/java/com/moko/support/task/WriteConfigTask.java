@@ -38,6 +38,7 @@ public class WriteConfigTask extends OrderTask {
             case GET_STORAGE_CONDITION:
             case GET_DEVICE_TIME:
             case SET_TH_EMPTY:
+            case GET_TRIGGER_DATA:
                 createGetConfigData(key.getConfigKey());
                 break;
         }
@@ -105,6 +106,45 @@ public class WriteConfigTask extends OrderTask {
         String value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_TH_PERIOD.getConfigKey()) + "0006"
                 + String.format("%02X", year) + String.format("%02X", month) + String.format("%02X", day)
                 + String.format("%02X", hour) + String.format("%02X", minute) + String.format("%02X", second);
+        data = MokoUtils.hex2bytes(value);
+    }
+
+    public void setTriggerData() {
+        String value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_TRIGGER_DATA.getConfigKey()) + "000100";
+        data = MokoUtils.hex2bytes(value);
+    }
+
+    public void setTriggerData(int triggerType, boolean isAbove, int params, boolean isStart) {
+        String value = "00";
+        switch (triggerType) {
+            case 1:
+                value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_TRIGGER_DATA.getConfigKey()) + "0005"
+                        + "01" + (isAbove ? "01" : "02") + String.format("%04X", params) + (isStart ? "01" : "02");
+                break;
+            case 2:
+                value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_TRIGGER_DATA.getConfigKey()) + "0005"
+                        + "02" + (isAbove ? "01" : "02") + String.format("%04X", params) + (isStart ? "01" : "02");
+                break;
+        }
+        data = MokoUtils.hex2bytes(value);
+    }
+
+    public void setTriggerData(int triggerType, int params, boolean isStart) {
+        String value = "00";
+        switch (triggerType) {
+            case 3:
+                value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_TRIGGER_DATA.getConfigKey()) + "0004"
+                        + "03" + String.format("%04X", params) + (isStart ? "01" : "02");
+                break;
+            case 4:
+                value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_TRIGGER_DATA.getConfigKey()) + "0004"
+                        + "04" + String.format("%04X", params) + (isStart ? "01" : "02");
+                break;
+            case 5:
+                value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_TRIGGER_DATA.getConfigKey()) + "0004"
+                        + "05" + String.format("%04X", params) + (isStart ? "01" : "02");
+                break;
+        }
         data = MokoUtils.hex2bytes(value);
     }
 }
