@@ -48,6 +48,7 @@ public class StorageTimeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_storage_time, container, false);
         ButterKnife.bind(this, view);
         activity = (THDataActivity) getActivity();
+        tvTimeTips.setText(getString(R.string.time_only_tips, mSelected));
         return view;
     }
 
