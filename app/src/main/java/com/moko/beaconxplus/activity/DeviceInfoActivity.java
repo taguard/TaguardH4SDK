@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.moko.beaconxplus.AppConstants;
 import com.moko.beaconxplus.R;
 import com.moko.beaconxplus.dialog.AlertMessageDialog;
+import com.moko.beaconxplus.dialog.LoadingMessageDialog;
 import com.moko.beaconxplus.entity.ValidParams;
 import com.moko.beaconxplus.fragment.DeviceFragment;
 import com.moko.beaconxplus.fragment.SettingFragment;
@@ -133,7 +134,8 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                     return;
                 }
                 showSyncingProgressDialog();
-                MokoSupport.getInstance().sendOrder(mMokoService.getDeviceType(),
+                MokoSupport.getInstance().sendOrder(mMokoService.setConfigNotify(),
+                        mMokoService.getDeviceType(),
                         mMokoService.getSlotType(), mMokoService.getDeviceMac(),
                         mMokoService.getConnectable(),
                         mMokoService.getManufacturer(), mMokoService.getDeviceModel(),
@@ -160,7 +162,6 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                     if (mIsClose) {
                         return;
                     }
-                    dismissLoadingProgressDialog();
                     if (MokoSupport.getInstance().isBluetoothOpen() && !isUpgrade) {
                         AlertMessageDialog dialog = new AlertMessageDialog();
                         dialog.setTitle("Dismiss");
@@ -179,8 +180,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                 }
                 if (MokoConstants.ACTION_DISCOVER_SUCCESS.equals(action)) {
                     // 设备连接成功，通知页面更新
-                    dismissLoadingProgressDialog();
-                    showVerifyingProgressDialog();
+                    showSyncingProgressDialog();
                     mMokoService.mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -203,7 +203,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
             public void run() {
                 MokoSupport.getInstance().sendOrder(mMokoService.getSlotType());
             }
-        }, 1000);
+        }, 2000);
     }
 
     private void getDeviceInfo() {
@@ -498,24 +498,18 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
         EventBus.getDefault().unregister(this);
     }
 
-    private ProgressDialog syncingDialog;
+    private LoadingMessageDialog mLoadingMessageDialog;
 
     public void showSyncingProgressDialog() {
-        syncingDialog = new ProgressDialog(this);
-        syncingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        syncingDialog.setCanceledOnTouchOutside(false);
-        syncingDialog.setCancelable(false);
-        syncingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        syncingDialog.setMessage("Syncing...");
-        if (!isFinishing() && syncingDialog != null && !syncingDialog.isShowing()) {
-            syncingDialog.show();
-        }
+        mLoadingMessageDialog = new LoadingMessageDialog();
+        mLoadingMessageDialog.setMessage("Syncing..");
+        mLoadingMessageDialog.show(getSupportFragmentManager());
+
     }
 
     public void dismissSyncProgressDialog() {
-        if (!isFinishing() && syncingDialog != null && syncingDialog.isShowing()) {
-            syncingDialog.dismiss();
-        }
+        if (mLoadingMessageDialog != null)
+            mLoadingMessageDialog.dismissAllowingStateLoss();
     }
 
     @OnClick({R.id.tv_back})
@@ -548,7 +542,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
         } else {
             fragmentManager.beginTransaction().hide(settingFragment).hide(deviceFragment).show(slotFragment).commit();
         }
-        tvTitle.setText(getString(R.string.options_title));
+        tvTitle.setText(getString(R.string.slot_title));
     }
 
     private void showSettingFragment() {
@@ -717,7 +711,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
 
         @Override
         public void onDfuCompleted(String deviceAddress) {
-            Toast.makeText(DeviceInfoActivity.this, "DfuCompleted!", Toast.LENGTH_SHORT).show();
+            ToastUtils.showToast(DeviceInfoActivity.this, "DFU Successfully!");
             dismissDFUProgressDialog();
         }
 
@@ -733,49 +727,9 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
 
         @Override
         public void onError(String deviceAddress, int error, int errorType, String message) {
-            Toast.makeText(DeviceInfoActivity.this, "Error:" + message, Toast.LENGTH_SHORT).show();
+            ToastUtils.showToast(DeviceInfoActivity.this, "Opps!DFU Failed. Please try again!");
             LogModule.i("Error:" + message);
             dismissDFUProgressDialog();
         }
     };
-
-    private ProgressDialog mLoadingDialog;
-
-    private void showLoadingProgressDialog() {
-        mLoadingDialog = new ProgressDialog(DeviceInfoActivity.this);
-        mLoadingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        mLoadingDialog.setCanceledOnTouchOutside(false);
-        mLoadingDialog.setCancelable(false);
-        mLoadingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        mLoadingDialog.setMessage("Connecting...");
-        if (!isFinishing() && mLoadingDialog != null && !mLoadingDialog.isShowing()) {
-            mLoadingDialog.show();
-        }
-    }
-
-    private void dismissLoadingProgressDialog() {
-        if (!isFinishing() && mLoadingDialog != null && mLoadingDialog.isShowing()) {
-            mLoadingDialog.dismiss();
-        }
-    }
-
-    private ProgressDialog mVerifyingDialog;
-
-    private void showVerifyingProgressDialog() {
-        mVerifyingDialog = new ProgressDialog(this);
-        mVerifyingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        mVerifyingDialog.setCanceledOnTouchOutside(false);
-        mVerifyingDialog.setCancelable(false);
-        mVerifyingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        mVerifyingDialog.setMessage("Verifying...");
-        if (!isFinishing() && mVerifyingDialog != null && !mVerifyingDialog.isShowing()) {
-            mVerifyingDialog.show();
-        }
-    }
-
-    private void dismissVerifyProgressDialog() {
-        if (!isFinishing() && mVerifyingDialog != null && mVerifyingDialog.isShowing()) {
-            mVerifyingDialog.dismiss();
-        }
-    }
 }

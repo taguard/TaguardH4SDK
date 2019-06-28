@@ -102,8 +102,8 @@ public class BeaconXParser {
         BeaconXTH beaconXTH = new BeaconXTH();
         int rssi_0m = Integer.parseInt(data.substring(2, 4), 16);
         beaconXTH.rangingData = (byte) rssi_0m + "";
-        beaconXTH.temperature = Integer.parseInt(data.substring(6, 10), 16) + "";
-        beaconXTH.humidity = Integer.parseInt(data.substring(10, 14), 16) + "";
+        beaconXTH.temperature = MokoUtils.getDecimalFormat("0.0").format(Integer.parseInt(data.substring(6, 10), 16) * 0.1f);
+        beaconXTH.humidity = MokoUtils.getDecimalFormat("0.0").format(Integer.parseInt(data.substring(10, 14), 16) * 0.1f);
         return beaconXTH;
     }
 

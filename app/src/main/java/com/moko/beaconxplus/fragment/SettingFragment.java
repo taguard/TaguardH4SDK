@@ -40,6 +40,8 @@ public class SettingFragment extends Fragment {
     RelativeLayout rlAxis;
     @Bind(R.id.rl_th)
     RelativeLayout rlTh;
+    @Bind(R.id.rl_reset_facotry)
+    RelativeLayout rlResetFacotry;
 
     private DeviceInfoActivity activity;
 
@@ -207,6 +209,7 @@ public class SettingFragment extends Fragment {
 
     public void setModifyPasswordVisiable(boolean isSupportModifyPassword) {
         rlPassword.setVisibility(isSupportModifyPassword ? View.VISIBLE : View.GONE);
+        rlResetFacotry.setVisibility(isSupportModifyPassword ? View.VISIBLE : View.GONE);
     }
 
     public void setDeviceType(int deviceType) {

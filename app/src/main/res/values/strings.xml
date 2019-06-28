@@ -26,15 +26,15 @@
     <string name="please_enter_password">Please enter password</string>
     <string name="device_name_null">The device name cannot be empty!</string>
     <string name="password_length">Length should be 8 bits</string>
-    <string name="options_title">Options</string>
-    <string name="setting_title">Setting</string>
-    <string name="device_title">Device info</string>
+    <string name="slot_title">SLOT</string>
+    <string name="setting_title">SETTING</string>
+    <string name="device_title">DEVICE</string>
     <string name="h_t"><![CDATA[T&H]]></string>
     <string name="storage_condition"><![CDATA[T&H Storage Condition]]></string>
     <string name="update_date"><![CDATA[Update Date&Time]]></string>
     <string name="export_data"><![CDATA[Export T&H Data]]></string>
     <string name="password_null">Password cannot be empty!</string>
-    <string name="temp_only_tips_1"><![CDATA[*The device records H&T data when the temperature changes by more than %s ℃.]]></string>
+    <string name="temp_only_tips_1"><![CDATA[*The device records T&H data when the temperature changes by more than %s ℃.]]></string>
     <string name="temp_only_tips_0"><![CDATA[*The device records T&H data when the temperature changes arbitrarily.]]></string>
     <string name="humidity_only_tips_1"><![CDATA[*The device records T&H data when the humidity changes by more than %d%%.]]></string>
     <string name="humidity_only_tips_0"><![CDATA[*The device records T&H data when the humidity changes arbitrarily.]]></string>
@@ -74,7 +74,7 @@
         <item>iBeacon</item>
         <item>Device Info</item>
         <item>NO DATA</item>
-        <item><![CDATA[H&T]]></item>
+        <item><![CDATA[T&H]]></item>
     </string-array>
     <string-array name="slot_type_all">
         <item>TLM</item>
@@ -84,7 +84,7 @@
         <item>Device Info</item>
         <item>NO DATA</item>
         <item>3-axis</item>
-        <item><![CDATA[H&T]]></item>
+        <item><![CDATA[T&H]]></item>
     </string-array>
     <string-array name="axis_data_rate">
         <item>1Hz</item>

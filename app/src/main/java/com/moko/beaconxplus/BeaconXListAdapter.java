@@ -38,7 +38,7 @@ public class BeaconXListAdapter extends BaseQuickAdapter<BeaconXInfo, BaseViewHo
         helper.setText(R.id.tv_mac, "MAC:" + item.mac);
         helper.setText(R.id.tv_rssi, item.rssi + "");
         helper.setText(R.id.tv_conn_state, item.connectState < 0 ? "N/A" : item.connectState == 0 ? "Unconnectable" : "Connectable");
-        helper.setText(R.id.tv_lock_state, item.lockState < 0 ? "Lock State:N/A" : String.format("Lock State:%#x", item.lockState));
+        helper.setText(R.id.tv_lock_state, item.lockState < 0 ? "Lock State:N/A" : String.format("Lock State:0x%02x", item.lockState));
         helper.setText(R.id.tv_interval_time, item.intervalTime == 0 ? "<->N/A" : String.format("<->%dms", item.intervalTime));
         helper.setText(R.id.tv_battery, item.battery < 0 ? "N/A" : String.format("%d%%", item.battery));
         helper.addOnClickListener(R.id.tv_connect);

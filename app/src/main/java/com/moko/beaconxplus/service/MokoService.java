@@ -565,15 +565,6 @@ public class MokoService extends Service implements MokoConnStateCallback, MokoO
     }
 
     /**
-     * @Description 设置iBeaconInfo
-     */
-    public OrderTask setiBeaconInfo(int major, int minor, int advTxPower) {
-        WriteConfigTask writeConfigTask = new WriteConfigTask(this);
-        writeConfigTask.setiBeaconData(major, minor, advTxPower);
-        return writeConfigTask;
-    }
-
-    /**
      * @Description 关机
      */
     public OrderTask setClose() {

@@ -479,7 +479,7 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
                         break;
                 }
                 if (slotDataActionImpl == null) {
-                    byte[] noData = new byte[]{0};
+                    byte[] noData = new byte[]{(byte) 0xFF};
                     MokoSupport.getInstance().sendOrder(
                             // 切换通道，保证通道是在当前设置通道里
                             mMokoService.setSlot(slotData.slotEnum),

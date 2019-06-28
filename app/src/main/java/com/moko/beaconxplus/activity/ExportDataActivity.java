@@ -372,7 +372,7 @@ public class ExportDataActivity extends BaseActivity {
             case R.id.tv_empty:
                 AlertMessageDialog dialog = new AlertMessageDialog();
                 dialog.setTitle("Warning!");
-                dialog.setMessage("Are you sure to empty the saved H&T datas?");
+                dialog.setMessage("Are you sure to empty the saved T&H datas?");
                 dialog.setOnAlertConfirmListener(new AlertMessageDialog.OnAlertConfirmListener() {
                     @Override
                     public void onClick() {

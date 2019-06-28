@@ -137,16 +137,16 @@ public class IBeaconFragment extends Fragment implements SeekBar.OnSeekBarChange
             if (activity.slotData.frameTypeEnum == SlotFrameTypeEnum.IBEACON) {
                 int advTxPowerProgress = activity.slotData.rssi_1m + 127;
                 sbAdvTxPower.setProgress(advTxPowerProgress);
-                advTxPower = activity.slotData.rssi_1m;
+                advTxPowerBytes = MokoUtils.toByteArray(activity.slotData.rssi_1m, 1);
                 tvAdvTxPower.setText(String.format("%ddBm", activity.slotData.rssi_1m));
             } else if (activity.slotData.frameTypeEnum == SlotFrameTypeEnum.TLM) {
                 sbAdvTxPower.setProgress(68);
-                advTxPower = -59;
+                advTxPowerBytes = MokoUtils.toByteArray(-59, 1);
                 tvAdvTxPower.setText(String.format("%ddBm", -59));
             } else {
                 int advTxPowerProgress = activity.slotData.rssi_0m + 127;
                 sbAdvTxPower.setProgress(advTxPowerProgress);
-                advTxPower = activity.slotData.rssi_0m;
+                advTxPowerBytes = MokoUtils.toByteArray(activity.slotData.rssi_0m, 1);
                 tvAdvTxPower.setText(String.format("%ddBm", activity.slotData.rssi_0m));
             }
 
@@ -196,7 +196,7 @@ public class IBeaconFragment extends Fragment implements SeekBar.OnSeekBarChange
     }
 
     private byte[] advIntervalBytes;
-    private int advTxPower;
+    private byte[] advTxPowerBytes;
     private byte[] txPowerBytes;
 
     @Override
@@ -216,7 +216,7 @@ public class IBeaconFragment extends Fragment implements SeekBar.OnSeekBarChange
             case R.id.sb_adv_tx_power:
                 int advTxPower = progress - 127;
                 tvAdvTxPower.setText(String.format("%ddBm", advTxPower));
-                this.advTxPower = advTxPower;
+                advTxPowerBytes = MokoUtils.toByteArray(advTxPower, 1);
                 break;
             case R.id.sb_tx_power:
                 TxPowerEnum txPowerEnum = TxPowerEnum.fromOrdinal(progress);
@@ -249,9 +249,10 @@ public class IBeaconFragment extends Fragment implements SeekBar.OnSeekBarChange
 
     }
 
-    private int major;
-    private int minor;
+    private String major;
+    private String minor;
     private String uuidHex;
+    private byte[] iBeaconParamsBytes;
 
     @Override
     public boolean isValid() {
@@ -276,9 +277,11 @@ public class IBeaconFragment extends Fragment implements SeekBar.OnSeekBarChange
             ToastUtils.showToast(activity, "The Adv Interval range is 1~100");
             return false;
         }
-        major = Integer.valueOf(majorStr);
-        minor = Integer.valueOf(minorStr);
+        major = String.format("%04X", Integer.valueOf(majorStr));
+        minor = String.format("%04X", Integer.valueOf(minorStr));
         uuidHex = uuidStr;
+        String iBeaconParamsHex = SlotFrameTypeEnum.IBEACON.getFrameType() + uuidHex + major + minor;
+        iBeaconParamsBytes = MokoUtils.hex2bytes(iBeaconParamsHex);
         advIntervalBytes = MokoUtils.toByteArray(advIntervalInt, 2);
         return true;
     }
@@ -288,9 +291,10 @@ public class IBeaconFragment extends Fragment implements SeekBar.OnSeekBarChange
         MokoSupport.getInstance().sendOrder(
                 // 切换通道，保证通道是在当前设置通道里
                 activity.mMokoService.setSlot(activity.slotData.slotEnum),
-                activity.mMokoService.setiBeaconInfo(major, minor, advTxPower),
+                activity.mMokoService.setSlotData(iBeaconParamsBytes),
                 activity.mMokoService.setiBeaconUUID(uuidHex),
                 activity.mMokoService.setRadioTxPower(txPowerBytes),
+                activity.mMokoService.setAdvTxPower(advTxPowerBytes),
                 activity.mMokoService.setAdvInterval(advIntervalBytes)
         );
     }

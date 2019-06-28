@@ -305,6 +305,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case AppConstants.REQUEST_CODE_DEVICE_INFO:
+                    mPassword = "";
                     if (animation == null) {
                         startScan();
                     }
@@ -352,7 +353,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
 
     private void updateDevices() {
         beaconXInfos.clear();
-        if (!TextUtils.isEmpty(filterName) || filterRssi != -127) {
+        if (!TextUtils.isEmpty(filterName) || filterRssi != -100) {
             ArrayList<BeaconXInfo> beaconXInfosFilter = new ArrayList<>(beaconXInfoHashMap.values());
             Iterator<BeaconXInfo> iterator = beaconXInfosFilter.iterator();
             while (iterator.hasNext()) {
@@ -398,7 +399,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
 
     private Animation animation = null;
     public String filterName;
-    public int filterRssi = -127;
+    public int filterRssi = -100;
 
     @OnClick({R.id.iv_refresh, R.id.iv_about, R.id.rl_edit_filter, R.id.rl_filter, R.id.iv_filter_delete})
     public void onViewClicked(View view) {
@@ -433,7 +434,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                     public void onDone(String filterName, int filterRssi) {
                         MainActivity.this.filterName = filterName;
                         MainActivity.this.filterRssi = filterRssi;
-                        if (!TextUtils.isEmpty(filterName) || filterRssi != -127) {
+                        if (!TextUtils.isEmpty(filterName) || filterRssi != -100) {
                             rl_filter.setVisibility(View.VISIBLE);
                             rl_edit_filter.setVisibility(View.GONE);
                             StringBuilder stringBuilder = new StringBuilder();
@@ -441,7 +442,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                                 stringBuilder.append(filterName);
                                 stringBuilder.append(";");
                             }
-                            if (filterRssi != -127) {
+                            if (filterRssi != -100) {
                                 stringBuilder.append(String.format("%sdBm", filterRssi + ""));
                                 stringBuilder.append(";");
                             }
@@ -473,7 +474,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                 rl_filter.setVisibility(View.GONE);
                 rl_edit_filter.setVisibility(View.VISIBLE);
                 filterName = "";
-                filterRssi = -127;
+                filterRssi = -100;
                 if (animation == null) {
                     startScan();
                 }

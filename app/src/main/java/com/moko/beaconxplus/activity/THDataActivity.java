@@ -318,7 +318,7 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
                         case htData:
                             if (value.length > 3) {
                                 byte[] tempBytes = Arrays.copyOfRange(value, 0, 2);
-                                float temp = MokoUtils.toInt(tempBytes) * 0.1f;
+                                float temp = MokoUtils.byte2short(tempBytes) * 0.1f;
                                 tvTemp.setText(MokoUtils.getDecimalFormat("0.0").format(temp));
                                 byte[] humidityBytes = Arrays.copyOfRange(value, 2, 4);
                                 float humidity = MokoUtils.toInt(humidityBytes) * 0.1f;

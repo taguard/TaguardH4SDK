@@ -10,7 +10,7 @@ public enum SlotFrameTypeEnum implements Serializable {
     DEVICE("Device Info", "40"),
     NO_DATA("NO DATA", "FF"),
     AXIS("3-axis", "60"),
-    TH("H&T", "70"),
+    TH("T&H", "70"),
     ;
     private String frameType;
     private String showName;
