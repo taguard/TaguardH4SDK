@@ -32,12 +32,6 @@
                 android:text="Stop advertising for a static period of time" />
 
             <RadioButton
-                android:id="@+id/rb_always_stop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Always stop advertising" />
-
-            <RadioButton
                 android:id="@+id/rb_start_advertising"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -49,7 +43,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="right"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingTop="30dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"

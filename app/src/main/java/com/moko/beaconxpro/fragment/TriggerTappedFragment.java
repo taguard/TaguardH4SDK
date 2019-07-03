@@ -32,8 +32,6 @@ public class TriggerTappedFragment extends Fragment implements RadioGroup.OnChec
     RadioButton rbAlwaysStart;
     @Bind(R.id.rb_start_advertising)
     RadioButton rbStartAdvertising;
-    @Bind(R.id.rb_always_stop)
-    RadioButton rbAlwaysStop;
     @Bind(R.id.rb_stop_advertising)
     RadioButton rbStopAdvertising;
     @Bind(R.id.rg_tapped)
@@ -73,10 +71,6 @@ public class TriggerTappedFragment extends Fragment implements RadioGroup.OnChec
                 rbAlwaysStart.setChecked(true);
                 etStart.setText(mDuration + "");
                 etStart.setSelection((mDuration + "").length());
-            } else {
-                rbAlwaysStop.setChecked(true);
-                etStop.setText(mDuration + "");
-                etStop.setSelection((mDuration + "").length());
             }
         } else {
             if (mIsStart) {
@@ -95,8 +89,6 @@ public class TriggerTappedFragment extends Fragment implements RadioGroup.OnChec
         } else if (rbStartAdvertising.isChecked()) {
             mDuration = Integer.parseInt(etStart.getText().toString());
             tvTriggerTips.setText(getString(R.string.trigger_tapped_tips_2, "start", String.format("%ds", mDuration), mIsDouble ? "double" : "triple"));
-        } else if (rbAlwaysStop.isChecked()) {
-            tvTriggerTips.setText(getString(R.string.trigger_tapped_tips_3, mIsDouble ? "double" : "triple"));
         } else {
             mDuration = Integer.parseInt(etStop.getText().toString());
             tvTriggerTips.setText(getString(R.string.trigger_tapped_tips_2, "stop", String.format("%ds", mDuration), mIsDouble ? "double" : "triple"));
@@ -189,10 +181,6 @@ public class TriggerTappedFragment extends Fragment implements RadioGroup.OnChec
                     mDuration = Integer.parseInt(startDuration);
                 }
                 tvTriggerTips.setText(getString(R.string.trigger_tapped_tips_2, "start", String.format("%ds", mDuration), mIsDouble ? "double" : "triple"));
-                break;
-            case R.id.rb_always_stop:
-                tvTriggerTips.setText(getString(R.string.trigger_tapped_tips_3, mIsDouble ? "double" : "triple"));
-                mIsStart = false;
                 break;
             case R.id.rb_stop_advertising:
                 mIsStart = false;

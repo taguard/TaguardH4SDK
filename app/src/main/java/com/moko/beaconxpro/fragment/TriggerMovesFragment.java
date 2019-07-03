@@ -32,8 +32,6 @@ public class TriggerMovesFragment extends Fragment implements RadioGroup.OnCheck
     RadioButton rbAlwaysStart;
     @Bind(R.id.rb_start_advertising)
     RadioButton rbStartAdvertising;
-    @Bind(R.id.rb_always_stop)
-    RadioButton rbAlwaysStop;
     @Bind(R.id.rb_stop_advertising)
     RadioButton rbStopAdvertising;
     @Bind(R.id.rg_moves)
@@ -73,10 +71,6 @@ public class TriggerMovesFragment extends Fragment implements RadioGroup.OnCheck
                 rbAlwaysStart.setChecked(true);
                 etStart.setText(mDuration + "");
                 etStart.setSelection((mDuration + "").length());
-            } else {
-                rbAlwaysStop.setChecked(true);
-                etStop.setText(mDuration + "");
-                etStop.setSelection((mDuration + "").length());
             }
         } else {
             if (mIsStart) {
@@ -178,10 +172,6 @@ public class TriggerMovesFragment extends Fragment implements RadioGroup.OnCheck
                     mDuration = Integer.parseInt(startDuration);
                 }
                 tvTriggerTips.setText(getString(R.string.trigger_moved_tips_2, "start", String.format("%ds", mDuration)));
-                break;
-            case R.id.rb_always_stop:
-                mIsStart = false;
-                tvTriggerTips.setText(getString(R.string.trigger_moved_tips_1, "stop advertising"));
                 break;
             case R.id.rb_stop_advertising:
                 mIsStart = false;
