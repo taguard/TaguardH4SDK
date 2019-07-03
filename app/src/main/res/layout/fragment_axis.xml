@@ -118,7 +118,7 @@
                 android:layout_below="@id/adv_tx_power"
                 android:layout_marginTop="10dp"
                 android:layout_toLeftOf="@+id/tv_adv_tx_power"
-                android:max="127"
+                android:max="120"
                 android:progress="0" />
 
             <TextView

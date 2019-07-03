@@ -160,7 +160,7 @@ public class BeaconXListAdapter extends BaseQuickAdapter<BeaconXInfo, BaseViewHo
         tv_rssi_1m.setText(String.format("RSSI@1m:%sdBm", iBeacon.rangingData));
         tv_tx_power.setText(String.format("%sdBm", iBeacon.txPower));
         tv_distance.setText(iBeacon.distanceDesc);
-        tv_uuid.setText(iBeacon.uuid.toLowerCase());
+        tv_uuid.setText(iBeacon.uuid.toUpperCase());
         tv_major.setText(iBeacon.major);
         tv_minor.setText(iBeacon.minor);
         return view;

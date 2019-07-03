@@ -690,19 +690,17 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
                 if (deviceType == 1) {
                     fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(tlmFragment).hide(iBeaconFragment).hide(deviceInfoFragment).show(axisFragment).commit();
                     slotDataActionImpl = axisFragment;
+                } else if (deviceType == 2) {
+                    fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(tlmFragment).hide(iBeaconFragment).hide(deviceInfoFragment).show(thFragment).commit();
+                    slotDataActionImpl = thFragment;
                 } else if (deviceType == 3) {
                     fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(tlmFragment).hide(iBeaconFragment).hide(deviceInfoFragment).show(axisFragment).hide(thFragment).commit();
                     slotDataActionImpl = axisFragment;
                 }
                 break;
             case 7:
-                if (deviceType == 2) {
-                    fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(tlmFragment).hide(iBeaconFragment).hide(deviceInfoFragment).show(thFragment).commit();
-                    slotDataActionImpl = thFragment;
-                } else if (deviceType == 3) {
-                    fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(tlmFragment).hide(iBeaconFragment).hide(deviceInfoFragment).show(thFragment).hide(axisFragment).commit();
-                    slotDataActionImpl = thFragment;
-                }
+                fragmentTransaction.hide(uidFragment).hide(urlFragment).hide(tlmFragment).hide(iBeaconFragment).hide(deviceInfoFragment).show(thFragment).hide(axisFragment).commit();
+                slotDataActionImpl = thFragment;
                 break;
 
         }

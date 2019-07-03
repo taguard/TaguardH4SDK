@@ -3,6 +3,7 @@ package com.moko.beaconxpro.fragment;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.method.ReplacementTransformationMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,6 +67,8 @@ public class UidFragment extends Fragment implements SeekBar.OnSeekBarChangeList
         activity = (SlotDataActivity) getActivity();
         sbAdvTxPower.setOnSeekBarChangeListener(this);
         sbTxPower.setOnSeekBarChangeListener(this);
+        etNamespace.setTransformationMethod(new A2bigA());
+        etInstanceId.setTransformationMethod(new A2bigA());
         setValue();
         return view;
     }
@@ -74,7 +77,7 @@ public class UidFragment extends Fragment implements SeekBar.OnSeekBarChangeList
         if (activity.slotData.frameTypeEnum == SlotFrameTypeEnum.NO_DATA) {
             etAdvInterval.setText("10");
             etAdvInterval.setSelection(etAdvInterval.getText().toString().length());
-            sbAdvTxPower.setProgress(127);
+            sbAdvTxPower.setProgress(100);
             sbTxPower.setProgress(6);
         } else {
             int advIntervalProgress = activity.slotData.advInterval / 100;
@@ -83,11 +86,11 @@ public class UidFragment extends Fragment implements SeekBar.OnSeekBarChangeList
             advIntervalBytes = MokoUtils.toByteArray(activity.slotData.advInterval, 2);
 
             if (activity.slotData.frameTypeEnum == SlotFrameTypeEnum.TLM) {
-                sbAdvTxPower.setProgress(127);
+                sbAdvTxPower.setProgress(100);
                 advTxPowerBytes = MokoUtils.toByteArray(0, 1);
                 tvAdvTxPower.setText(String.format("%ddBm", 0));
             } else {
-                int advTxPowerProgress = activity.slotData.rssi_0m + 127;
+                int advTxPowerProgress = activity.slotData.rssi_0m + 100;
                 sbAdvTxPower.setProgress(advTxPowerProgress);
                 advTxPowerBytes = MokoUtils.toByteArray(activity.slotData.rssi_0m, 1);
                 tvAdvTxPower.setText(String.format("%ddBm", activity.slotData.rssi_0m));
@@ -149,7 +152,7 @@ public class UidFragment extends Fragment implements SeekBar.OnSeekBarChangeList
     public void upgdateData(int viewId, int progress) {
         switch (viewId) {
             case R.id.sb_adv_tx_power:
-                int advTxPower = progress - 127;
+                int advTxPower = progress - 100;
                 tvAdvTxPower.setText(String.format("%ddBm", advTxPower));
                 advTxPowerBytes = MokoUtils.toByteArray(advTxPower, 1);
                 break;
@@ -224,5 +227,20 @@ public class UidFragment extends Fragment implements SeekBar.OnSeekBarChangeList
                 activity.mMokoService.setAdvTxPower(advTxPowerBytes),
                 activity.mMokoService.setAdvInterval(advIntervalBytes)
         );
+    }
+
+    public class A2bigA extends ReplacementTransformationMethod {
+
+        @Override
+        protected char[] getOriginal() {
+            char[] aa = {'a', 'b', 'c', 'd', 'e', 'f'};
+            return aa;
+        }
+
+        @Override
+        protected char[] getReplacement() {
+            char[] cc = {'A', 'B', 'C', 'D', 'E', 'F'};
+            return cc;
+        }
     }
 }

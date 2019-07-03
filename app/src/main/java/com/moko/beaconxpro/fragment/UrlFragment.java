@@ -93,7 +93,7 @@ public class UrlFragment extends Fragment implements SeekBar.OnSeekBarChangeList
         if (activity.slotData.frameTypeEnum == SlotFrameTypeEnum.NO_DATA) {
             etAdvInterval.setText("10");
             etAdvInterval.setSelection(etAdvInterval.getText().toString().length());
-            sbAdvTxPower.setProgress(127);
+            sbAdvTxPower.setProgress(100);
             sbTxPower.setProgress(6);
         } else {
             int advIntervalProgress = activity.slotData.advInterval / 100;
@@ -102,11 +102,11 @@ public class UrlFragment extends Fragment implements SeekBar.OnSeekBarChangeList
             advIntervalBytes = MokoUtils.toByteArray(activity.slotData.advInterval, 2);
 
             if (activity.slotData.frameTypeEnum == SlotFrameTypeEnum.TLM) {
-                sbAdvTxPower.setProgress(127);
+                sbAdvTxPower.setProgress(100);
                 advTxPowerBytes = MokoUtils.toByteArray(0, 1);
                 tvAdvTxPower.setText(String.format("%ddBm", 0));
             } else {
-                int advTxPowerProgress = activity.slotData.rssi_0m + 127;
+                int advTxPowerProgress = activity.slotData.rssi_0m + 100;
                 sbAdvTxPower.setProgress(advTxPowerProgress);
                 advTxPowerBytes = MokoUtils.toByteArray(activity.slotData.rssi_0m, 1);
                 tvAdvTxPower.setText(String.format("%ddBm", activity.slotData.rssi_0m));
@@ -179,7 +179,7 @@ public class UrlFragment extends Fragment implements SeekBar.OnSeekBarChangeList
     public void upgdateData(int viewId, int progress) {
         switch (viewId) {
             case R.id.sb_adv_tx_power:
-                int advTxPower = progress - 127;
+                int advTxPower = progress - 100;
                 tvAdvTxPower.setText(String.format("%ddBm", advTxPower));
                 advTxPowerBytes = MokoUtils.toByteArray(advTxPower, 1);
                 sbAdvTxPower.setProgress(progress);

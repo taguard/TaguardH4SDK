@@ -25,8 +25,8 @@ public class BeaconXParser {
         BeaconXUID uid = new BeaconXUID();
         int rssi_0m = Integer.parseInt(data.substring(2, 4), 16);
         uid.rangingData = (byte) rssi_0m + "";
-        uid.namespace = data.substring(4, 24);
-        uid.instanceId = data.substring(24, 36);
+        uid.namespace = data.substring(4, 24).toUpperCase();
+        uid.instanceId = data.substring(24, 36).toUpperCase();
         return uid;
     }
 
@@ -81,7 +81,7 @@ public class BeaconXParser {
         BeaconXiBeacon iBeacon = new BeaconXiBeacon();
         int rssi_1m = Integer.parseInt(data.substring(2, 4), 16);
         iBeacon.rangingData = (byte) rssi_1m + "";
-        iBeacon.uuid = data.substring(6, 38);
+        iBeacon.uuid = data.substring(6, 38).toUpperCase();
         iBeacon.major = Integer.parseInt(data.substring(38, 42), 16) + "";
         iBeacon.minor = Integer.parseInt(data.substring(42, 46), 16) + "";
         double distance = MokoUtils.getDistance(rssi, rssi_1m);

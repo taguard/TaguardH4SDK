@@ -17,6 +17,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@id/tv_rssi"
+            android:layout_toLeftOf="@id/tv_connect"
             android:text="N/A"
             android:textColor="@color/black_333333"
             android:textSize="20sp"

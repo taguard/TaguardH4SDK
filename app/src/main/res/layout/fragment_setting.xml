@@ -7,23 +7,22 @@
     android:paddingRight="15dp">
 
     <RelativeLayout
-        android:id="@+id/rl_password"
+        android:id="@+id/rl_reset_facotry"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:visibility="gone">
+        android:layout_height="50dp">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:src="@drawable/modify_password" />
+            android:src="@drawable/reset_factory" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="40dp"
-            android:text="Modify Password"
+            android:text="Factory Reset"
             android:textColor="@color/black_333333"
             android:textSize="15sp" />
 
@@ -42,7 +41,6 @@
             style="@style/divider_line"
             android:layout_alignParentBottom="true" />
     </RelativeLayout>
-
 
     <RelativeLayout
         android:id="@+id/rl_update_firmware"
@@ -81,22 +79,23 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/rl_reset_facotry"
+        android:id="@+id/rl_password"
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_height="50dp"
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:src="@drawable/reset_factory" />
+            android:src="@drawable/modify_password" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="40dp"
-            android:text="Reset Factory"
+            android:text="Modify Password"
             android:textColor="@color/black_333333"
             android:textSize="15sp" />
 
@@ -133,7 +132,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="40dp"
-            android:text="3-axis Accelerometer"
+            android:text="3-axis Sensor"
             android:textColor="@color/black_333333"
             android:textSize="15sp" />
 
