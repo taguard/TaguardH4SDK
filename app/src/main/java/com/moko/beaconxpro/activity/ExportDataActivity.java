@@ -217,7 +217,7 @@ public class ExportDataActivity extends BaseActivity {
                                 int minute1 = value1[4] & 0xff;
                                 int second1 = value1[5] & 0xff;
                                 byte[] tempBytes1 = Arrays.copyOfRange(value1, 6, 8);
-                                float temp1 = MokoUtils.toInt(tempBytes1) * 0.1f;
+                                float temp1 = MokoUtils.byte2short(tempBytes1) * 0.1f;
                                 byte[] humidityBytes1 = Arrays.copyOfRange(value1, 8, 10);
                                 float humidity1 = MokoUtils.toInt(humidityBytes1) * 0.1f;
                                 Calendar calendar1 = Calendar.getInstance();
@@ -248,7 +248,7 @@ public class ExportDataActivity extends BaseActivity {
                                 int minute2 = value2[4] & 0xff;
                                 int second2 = value2[5] & 0xff;
                                 byte[] tempBytes2 = Arrays.copyOfRange(value2, 6, 8);
-                                float temp2 = MokoUtils.toInt(tempBytes2) * 0.1f;
+                                float temp2 = MokoUtils.byte2short(tempBytes2) * 0.1f;
                                 byte[] humidityBytes2 = Arrays.copyOfRange(value2, 8, 10);
                                 float humidity2 = MokoUtils.toInt(humidityBytes2) * 0.1f;
                                 Calendar calendar2 = Calendar.getInstance();
@@ -279,7 +279,7 @@ public class ExportDataActivity extends BaseActivity {
                                 int minute = value[4] & 0xff;
                                 int second = value[5] & 0xff;
                                 byte[] tempBytes = Arrays.copyOfRange(value, 6, 8);
-                                float temp = MokoUtils.toInt(tempBytes) * 0.1f;
+                                float temp = MokoUtils.byte2short(tempBytes) * 0.1f;
                                 byte[] humidityBytes = Arrays.copyOfRange(value, 8, 10);
                                 float humidity = MokoUtils.toInt(humidityBytes) * 0.1f;
                                 Calendar calendar = Calendar.getInstance();
