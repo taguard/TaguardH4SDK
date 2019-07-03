@@ -23,10 +23,10 @@ import java.io.IOException;
  * @ClassPath com.moko.support.log.LogModule
  */
 public class LogModule {
-    private static final String TAG = "mokoBeaconXPlus";
-    private static final String LOG_FILE = "mokoBeaconXPlus.txt";
+    private static final String TAG = "mokoBeaconXPro";
+    private static final String LOG_FILE = "mokoBeaconXPro.txt";
     private static final String TH_FILE = "th.txt";
-    private static final String LOG_FOLDER = "mokoBeaconXPlus";
+    private static final String LOG_FOLDER = "mokoBeaconXPro";
     private static String PATH_LOGCAT;
 
     public static void init(Context context) {

@@ -37,7 +37,7 @@
             android:textSize="15sp" />
     </RelativeLayout>
 
-    <com.moko.beaconxplus.view.WheelView
+    <com.moko.beaconxpro.view.WheelView
         android:id="@+id/wv_storage_time"
         android:layout_width="0dp"
         android:layout_height="182dp"

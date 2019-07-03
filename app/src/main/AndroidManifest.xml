@@ -1,15 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.moko.beaconxplus">
+    package="com.moko.beaconxpro">
 
     <application
-        android:name="com.moko.beaconxplus.BaseApplication"
+        android:name="com.moko.beaconxpro.BaseApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/LaunchActivityTheme">
 
-        <activity android:name="com.moko.beaconxplus.activity.GuideActivity">
+        <activity android:name="com.moko.beaconxpro.activity.GuideActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -17,39 +17,39 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.moko.beaconxplus.activity.MainActivity"
+            android:name="com.moko.beaconxpro.activity.MainActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
 
         <activity
-            android:name=".activity.AboutActivity"
+            android:name="com.moko.beaconxpro.activity.AboutActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
 
         <activity
-            android:name=".activity.DeviceInfoActivity"
+            android:name="com.moko.beaconxpro.activity.DeviceInfoActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".activity.SlotDataActivity"
+            android:name="com.moko.beaconxpro.activity.SlotDataActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".activity.AxisDataActivity"
+            android:name="com.moko.beaconxpro.activity.AxisDataActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".activity.THDataActivity"
+            android:name="com.moko.beaconxpro.activity.THDataActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".activity.ExportDataActivity"
+            android:name="com.moko.beaconxpro.activity.ExportDataActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.moko.beaconxplus.fileprovider"
+            android:authorities="com.moko.beaconxpro.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -57,8 +57,8 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <service android:name="com.moko.beaconxplus.service.MokoService" />
-        <service android:name="com.moko.beaconxplus.service.DfuService" />
+        <service android:name="com.moko.beaconxpro.service.MokoService" />
+        <service android:name="com.moko.beaconxpro.service.DfuService" />
 
     </application>
 
