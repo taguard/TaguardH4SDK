@@ -376,8 +376,17 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                                     if (isModifyPassword) {
                                         isModifyPassword = false;
                                         dismissSyncProgressDialog();
-                                        ToastUtils.showToast(DeviceInfoActivity.this, "Modify successfully!");
-                                        back();
+                                        AlertMessageDialog dialog = new AlertMessageDialog();
+                                        dialog.setMessage("Password changed successfully! Please reconnect the Device.");
+                                        dialog.setCancelGone();
+                                        dialog.setOnAlertConfirmListener(new AlertMessageDialog.OnAlertConfirmListener() {
+                                            @Override
+                                            public void onClick() {
+                                                DeviceInfoActivity.this.setResult(DeviceInfoActivity.this.RESULT_OK);
+                                                back();
+                                            }
+                                        });
+                                        dialog.show(getSupportFragmentManager());
                                     }
                                 }
                             }

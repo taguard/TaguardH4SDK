@@ -394,7 +394,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
             }
         });
         adapter.replaceData(beaconXInfos);
-        tvDeviceNum.setText(String.format("Devices(%d)", beaconXInfos.size()));
+        tvDeviceNum.setText(String.format("DEVICE(%d)", beaconXInfos.size()));
     }
 
     private Animation animation = null;

@@ -63,11 +63,11 @@ public class ModifyPasswordDialog extends BaseDialog {
                     return;
                 }
                 if (TextUtils.isEmpty(newPasswordRe)) {
-                    ToastUtils.showToast(getContext(), "The two passwords differ.");
+                    ToastUtils.showToast(getContext(), "Password do not match! Please try again.");
                     return;
                 }
                 if (!newPasswordRe.equals(newPassword)) {
-                    ToastUtils.showToast(getContext(), "The two passwords differ.");
+                    ToastUtils.showToast(getContext(), "Password do not match! Please try again.");
                     return;
                 }
                 dismiss();

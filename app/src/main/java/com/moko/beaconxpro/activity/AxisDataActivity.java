@@ -124,14 +124,13 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
 
     @Subscribe(threadMode = ThreadMode.POSTING, priority = 200)
     public void onConnectStatusEvent(ConnectStatusEvent event) {
-        EventBus.getDefault().cancelEventDelivery(event);
         final String action = event.getAction();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (MokoConstants.ACTION_CONN_STATUS_DISCONNECTED.equals(action)) {
                     // 设备断开，通知页面更新
-                    back();
+                    finish();
                 }
                 if (MokoConstants.ACTION_DISCOVER_SUCCESS.equals(action)) {
                     // 设备连接成功，通知页面更新

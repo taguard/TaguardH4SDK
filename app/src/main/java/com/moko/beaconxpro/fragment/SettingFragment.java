@@ -208,7 +208,7 @@ public class SettingFragment extends Fragment {
     }
 
     public void setModifyPasswordVisiable(boolean isSupportModifyPassword) {
-        rlPassword.setVisibility(isSupportModifyPassword && !noPassowrd ? View.VISIBLE : View.GONE);
+        rlPassword.setVisibility(isSupportModifyPassword ? View.VISIBLE : View.GONE);
         rlResetFacotry.setVisibility(noPassowrd ? View.GONE : View.VISIBLE);
     }
 
