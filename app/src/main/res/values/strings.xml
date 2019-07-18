@@ -47,9 +47,8 @@
     <string name="trigger_tapped_tips_1">*The device will always advertise if the button %s tapped.</string>
     <string name="trigger_tapped_tips_2">*The device will %1$s advertising for %2$s if the button %3$s tapped.</string>
     <string name="trigger_tapped_tips_3">*The device will always stop advertising if the button %s tapped.</string>
-    <string name="trigger_moved_tips_always">*Please set the 3-axis Accelerometer parameters to Scale = ±4g and data rate = 25hz. Other values will cause the trigger effect to be inaccurate.</string>
     <string name="trigger_moved_tips_1">*The device will always %s if the device moves.</string>
-    <string name="trigger_moved_tips_2">*The device will %1$s advertising after a static period of %2$s and it starts advertising again if the device moves.</string>
+    <string name="trigger_moved_tips_2">*The device will %1$s advertising after a static period of %2$s and it %3$s advertising again if the device moves.</string>
     <string-array name="slot_type_no_sensor">
         <item>TLM</item>
         <item>UID</item>

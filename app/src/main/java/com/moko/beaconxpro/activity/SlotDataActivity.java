@@ -217,7 +217,7 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
                 }
                 byte[] movesBytes = Arrays.copyOfRange(triggerData, 0, 2);
                 movesFragment.setData(MokoUtils.toInt(movesBytes));
-                movesFragment.setStart((triggerData[2] & 0xff) == 1);
+                movesFragment.setStart((triggerData[2] & 0xff) == 2);
                 break;
         }
     }

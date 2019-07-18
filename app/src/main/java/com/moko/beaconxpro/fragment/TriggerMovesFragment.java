@@ -66,6 +66,8 @@ public class TriggerMovesFragment extends Fragment implements RadioGroup.OnCheck
         View view = inflater.inflate(R.layout.fragment_trigger_moves, container, false);
         ButterKnife.bind(this, view);
         activity = (SlotDataActivity) getActivity();
+        rgMoves.setOnCheckedChangeListener(this);
+        tvTriggerTips.setText(getString(R.string.trigger_moved_tips_1, "advertise"));
         if (mDuration == 0) {
             if (mIsStart) {
                 rbAlwaysStart.setChecked(true);
@@ -83,8 +85,6 @@ public class TriggerMovesFragment extends Fragment implements RadioGroup.OnCheck
                 etStop.setSelection((mDuration + "").length());
             }
         }
-        rgMoves.setOnCheckedChangeListener(this);
-        tvTriggerTips.setText(getString(R.string.trigger_moved_tips_1, "advertise"));
         etStart.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -101,7 +101,7 @@ public class TriggerMovesFragment extends Fragment implements RadioGroup.OnCheck
                 String duration = s.toString();
                 if (rbStartAdvertising.isChecked() && !TextUtils.isEmpty(duration)) {
                     mDuration = Integer.parseInt(duration);
-                    tvTriggerTips.setText(getString(R.string.trigger_moved_tips_2, "start", String.format("%ds", mDuration)));
+                    tvTriggerTips.setText(getString(R.string.trigger_moved_tips_2, "start", String.format("%ds", mDuration), "stops"));
                 }
             }
         });
@@ -121,7 +121,7 @@ public class TriggerMovesFragment extends Fragment implements RadioGroup.OnCheck
                 String duration = s.toString();
                 if (rbStopAdvertising.isChecked() && !TextUtils.isEmpty(duration)) {
                     mDuration = Integer.parseInt(duration);
-                    tvTriggerTips.setText(getString(R.string.trigger_moved_tips_2, "stop", String.format("%ds", mDuration)));
+                    tvTriggerTips.setText(getString(R.string.trigger_moved_tips_2, "stop", String.format("%ds", mDuration), "starts"));
                 }
             }
         });
@@ -171,7 +171,7 @@ public class TriggerMovesFragment extends Fragment implements RadioGroup.OnCheck
                 } else {
                     mDuration = Integer.parseInt(startDuration);
                 }
-                tvTriggerTips.setText(getString(R.string.trigger_moved_tips_2, "start", String.format("%ds", mDuration)));
+                tvTriggerTips.setText(getString(R.string.trigger_moved_tips_2, "start", String.format("%ds", mDuration), "stops"));
                 break;
             case R.id.rb_stop_advertising:
                 mIsStart = false;
@@ -181,7 +181,7 @@ public class TriggerMovesFragment extends Fragment implements RadioGroup.OnCheck
                 } else {
                     mDuration = Integer.parseInt(stopDuration);
                 }
-                tvTriggerTips.setText(getString(R.string.trigger_moved_tips_2, "stop", String.format("%ds", mDuration)));
+                tvTriggerTips.setText(getString(R.string.trigger_moved_tips_2, "stop", String.format("%ds", mDuration), "starts"));
                 break;
         }
     }
