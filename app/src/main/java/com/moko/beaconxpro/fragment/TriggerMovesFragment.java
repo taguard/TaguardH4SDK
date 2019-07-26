@@ -66,25 +66,25 @@ public class TriggerMovesFragment extends Fragment implements RadioGroup.OnCheck
         View view = inflater.inflate(R.layout.fragment_trigger_moves, container, false);
         ButterKnife.bind(this, view);
         activity = (SlotDataActivity) getActivity();
-        rgMoves.setOnCheckedChangeListener(this);
         tvTriggerTips.setText(getString(R.string.trigger_moved_tips_1, "advertise"));
         if (mDuration == 0) {
-            if (mIsStart) {
+            if (!mIsStart) {
                 rbAlwaysStart.setChecked(true);
-                etStart.setText(mDuration + "");
-                etStart.setSelection((mDuration + "").length());
             }
         } else {
             if (mIsStart) {
                 rbStartAdvertising.setChecked(true);
-                etStart.setText(mDuration + "");
-                etStart.setSelection((mDuration + "").length());
-            } else {
-                rbStopAdvertising.setChecked(true);
                 etStop.setText(mDuration + "");
                 etStop.setSelection((mDuration + "").length());
+                tvTriggerTips.setText(getString(R.string.trigger_moved_tips_2, "start", String.format("%ds", mDuration), "stops"));
+            } else {
+                rbStopAdvertising.setChecked(true);
+                etStart.setText(mDuration + "");
+                etStart.setSelection((mDuration + "").length());
+                tvTriggerTips.setText(getString(R.string.trigger_moved_tips_2, "stop", String.format("%ds", mDuration), "starts"));
             }
         }
+        rgMoves.setOnCheckedChangeListener(this);
         etStart.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -99,9 +99,9 @@ public class TriggerMovesFragment extends Fragment implements RadioGroup.OnCheck
             @Override
             public void afterTextChanged(Editable s) {
                 String duration = s.toString();
-                if (rbStartAdvertising.isChecked() && !TextUtils.isEmpty(duration)) {
+                if (rbStopAdvertising.isChecked() && !TextUtils.isEmpty(duration)) {
                     mDuration = Integer.parseInt(duration);
-                    tvTriggerTips.setText(getString(R.string.trigger_moved_tips_2, "start", String.format("%ds", mDuration), "stops"));
+                    tvTriggerTips.setText(getString(R.string.trigger_moved_tips_2, "stop", String.format("%ds", mDuration), "starts"));
                 }
             }
         });
@@ -119,9 +119,9 @@ public class TriggerMovesFragment extends Fragment implements RadioGroup.OnCheck
             @Override
             public void afterTextChanged(Editable s) {
                 String duration = s.toString();
-                if (rbStopAdvertising.isChecked() && !TextUtils.isEmpty(duration)) {
+                if (rbStartAdvertising.isChecked() && !TextUtils.isEmpty(duration)) {
                     mDuration = Integer.parseInt(duration);
-                    tvTriggerTips.setText(getString(R.string.trigger_moved_tips_2, "stop", String.format("%ds", mDuration), "starts"));
+                    tvTriggerTips.setText(getString(R.string.trigger_moved_tips_2, "start", String.format("%ds", mDuration), "stops"));
                 }
             }
         });
@@ -160,12 +160,13 @@ public class TriggerMovesFragment extends Fragment implements RadioGroup.OnCheck
     public void onCheckedChanged(RadioGroup group, int checkedId) {
         switch (checkedId) {
             case R.id.rb_always_start:
-                mIsStart = true;
+                mIsStart = false;
+                mDuration = 0;
                 tvTriggerTips.setText(getString(R.string.trigger_moved_tips_1, "advertise"));
                 break;
             case R.id.rb_start_advertising:
                 mIsStart = true;
-                String startDuration = etStart.getText().toString();
+                String startDuration = etStop.getText().toString();
                 if (TextUtils.isEmpty(startDuration)) {
                     mDuration = 0;
                 } else {

@@ -534,9 +534,11 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
                         switch (triggerTypeSelected) {
                             case 0:
                                 tappedFragment.setIsDouble(true);
+                                tappedFragment.updateTips();
                                 break;
                             case 1:
                                 tappedFragment.setIsDouble(false);
+                                tappedFragment.updateTips();
                                 break;
                             case 2:
                                 if (deviceType != 1) {

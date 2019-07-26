@@ -135,11 +135,11 @@ public class WriteConfigTask extends OrderTask {
         switch (triggerType) {
             case 3:
                 value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_TRIGGER_DATA.getConfigKey()) + "0004"
-                        + "03" + String.format("%04X", params) + (isStart ? "02" : "01");
+                        + "03" + String.format("%04X", params) + (isStart ? "01" : "02");
                 break;
             case 4:
                 value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_TRIGGER_DATA.getConfigKey()) + "0004"
-                        + "04" + String.format("%04X", params) + (isStart ? "02" : "01");
+                        + "04" + String.format("%04X", params) + (isStart ? "01" : "02");
                 break;
             case 5:
                 value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_TRIGGER_DATA.getConfigKey()) + "0004"

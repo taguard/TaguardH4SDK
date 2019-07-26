@@ -69,8 +69,6 @@ public class TriggerTappedFragment extends Fragment implements RadioGroup.OnChec
         if (mDuration == 0) {
             if (mIsStart) {
                 rbAlwaysStart.setChecked(true);
-                etStart.setText(mDuration + "");
-                etStart.setSelection((mDuration + "").length());
             }
         } else {
             if (mIsStart) {
@@ -84,15 +82,7 @@ public class TriggerTappedFragment extends Fragment implements RadioGroup.OnChec
             }
         }
         rgTapped.setOnCheckedChangeListener(this);
-        if (rbAlwaysStart.isChecked()) {
-            tvTriggerTips.setText(getString(R.string.trigger_tapped_tips_1, mIsDouble ? "double" : "triple"));
-        } else if (rbStartAdvertising.isChecked()) {
-            mDuration = Integer.parseInt(etStart.getText().toString());
-            tvTriggerTips.setText(getString(R.string.trigger_tapped_tips_2, "start", String.format("%ds", mDuration), mIsDouble ? "double" : "triple"));
-        } else {
-            mDuration = Integer.parseInt(etStop.getText().toString());
-            tvTriggerTips.setText(getString(R.string.trigger_tapped_tips_2, "stop", String.format("%ds", mDuration), mIsDouble ? "double" : "triple"));
-        }
+        updateTips();
         etStart.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -134,6 +124,18 @@ public class TriggerTappedFragment extends Fragment implements RadioGroup.OnChec
             }
         });
         return view;
+    }
+
+    public void updateTips() {
+        if (rbAlwaysStart.isChecked()) {
+            tvTriggerTips.setText(getString(R.string.trigger_tapped_tips_1, mIsDouble ? "double" : "triple"));
+        } else if (rbStartAdvertising.isChecked()) {
+            mDuration = Integer.parseInt(etStart.getText().toString());
+            tvTriggerTips.setText(getString(R.string.trigger_tapped_tips_2, "start", String.format("%ds", mDuration), mIsDouble ? "double" : "triple"));
+        } else {
+            mDuration = Integer.parseInt(etStop.getText().toString());
+            tvTriggerTips.setText(getString(R.string.trigger_tapped_tips_2, "stop", String.format("%ds", mDuration), mIsDouble ? "double" : "triple"));
+        }
     }
 
     @Override
@@ -184,7 +186,7 @@ public class TriggerTappedFragment extends Fragment implements RadioGroup.OnChec
                 break;
             case R.id.rb_stop_advertising:
                 mIsStart = false;
-                String stopDuration = etStart.getText().toString();
+                String stopDuration = etStop.getText().toString();
                 if (TextUtils.isEmpty(stopDuration)) {
                     mDuration = 0;
                 } else {
