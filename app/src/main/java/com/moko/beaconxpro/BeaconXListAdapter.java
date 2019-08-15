@@ -40,7 +40,7 @@ public class BeaconXListAdapter extends BaseQuickAdapter<BeaconXInfo, BaseViewHo
         helper.setText(R.id.tv_conn_state, item.connectState < 0 ? "N/A" : item.connectState == 0 ? "Unconnectable" : "Connectable");
         helper.setText(R.id.tv_lock_state, item.lockState < 0 ? "Lock State:N/A" : String.format("Lock State:0x%02x", item.lockState));
         helper.setText(R.id.tv_interval_time, item.intervalTime == 0 ? "<->N/A" : String.format("<->%dms", item.intervalTime));
-        helper.setText(R.id.tv_battery, item.battery < 0 ? "N/A" : String.format("%d%%", item.battery));
+        helper.setText(R.id.tv_battery, item.battery < 0 ? "N/A" : String.format("%dmV", item.battery));
         helper.addOnClickListener(R.id.tv_connect);
         LinearLayout parent = helper.getView(R.id.ll_data);
         parent.removeAllViews();
@@ -85,22 +85,6 @@ public class BeaconXListAdapter extends BaseQuickAdapter<BeaconXInfo, BaseViewHo
             }
             if (validData.type == BeaconXInfo.VALID_DATA_FRAME_TYPE_INFO) {
                 helper.setText(R.id.tv_tx_power, String.format("Tx Power:%ddBm", validData.txPower));
-                int battery = item.battery;
-                if (battery >= 0 && battery <= 20) {
-                    helper.setImageResource(R.id.iv_battery, R.drawable.battery_5);
-                }
-                if (battery > 20 && battery <= 40) {
-                    helper.setImageResource(R.id.iv_battery, R.drawable.battery_4);
-                }
-                if (battery > 40 && battery <= 60) {
-                    helper.setImageResource(R.id.iv_battery, R.drawable.battery_3);
-                }
-                if (battery > 60 && battery <= 80) {
-                    helper.setImageResource(R.id.iv_battery, R.drawable.battery_2);
-                }
-                if (battery > 80 && battery <= 100) {
-                    helper.setImageResource(R.id.iv_battery, R.drawable.battery_1);
-                }
             }
         }
     }

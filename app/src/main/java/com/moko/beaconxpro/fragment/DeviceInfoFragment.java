@@ -219,7 +219,7 @@ public class DeviceInfoFragment extends Fragment implements SeekBar.OnSeekBarCha
         String deviceNameHex = MokoUtils.string2Hex(deviceName);
         String deviceNameParamsHex = activity.slotData.frameTypeEnum.getFrameType() + deviceNameHex;
         deviceInfoParamsBytes = MokoUtils.hex2bytes(deviceNameParamsHex);
-        advIntervalBytes = MokoUtils.toByteArray(advIntervalInt, 2);
+        advIntervalBytes = MokoUtils.toByteArray(advIntervalInt * 100, 2);
         return true;
     }
 

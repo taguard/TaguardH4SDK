@@ -282,7 +282,7 @@ public class IBeaconFragment extends Fragment implements SeekBar.OnSeekBarChange
         uuidHex = uuidStr;
         String iBeaconParamsHex = SlotFrameTypeEnum.IBEACON.getFrameType() + uuidHex + major + minor;
         iBeaconParamsBytes = MokoUtils.hex2bytes(iBeaconParamsHex);
-        advIntervalBytes = MokoUtils.toByteArray(advIntervalInt, 2);
+        advIntervalBytes = MokoUtils.toByteArray(advIntervalInt * 100, 2);
         return true;
     }
 

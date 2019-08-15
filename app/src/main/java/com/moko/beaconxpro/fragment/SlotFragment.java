@@ -353,7 +353,7 @@ public class SlotFragment extends Fragment {
 
     public void setTriggerData(byte[] value) {
         triggerType = value[4] & 0xff;
-        if (deviceType != 0) {
+        if (triggerType != 0) {
             triggerData = MokoUtils.bytesToHexString(Arrays.copyOfRange(value, 5, value.length));
         }
     }

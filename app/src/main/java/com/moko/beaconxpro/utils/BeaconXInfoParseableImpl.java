@@ -24,9 +24,6 @@ import no.nordicsemi.android.support.v18.scanner.ScanResult;
  */
 public class BeaconXInfoParseableImpl implements DeviceInfoParseable<BeaconXInfo> {
     private HashMap<String, BeaconXInfo> beaconXInfoHashMap;
-    private int battery = -1;
-    private int connectState = -1;
-    private int lockState = -1;
 
     public BeaconXInfoParseableImpl() {
         this.beaconXInfoHashMap = new HashMap<>();
@@ -34,6 +31,9 @@ public class BeaconXInfoParseableImpl implements DeviceInfoParseable<BeaconXInfo
 
     @Override
     public BeaconXInfo parseDeviceInfo(DeviceInfo deviceInfo) {
+        int battery = -1;
+        int connectState = -1;
+        int lockState = -1;
         ScanResult result = deviceInfo.scanResult;
         ScanRecord record = result.getScanRecord();
         Map<ParcelUuid, byte[]> map = record.getServiceData();
@@ -73,14 +73,7 @@ public class BeaconXInfoParseableImpl implements DeviceInfoParseable<BeaconXInfo
                         switch (bytes[0] & 0xff) {
                             case BeaconXInfo.VALID_DATA_FRAME_TYPE_INFO:
                                 type = BeaconXInfo.VALID_DATA_FRAME_TYPE_INFO;
-                                int batteryValue = MokoUtils.toInt(Arrays.copyOfRange(bytes, 3, 5));
-                                if (batteryValue > 3000) {
-                                    battery = 100;
-                                } else if (batteryValue < 2000) {
-                                    battery = 0;
-                                } else {
-                                    battery = (batteryValue - 2000) * 100 / 1000;
-                                }
+                                battery = MokoUtils.toInt(Arrays.copyOfRange(bytes, 3, 5));
                                 lockState = bytes[5] & 0xff;
                                 connectState = bytes[6] & 0xff;
                                 // 40000a0d0d0001ff02030405063001

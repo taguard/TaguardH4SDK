@@ -213,7 +213,7 @@ public class UidFragment extends Fragment implements SeekBar.OnSeekBarChangeList
         }
         String uidParamsStr = activity.slotData.frameTypeEnum.getFrameType() + namespace + instanceId;
         uidParamsBytes = MokoUtils.hex2bytes(uidParamsStr);
-        advIntervalBytes = MokoUtils.toByteArray(advIntervalInt, 2);
+        advIntervalBytes = MokoUtils.toByteArray(advIntervalInt * 100, 2);
         return true;
     }
 

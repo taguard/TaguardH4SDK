@@ -187,7 +187,7 @@ public class THFragment extends Fragment implements SeekBar.OnSeekBarChangeListe
             ToastUtils.showToast(activity, "The Adv Interval range is 1~100");
             return false;
         }
-        advIntervalBytes = MokoUtils.toByteArray(advIntervalInt, 2);
+        advIntervalBytes = MokoUtils.toByteArray(advIntervalInt * 100, 2);
         return true;
     }
 

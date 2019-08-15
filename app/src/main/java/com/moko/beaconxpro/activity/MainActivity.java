@@ -84,6 +84,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
     private HashMap<String, BeaconXInfo> beaconXInfoHashMap;
     private ArrayList<BeaconXInfo> beaconXInfos;
     private BeaconXListAdapter adapter;
+    private boolean mInputPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,6 +161,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                             if ("00".equals(valueStr)) {
                                 dismissLoadingMessageDialog();
                                 if (TextUtils.isEmpty(unLockResponse)) {
+                                    mInputPassword = true;
                                     MokoSupport.getInstance().disConnectBle();
                                     // 弹出密码框
                                     final PasswordDialog dialog = new PasswordDialog(MainActivity.this);
@@ -244,6 +246,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                             if (animation != null) {
                                 mMokoService.mHandler.removeMessages(0);
                                 MokoSupport.getInstance().stopScanDevice();
+                                onStopScan();
                             }
                             break;
                         case BluetoothAdapter.STATE_ON:
@@ -267,7 +270,8 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
             dismissLoadingProgressDialog();
             dismissLoadingMessageDialog();
             ToastUtils.showToast(MainActivity.this, "Disconnected");
-            if (animation == null) {
+            if (!mInputPassword && animation == null) {
+                mInputPassword = false;
                 startScan();
             }
         }

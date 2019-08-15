@@ -281,7 +281,7 @@ public class UrlFragment extends Fragment implements SeekBar.OnSeekBarChangeList
         }
         String urlParamsHex = activity.slotData.frameTypeEnum.getFrameType() + mUrlSchemeHex + urlContentHex;
         urlParamsBytes = MokoUtils.hex2bytes(urlParamsHex);
-        advIntervalBytes = MokoUtils.toByteArray(advIntervalInt, 2);
+        advIntervalBytes = MokoUtils.toByteArray(advIntervalInt * 100, 2);
         return true;
     }
 
