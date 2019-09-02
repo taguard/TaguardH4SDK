@@ -116,15 +116,15 @@ public class WriteConfigTask extends OrderTask {
 
     public void setTriggerData(int triggerType, boolean isAbove, int params, boolean isStart) {
         String value = "00";
+        byte[] paramsBytes = MokoUtils.short2Byte((short) params);
         switch (triggerType) {
             case 1:
-                byte[] paramsBytes = MokoUtils.short2Byte((short) params);
                 value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_TRIGGER_DATA.getConfigKey()) + "0005"
                         + "01" + (isAbove ? "01" : "02") + MokoUtils.bytesToHexString(paramsBytes) + (isStart ? "01" : "02");
                 break;
             case 2:
                 value = "EA" + MokoUtils.int2HexString(ConfigKeyEnum.SET_TRIGGER_DATA.getConfigKey()) + "0005"
-                        + "02" + (isAbove ? "01" : "02") + String.format("%04X", params) + (isStart ? "01" : "02");
+                        + "02" + (isAbove ? "01" : "02") + MokoUtils.bytesToHexString(paramsBytes) + (isStart ? "01" : "02");
                 break;
         }
         data = MokoUtils.hex2bytes(value);

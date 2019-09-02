@@ -203,9 +203,9 @@ public class TriggerMovesFragment extends Fragment implements RadioGroup.OnCheck
     public int getData() {
         String duration = "";
         if (rbStartAdvertising.isChecked()) {
-            duration = etStart.getText().toString();
-        } else if (rbStopAdvertising.isChecked()) {
             duration = etStop.getText().toString();
+        } else if (rbStopAdvertising.isChecked()) {
+            duration = etStart.getText().toString();
         } else {
             duration = "0";
         }

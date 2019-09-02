@@ -461,7 +461,7 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
                         orderTask = mMokoService.setTHTrigger(triggerType, tempFragment.getTempType(), tempFragment.getData(), tempFragment.isStart());
                         break;
                     case 2:
-                        orderTask = mMokoService.setTHTrigger(triggerType, humidityFragment.getHumidityType(), tempFragment.getData(), tempFragment.isStart());
+                        orderTask = mMokoService.setTHTrigger(triggerType, humidityFragment.getHumidityType(), humidityFragment.getData(), humidityFragment.isStart());
                         break;
                     case 3:
                     case 4:
