@@ -17,7 +17,7 @@
             android:layout_toLeftOf="@id/tv_storage_temp"
             android:text="Temperature"
             android:textColor="@color/black_333333"
-            android:textSize="15sp" />
+            android:textSize="10sp" />
 
         <TextView
             android:id="@+id/storage_temp_unit"
@@ -59,7 +59,7 @@
             android:layout_toLeftOf="@id/tv_storage_humidity"
             android:text="Humidity"
             android:textColor="@color/black_333333"
-            android:textSize="15sp" />
+            android:textSize="10sp" />
 
         <TextView
             android:id="@+id/storage_humidity_unit"

@@ -271,8 +271,9 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
             dismissLoadingMessageDialog();
             ToastUtils.showToast(MainActivity.this, "Disconnected");
             if (!mInputPassword && animation == null) {
-                mInputPassword = false;
                 startScan();
+            } else {
+                mInputPassword = false;
             }
         }
         if (MokoConstants.ACTION_DISCOVER_SUCCESS.equals(action)) {
@@ -335,6 +336,26 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
     @Override
     public void onStartScan() {
         beaconXInfoHashMap.clear();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (animation != null) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.replaceData(beaconXInfos);
+                            tvDeviceNum.setText(String.format("DEVICE(%d)", beaconXInfos.size()));
+                        }
+                    });
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    updateDevices();
+                }
+            }
+        }).start();
     }
 
     private BeaconXInfoParseableImpl beaconXInfoParseable;
@@ -345,14 +366,12 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
         if (beaconXInfo == null)
             return;
         beaconXInfoHashMap.put(beaconXInfo.mac, beaconXInfo);
-        updateDevices();
     }
 
     @Override
     public void onStopScan() {
         findViewById(R.id.iv_refresh).clearAnimation();
         animation = null;
-        updateDevices();
     }
 
     private void updateDevices() {
@@ -397,8 +416,6 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                 return 0;
             }
         });
-        adapter.replaceData(beaconXInfos);
-        tvDeviceNum.setText(String.format("DEVICE(%d)", beaconXInfos.size()));
     }
 
     private Animation animation = null;
@@ -487,6 +504,8 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
     }
 
     private void startScan() {
+        if (isWindowLocked())
+            return;
         if (!MokoSupport.getInstance().isBluetoothOpen()) {
             // 蓝牙未打开，开启蓝牙
             MokoSupport.getInstance().enableBluetooth();

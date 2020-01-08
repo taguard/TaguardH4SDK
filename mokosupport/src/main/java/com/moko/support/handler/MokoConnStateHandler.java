@@ -81,15 +81,15 @@ public class MokoConnStateHandler extends BluetoothGattCallback {
     public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
         super.onCharacteristicWrite(gatt, characteristic, status);
         LogModule.d("onCharacteristicWrite");
-        LogModule.e("app to device : " + MokoUtils.bytesToHexString(characteristic.getValue()));
+        LogModule.e("device to app : " + MokoUtils.bytesToHexString(characteristic.getValue()));
         mMokoResponseCallback.onCharacteristicWrite(characteristic.getValue());
     }
 
     @Override
     public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
         super.onCharacteristicRead(gatt, characteristic, status);
-        LogModule.d("onCharacteristicWrite");
-        LogModule.e("app to device : " + MokoUtils.bytesToHexString(characteristic.getValue()));
+        LogModule.d("onCharacteristicRead");
+        LogModule.e("device to app : " + MokoUtils.bytesToHexString(characteristic.getValue()));
         mMokoResponseCallback.onCharacteristicRead(characteristic.getValue());
     }
 

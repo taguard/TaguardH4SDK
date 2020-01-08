@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="3-Axis"
+            android:text="3-axis"
             android:textColor="@color/white_ffffff"
             android:textSize="17sp" />
 
@@ -88,9 +88,9 @@
                     android:layout_height="wrap_content"
                     android:layout_alignTop="@id/ll_sync"
                     android:layout_alignBottom="@id/ll_sync"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="5dp"
                     android:layout_toRightOf="@id/ll_sync"
-                    android:text="3-Axis Accelerometer Data"
+                    android:text="3-axis Accelerometer Data"
                     android:textColor="@color/black_333333"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -147,7 +147,7 @@
                     android:drawableLeft="@drawable/base_params"
                     android:drawablePadding="10dp"
                     android:gravity="center"
-                    android:text="3-Axis Parameters"
+                    android:text="3-axis Parameters"
                     android:textColor="@color/black_333333"
                     android:textSize="15sp"
                     android:textStyle="bold" />

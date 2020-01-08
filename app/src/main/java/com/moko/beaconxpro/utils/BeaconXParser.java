@@ -83,7 +83,7 @@ public class BeaconXParser {
         iBeacon.uuid = data.substring(6, 38).toUpperCase();
         iBeacon.major = Integer.parseInt(data.substring(38, 42), 16) + "";
         iBeacon.minor = Integer.parseInt(data.substring(42, 46), 16) + "";
-        double distance = MokoUtils.getDistance(rssi, rssi_1m);
+        double distance = MokoUtils.getDistance(rssi, Math.abs((byte) rssi_1m));
         String distanceDesc = "Unknown";
         if (distance <= 1.0) {
             distanceDesc = "Immediate";

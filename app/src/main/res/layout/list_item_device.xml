@@ -16,8 +16,8 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
-            android:layout_toRightOf="@id/tv_rssi"
             android:layout_toLeftOf="@id/tv_connect"
+            android:layout_toRightOf="@id/tv_rssi"
             android:text="N/A"
             android:textColor="@color/black_333333"
             android:textSize="20sp"
@@ -27,6 +27,7 @@
             android:id="@+id/tv_rssi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_marginTop="5dp"
             android:drawableTop="@drawable/rssi"
             android:drawablePadding="5dp"
@@ -58,14 +59,15 @@
             android:id="@+id/iv_battery"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="-5dp"
+            android:layout_marginLeft="-2dp"
+            android:layout_marginTop="-4dp"
             android:src="@drawable/battery_1" />
 
         <TextView
             android:id="@+id/tv_battery"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/iv_battery"
+            android:layout_alignBaseline="@id/tv_tx_power"
             android:text=""
             android:textColor="@color/grey_666666"
             android:textSize="10sp" />
@@ -108,7 +110,7 @@
             android:id="@+id/tv_interval_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tv_conn_state"
+            android:layout_alignBaseline="@id/tv_tx_power"
             android:layout_alignParentRight="true"
             android:layout_marginTop="5dp"
             android:text=""
@@ -122,6 +124,7 @@
             android:layout_alignParentRight="true"
             android:includeFontPadding="false"
             android:text="N/A"
+            android:textSize="14sp"
             android:textColor="@color/grey_666666" />
     </RelativeLayout>
 
