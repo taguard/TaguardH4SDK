@@ -85,11 +85,11 @@ public class BeaconXParser {
         iBeacon.minor = Integer.parseInt(data.substring(42, 46), 16) + "";
         double distance = MokoUtils.getDistance(rssi, Math.abs((byte) rssi_1m));
         String distanceDesc = "Unknown";
-        if (distance <= 1.0) {
+        if (distance <= 0.1) {
             distanceDesc = "Immediate";
-        } else if (distance > 1.0 && distance <= 3.0) {
+        } else if (distance > 0.1 && distance <= 1.0) {
             distanceDesc = "Near";
-        } else if (distance > 3.0) {
+        } else if (distance > 1.0) {
             distanceDesc = "Far";
         }
         iBeacon.distanceDesc = distanceDesc;

@@ -426,6 +426,8 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_refresh:
+                if (isWindowLocked())
+                    return;
                 if (!MokoSupport.getInstance().isBluetoothOpen()) {
                     // 蓝牙未打开，开启蓝牙
                     MokoSupport.getInstance().enableBluetooth();
@@ -472,6 +474,8 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                             rl_filter.setVisibility(View.GONE);
                             rl_edit_filter.setVisibility(View.VISIBLE);
                         }
+                        if (isWindowLocked())
+                            return;
                         if (animation == null) {
                             startScan();
                         }
@@ -480,6 +484,8 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                 scanFilterDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
+                        if (isWindowLocked())
+                            return;
                         if (animation == null) {
                             startScan();
                         }
@@ -496,6 +502,8 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                 rl_edit_filter.setVisibility(View.VISIBLE);
                 filterName = "";
                 filterRssi = -100;
+                if (isWindowLocked())
+                    return;
                 if (animation == null) {
                     startScan();
                 }
@@ -504,8 +512,6 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
     }
 
     private void startScan() {
-        if (isWindowLocked())
-            return;
         if (!MokoSupport.getInstance().isBluetoothOpen()) {
             // 蓝牙未打开，开启蓝牙
             MokoSupport.getInstance().enableBluetooth();
