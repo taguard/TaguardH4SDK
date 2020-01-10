@@ -121,21 +121,24 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1.3"
                         android:gravity="center"
-                        android:text="Time" />
+                        android:text="Time"
+                        android:textSize="11sp" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1.0"
                         android:gravity="center"
-                        android:text="Temperature(℃)" />
+                        android:text="Temperature(℃)"
+                        android:textSize="11sp" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1.0"
                         android:gravity="center"
-                        android:text="Humidity(%)" />
+                        android:text="Humidity(%)"
+                        android:textSize="11sp" />
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>
