@@ -135,6 +135,7 @@ public class MokoSupport implements MokoResponseCallback {
         }
         if (isConnDevice(context, address)) {
             LogModule.w("connDevice: 设备已连接");
+            disConnectBle();
             return;
         }
         final MokoConnStateHandler gattCallback = MokoConnStateHandler.getInstance();

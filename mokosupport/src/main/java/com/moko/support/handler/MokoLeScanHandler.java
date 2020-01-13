@@ -1,7 +1,6 @@
 package com.moko.support.handler;
 
 import android.bluetooth.BluetoothDevice;
-import android.text.TextUtils;
 
 import com.moko.support.callback.MokoScanDeviceCallback;
 import com.moko.support.entity.DeviceInfo;
@@ -33,7 +32,7 @@ public class MokoLeScanHandler extends ScanCallback {
                 return;
             }
             DeviceInfo deviceInfo = new DeviceInfo();
-            deviceInfo.name = device.getName();
+            deviceInfo.name = result.getScanRecord().getDeviceName();
             deviceInfo.rssi = rssi;
             deviceInfo.mac = device.getAddress();
             String scanRecordStr = MokoUtils.bytesToHexString(scanRecord);

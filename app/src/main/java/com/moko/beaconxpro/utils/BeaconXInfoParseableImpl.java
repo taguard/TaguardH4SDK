@@ -2,6 +2,7 @@ package com.moko.beaconxpro.utils;
 
 import android.os.ParcelUuid;
 import android.os.SystemClock;
+import android.text.TextUtils;
 
 import com.moko.beaconxpro.entity.BeaconXInfo;
 import com.moko.support.entity.DeviceInfo;
@@ -104,7 +105,9 @@ public class BeaconXInfoParseableImpl implements DeviceInfoParseable<BeaconXInfo
         BeaconXInfo beaconXInfo;
         if (beaconXInfoHashMap.containsKey(deviceInfo.mac)) {
             beaconXInfo = beaconXInfoHashMap.get(deviceInfo.mac);
-            beaconXInfo.name = deviceInfo.name;
+            if (!TextUtils.isEmpty(deviceInfo.name)) {
+                beaconXInfo.name = deviceInfo.name;
+            }
             beaconXInfo.rssi = deviceInfo.rssi;
             if (battery >= 0) {
                 beaconXInfo.battery = battery;

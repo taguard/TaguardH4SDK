@@ -180,8 +180,13 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                                                 mMokoService.mHandler.removeMessages(0);
                                                 MokoSupport.getInstance().stopScanDevice();
                                             }
-                                            mMokoService.connectBluetoothDevice(mSelectedBeaconXMac);
                                             showLoadingProgressDialog();
+                                            ivRefresh.postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    mMokoService.connectBluetoothDevice(mSelectedBeaconXMac);
+                                                }
+                                            }, 2000);
                                         }
 
                                         @Override
@@ -269,8 +274,8 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
             // 设备断开，通知页面更新
             dismissLoadingProgressDialog();
             dismissLoadingMessageDialog();
-            ToastUtils.showToast(MainActivity.this, "Disconnected");
             if (!mInputPassword && animation == null) {
+                ToastUtils.showToast(MainActivity.this, "Disconnected");
                 startScan();
             } else {
                 mInputPassword = false;
@@ -581,15 +586,20 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
             MokoSupport.getInstance().enableBluetooth();
             return;
         }
-        BeaconXInfo beaconXInfo = (BeaconXInfo) adapter.getItem(position);
+        final BeaconXInfo beaconXInfo = (BeaconXInfo) adapter.getItem(position);
         if (beaconXInfo != null && !isFinishing()) {
             if (animation != null) {
                 mMokoService.mHandler.removeMessages(0);
                 MokoSupport.getInstance().stopScanDevice();
             }
-            mMokoService.connectBluetoothDevice(beaconXInfo.mac);
             mSelectedBeaconXMac = beaconXInfo.mac;
             showLoadingProgressDialog();
+            ivRefresh.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mMokoService.connectBluetoothDevice(beaconXInfo.mac);
+                }
+            }, 2000);
         }
     }
 }
