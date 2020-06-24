@@ -57,8 +57,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -164,8 +162,8 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                                 if (TextUtils.isEmpty(unLockResponse)) {
                                     mInputPassword = true;
                                     // 弹出密码框
-                                    final PasswordDialog dialog = new PasswordDialog(MainActivity.this);
-                                    dialog.setData(mSavedPassword);
+                                    PasswordDialog dialog = new PasswordDialog();
+                                    dialog.setPassword(mSavedPassword);
                                     dialog.setOnPasswordClicked(new PasswordDialog.PasswordClickListener() {
                                         @Override
                                         public void onEnsureClicked(String password) {
@@ -192,23 +190,12 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                                         @Override
                                         public void onDismiss() {
                                             unLockResponse = "";
-                                            MokoSupport.getInstance().disConnectBle();
+                                            if (animation == null) {
+                                                startScan();
+                                            }
                                         }
                                     });
-                                    dialog.show();
-                                    Timer timer = new Timer();
-                                    timer.schedule(new TimerTask() {
-
-                                        @Override
-                                        public void run() {
-                                            runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    dialog.showKeyboard();
-                                                }
-                                            });
-                                        }
-                                    }, 200);
+                                    dialog.show(MainActivity.this.getSupportFragmentManager());
                                 } else {
                                     unLockResponse = "";
                                     ToastUtils.showToast(MainActivity.this, "Password error");
