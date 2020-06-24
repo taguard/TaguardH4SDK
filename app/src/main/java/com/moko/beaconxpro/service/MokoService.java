@@ -9,11 +9,9 @@ import android.os.Message;
 import com.moko.beaconxpro.utils.Utils;
 import com.moko.support.MokoConstants;
 import com.moko.support.MokoSupport;
-import com.moko.support.callback.MokoConnStateCallback;
 import com.moko.support.callback.MokoOrderTaskCallback;
 import com.moko.support.entity.ConfigKeyEnum;
 import com.moko.support.entity.SlotEnum;
-import com.moko.support.event.ConnectStatusEvent;
 import com.moko.support.handler.BaseMessageHandler;
 import com.moko.support.log.LogModule;
 import com.moko.support.task.AdvIntervalTask;
@@ -43,8 +41,6 @@ import com.moko.support.task.UnLockTask;
 import com.moko.support.task.WriteConfigTask;
 import com.moko.support.utils.MokoUtils;
 
-import org.greenrobot.eventbus.EventBus;
-
 
 /**
  * @Date 2017/12/7 0007
@@ -52,21 +48,21 @@ import org.greenrobot.eventbus.EventBus;
  * @Description
  * @ClassPath com.moko.beaconxpro.service.MokoService
  */
-public class MokoService extends Service implements MokoConnStateCallback, MokoOrderTaskCallback {
+public class MokoService extends Service implements MokoOrderTaskCallback {
 
-    @Override
-    public void onConnectSuccess() {
-        ConnectStatusEvent connectStatusEvent = new ConnectStatusEvent();
-        connectStatusEvent.setAction(MokoConstants.ACTION_DISCOVER_SUCCESS);
-        EventBus.getDefault().post(connectStatusEvent);
-    }
-
-    @Override
-    public void onDisConnected() {
-        ConnectStatusEvent connectStatusEvent = new ConnectStatusEvent();
-        connectStatusEvent.setAction(MokoConstants.ACTION_CONN_STATUS_DISCONNECTED);
-        EventBus.getDefault().post(connectStatusEvent);
-    }
+//    @Override
+//    public void onConnectSuccess() {
+//        ConnectStatusEvent connectStatusEvent = new ConnectStatusEvent();
+//        connectStatusEvent.setAction(MokoConstants.ACTION_DISCOVER_SUCCESS);
+//        EventBus.getDefault().post(connectStatusEvent);
+//    }
+//
+//    @Override
+//    public void onDisConnected() {
+//        ConnectStatusEvent connectStatusEvent = new ConnectStatusEvent();
+//        connectStatusEvent.setAction(MokoConstants.ACTION_CONN_STATUS_DISCONNECTED);
+//        EventBus.getDefault().post(connectStatusEvent);
+//    }
 
     @Override
     public void onOrderResult(OrderTaskResponse response) {
@@ -95,7 +91,7 @@ public class MokoService extends Service implements MokoConnStateCallback, MokoO
     }
 
     public void connectBluetoothDevice(String address) {
-        MokoSupport.getInstance().connDevice(this, address, this);
+        MokoSupport.getInstance().connDevice(this, address);
     }
 
     /**

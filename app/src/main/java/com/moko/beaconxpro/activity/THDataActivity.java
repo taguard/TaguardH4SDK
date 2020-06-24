@@ -202,7 +202,7 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
 
             if (intent != null) {
                 String action = intent.getAction();
-                if (!BluetoothAdapter.ACTION_STATE_CHANGED.equals(action) && !MokoConstants.ACTION_CURRENT_DATA.equals(action)) {
+                if (!BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
                     abortBroadcast();
                 }
                 if (MokoConstants.ACTION_ORDER_TIMEOUT.equals(action)) {

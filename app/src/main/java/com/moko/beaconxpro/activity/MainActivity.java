@@ -186,7 +186,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                                                 public void run() {
                                                     mMokoService.connectBluetoothDevice(mSelectedBeaconXMac);
                                                 }
-                                            }, 2000);
+                                            }, 500);
                                         }
 
                                         @Override
@@ -293,7 +293,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                             MokoSupport.getInstance().sendOrder(mMokoService.getUnLock());
                         }
                     }
-                }, 1000);
+                }, 500);
 
             } else {
                 MokoSupport.getInstance().disConnectBle();
@@ -595,7 +595,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                 public void run() {
                     mMokoService.connectBluetoothDevice(beaconXInfo.mac);
                 }
-            }, 2000);
+            }, 500);
         }
     }
 }

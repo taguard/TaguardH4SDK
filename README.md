@@ -128,25 +128,7 @@ if (parcelUuid.toString().startsWith("0000feaa")) {
 
 
 ```
-MokoSupport.getInstance().connDevice(context, address, mokoConnStateCallback);
-```
-
-When connecting to the device, context, MAC address and callback interface of connection status (`MokoConnStateCallback`) should be transferred in.
-
-
-```java
-public interface MokoConnStateCallback {
-
-    /**
-     * @Description  Connecting succeeds
-     */
-    void onConnectSuccess();
-
-    /**
-     * @Description  Disconnect
-     */
-    void onDisConnected();
-}
+MokoSupport.getInstance().connDevice(context, address);
 ```
 
 "Demo Project" implements callback interface in Service. It uses `EventBus` to notify activity after receiving the status, and send and receive data after connecting to the device whit `broadcast`
