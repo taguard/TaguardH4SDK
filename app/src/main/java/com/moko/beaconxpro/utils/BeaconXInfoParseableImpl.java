@@ -53,14 +53,20 @@ public class BeaconXInfoParseableImpl implements DeviceInfoParseable<BeaconXInfo
                     if (bytes != null) {
                         switch (bytes[0] & 0xff) {
                             case BeaconXInfo.VALID_DATA_FRAME_TYPE_UID:
+                                if (bytes.length != 20)
+                                    return null;
                                 type = BeaconXInfo.VALID_DATA_FRAME_TYPE_UID;
                                 // 00ee0102030405060708090a0102030405060000
                                 break;
                             case BeaconXInfo.VALID_DATA_FRAME_TYPE_URL:
+                                if (bytes.length < 4 || bytes.length > 20)
+                                    return null;
                                 type = BeaconXInfo.VALID_DATA_FRAME_TYPE_URL;
                                 // 100c0141424344454609
                                 break;
                             case BeaconXInfo.VALID_DATA_FRAME_TYPE_TLM:
+                                if (bytes.length != 14)
+                                    return null;
                                 type = BeaconXInfo.VALID_DATA_FRAME_TYPE_TLM;
                                 // 20000d18158000017eb20002e754
                                 break;
@@ -73,6 +79,8 @@ public class BeaconXInfoParseableImpl implements DeviceInfoParseable<BeaconXInfo
                     if (bytes != null) {
                         switch (bytes[0] & 0xff) {
                             case BeaconXInfo.VALID_DATA_FRAME_TYPE_INFO:
+                                if (bytes.length != 15)
+                                    return null;
                                 type = BeaconXInfo.VALID_DATA_FRAME_TYPE_INFO;
                                 battery = MokoUtils.toInt(Arrays.copyOfRange(bytes, 3, 5));
                                 lockState = bytes[5] & 0xff;
@@ -80,14 +88,20 @@ public class BeaconXInfoParseableImpl implements DeviceInfoParseable<BeaconXInfo
                                 // 40000a0d0d0001ff02030405063001
                                 break;
                             case BeaconXInfo.VALID_DATA_FRAME_TYPE_IBEACON:
+                                if (bytes.length != 23)
+                                    return null;
                                 type = BeaconXInfo.VALID_DATA_FRAME_TYPE_IBEACON;
                                 // 50ee0c0102030405060708090a0b0c0d0e0f1000010002
                                 break;
                             case BeaconXInfo.VALID_DATA_FRAME_TYPE_AXIS:
+                                if (bytes.length != 12)
+                                    return null;
                                 type = BeaconXInfo.VALID_DATA_FRAME_TYPE_AXIS;
                                 // 60f60e010007f600d5002e00
                                 break;
                             case BeaconXInfo.VALID_DATA_FRAME_TYPE_TH:
+                                if (bytes.length != 7)
+                                    return null;
                                 type = BeaconXInfo.VALID_DATA_FRAME_TYPE_TH;
                                 // 700b1000fb02f5
                                 break;

@@ -158,11 +158,11 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                     switch (orderType) {
                         case lockState:
                             String valueStr = MokoUtils.bytesToHexString(value);
+                            dismissLoadingMessageDialog();
                             if ("00".equals(valueStr)) {
-                                dismissLoadingMessageDialog();
+                                MokoSupport.getInstance().disConnectBle();
                                 if (TextUtils.isEmpty(unLockResponse)) {
                                     mInputPassword = true;
-                                    MokoSupport.getInstance().disConnectBle();
                                     // 弹出密码框
                                     final PasswordDialog dialog = new PasswordDialog(MainActivity.this);
                                     dialog.setData(mSavedPassword);
@@ -210,20 +210,16 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                                         }
                                     }, 200);
                                 } else {
-                                    dismissLoadingMessageDialog();
                                     unLockResponse = "";
-                                    MokoSupport.getInstance().disConnectBle();
                                     ToastUtils.showToast(MainActivity.this, "Password error");
                                 }
                             } else if ("02".equals(valueStr)) {
                                 // 不需要密码验证
-                                dismissLoadingMessageDialog();
                                 Intent deviceInfoIntent = new Intent(MainActivity.this, DeviceInfoActivity.class);
                                 deviceInfoIntent.putExtra(AppConstants.EXTRA_KEY_PASSWORD, mPassword);
                                 startActivityForResult(deviceInfoIntent, AppConstants.REQUEST_CODE_DEVICE_INFO);
                             } else {
                                 // 解锁成功
-                                dismissLoadingMessageDialog();
                                 LogModule.i("解锁成功");
                                 unLockResponse = "";
                                 mSavedPassword = mPassword;
