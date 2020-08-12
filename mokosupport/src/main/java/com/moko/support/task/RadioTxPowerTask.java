@@ -1,6 +1,5 @@
 package com.moko.support.task;
 
-import com.moko.support.callback.MokoOrderTaskCallback;
 import com.moko.support.entity.OrderEnum;
 import com.moko.support.entity.OrderType;
 
@@ -14,8 +13,8 @@ public class RadioTxPowerTask extends OrderTask {
 
     public byte[] data;
 
-    public RadioTxPowerTask(MokoOrderTaskCallback callback, int responseType) {
-        super(OrderType.radioTxPower, OrderEnum.RADIO_TX_POWER, callback, responseType);
+    public RadioTxPowerTask(int responseType) {
+        super(OrderType.radioTxPower, OrderEnum.RADIO_TX_POWER, responseType);
     }
 
     @Override

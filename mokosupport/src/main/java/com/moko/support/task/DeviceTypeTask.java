@@ -1,6 +1,5 @@
 package com.moko.support.task;
 
-import com.moko.support.callback.MokoOrderTaskCallback;
 import com.moko.support.entity.OrderEnum;
 import com.moko.support.entity.OrderType;
 
@@ -14,8 +13,8 @@ public class DeviceTypeTask extends OrderTask {
 
     public byte[] data;
 
-    public DeviceTypeTask(MokoOrderTaskCallback callback) {
-        super(OrderType.deviceType, OrderEnum.DEVICE_TYPE, callback, OrderTask.RESPONSE_TYPE_READ);
+    public DeviceTypeTask() {
+        super(OrderType.deviceType, OrderEnum.DEVICE_TYPE, OrderTask.RESPONSE_TYPE_READ);
     }
 
     @Override

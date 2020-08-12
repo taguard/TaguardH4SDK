@@ -1,6 +1,5 @@
 package com.moko.support.task;
 
-import com.moko.support.callback.MokoOrderTaskCallback;
 import com.moko.support.entity.OrderEnum;
 import com.moko.support.entity.OrderType;
 
@@ -14,8 +13,8 @@ public class ProductDateTask extends OrderTask {
 
     public byte[] data;
 
-    public ProductDateTask(MokoOrderTaskCallback callback) {
-        super(OrderType.productDate, OrderEnum.PRODUCT_DATE, callback, OrderTask.RESPONSE_TYPE_READ);
+    public ProductDateTask() {
+        super(OrderType.productDate, OrderEnum.PRODUCT_DATE, OrderTask.RESPONSE_TYPE_READ);
     }
 
     @Override

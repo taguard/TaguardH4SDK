@@ -1,6 +1,5 @@
 package com.moko.support.task;
 
-import com.moko.support.callback.MokoOrderTaskCallback;
 import com.moko.support.entity.ConfigKeyEnum;
 import com.moko.support.entity.OrderEnum;
 import com.moko.support.entity.OrderType;
@@ -15,8 +14,8 @@ import com.moko.support.utils.MokoUtils;
 public class WriteConfigTask extends OrderTask {
     public byte[] data;
 
-    public WriteConfigTask(MokoOrderTaskCallback callback) {
-        super(OrderType.writeConfig, OrderEnum.WRITE_CONFIG, callback, OrderTask.RESPONSE_TYPE_WRITE_NO_RESPONSE);
+    public WriteConfigTask() {
+        super(OrderType.writeConfig, OrderEnum.WRITE_CONFIG, OrderTask.RESPONSE_TYPE_WRITE_NO_RESPONSE);
     }
 
     @Override

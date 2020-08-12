@@ -1,6 +1,5 @@
 package com.moko.support.task;
 
-import com.moko.support.callback.MokoOrderTaskCallback;
 import com.moko.support.entity.OrderEnum;
 import com.moko.support.entity.OrderType;
 
@@ -14,8 +13,8 @@ public class NotifySavedHTTask extends OrderTask {
 
     public byte[] data;
 
-    public NotifySavedHTTask(MokoOrderTaskCallback callback, int responseType) {
-        super(OrderType.htSavedData, OrderEnum.SAVED_HT_NOTIFY, callback, responseType);
+    public NotifySavedHTTask(int responseType) {
+        super(OrderType.htSavedData, OrderEnum.SAVED_HT_NOTIFY, responseType);
     }
 
     @Override

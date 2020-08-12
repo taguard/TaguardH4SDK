@@ -59,9 +59,13 @@ public class BeaconXParser {
         // 20000d18158000017eb20002e754
         BeaconXTLM tlm = new BeaconXTLM();
         tlm.vbatt = Integer.parseInt(data.substring(4, 8), 16) + "";
-        String temp1 = Integer.parseInt(data.substring(8, 10), 16) + "";
-        String temp2 = Integer.parseInt(data.substring(10, 12), 16) + "";
-        tlm.temp = String.format("%s.%s°C", temp1, temp2);
+        int temp1 = Integer.parseInt(data.substring(8, 10), 16);
+        int temp2 = Integer.parseInt(data.substring(10, 12), 16);
+        int tempInt = temp1 > 128 ? temp1 - 256 : temp1;
+        float tempDecimal = temp2 / 256.0f;
+        float temperature = tempInt + tempDecimal;
+        String tempStr = MokoUtils.getDecimalFormat("0.##").format(temperature);
+        tlm.temp = String.format("%s°C", tempStr);
         tlm.adv_cnt = Long.parseLong(data.substring(12, 20), 16) + "";
         long seconds = Long.parseLong(data.substring(20, 28), 16) / 10;
         int day = 0, hours = 0, minutes = 0;
