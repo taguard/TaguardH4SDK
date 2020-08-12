@@ -108,6 +108,23 @@ public class BeaconXInfoParseableImpl implements DeviceInfoParseable<BeaconXInfo
                         }
                     }
                     values = bytes;
+                } else if (parcelUuid.toString().startsWith("0000feac")) {
+                    isBeaconXPro = true;
+                    byte[] bytes = map.get(parcelUuid);
+                    if (bytes != null) {
+                        switch (bytes[0] & 0xff) {
+                            case BeaconXInfo.VALID_DATA_FRAME_TYPE_INFO:
+                                if (bytes.length != 15)
+                                    return null;
+                                type = BeaconXInfo.VALID_DATA_FRAME_TYPE_INFO;
+                                battery = MokoUtils.toInt(Arrays.copyOfRange(bytes, 3, 5));
+                                lockState = bytes[5] & 0xff;
+                                connectState = bytes[6] & 0xff;
+                                // 40000a0d0d0001ff02030405063001
+                                break;
+                        }
+                    }
+                    values = bytes;
                 }
 
             }
