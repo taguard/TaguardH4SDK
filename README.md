@@ -73,20 +73,26 @@ BeaconXInfo beaconXInfo = new BeaconXInfoParseableImpl().parseDeviceInfo(device)
 Device types can be distinguished by `parseDeviceInfo(DeviceInfo deviceInfo)`.Refer `deviceInfo.scanResult.getScanRecord().getServiceData()` we can get parcelUuid,etc.
 
 ```
-if (parcelUuid.toString().startsWith("0000feaa")) {
+                if (parcelUuid.toString().startsWith("0000feaa")) {
                     isEddystone = true;
                     byte[] bytes = map.get(parcelUuid);
                     if (bytes != null) {
                         switch (bytes[0] & 0xff) {
                             case BeaconXInfo.VALID_DATA_FRAME_TYPE_UID:
+                                if (bytes.length != 20)
+                                    return null;
                                 type = BeaconXInfo.VALID_DATA_FRAME_TYPE_UID;
                                 // 00ee0102030405060708090a0102030405060000
                                 break;
                             case BeaconXInfo.VALID_DATA_FRAME_TYPE_URL:
+                                if (bytes.length < 4 || bytes.length > 20)
+                                    return null;
                                 type = BeaconXInfo.VALID_DATA_FRAME_TYPE_URL;
                                 // 100c0141424344454609
                                 break;
                             case BeaconXInfo.VALID_DATA_FRAME_TYPE_TLM:
+                                if (bytes.length != 14)
+                                    return null;
                                 type = BeaconXInfo.VALID_DATA_FRAME_TYPE_TLM;
                                 // 20000d18158000017eb20002e754
                                 break;
@@ -99,6 +105,8 @@ if (parcelUuid.toString().startsWith("0000feaa")) {
                     if (bytes != null) {
                         switch (bytes[0] & 0xff) {
                             case BeaconXInfo.VALID_DATA_FRAME_TYPE_INFO:
+                                if (bytes.length != 15)
+                                    return null;
                                 type = BeaconXInfo.VALID_DATA_FRAME_TYPE_INFO;
                                 battery = MokoUtils.toInt(Arrays.copyOfRange(bytes, 3, 5));
                                 lockState = bytes[5] & 0xff;
@@ -106,16 +114,39 @@ if (parcelUuid.toString().startsWith("0000feaa")) {
                                 // 40000a0d0d0001ff02030405063001
                                 break;
                             case BeaconXInfo.VALID_DATA_FRAME_TYPE_IBEACON:
+                                if (bytes.length != 23)
+                                    return null;
                                 type = BeaconXInfo.VALID_DATA_FRAME_TYPE_IBEACON;
                                 // 50ee0c0102030405060708090a0b0c0d0e0f1000010002
                                 break;
                             case BeaconXInfo.VALID_DATA_FRAME_TYPE_AXIS:
+                                if (bytes.length != 12)
+                                    return null;
                                 type = BeaconXInfo.VALID_DATA_FRAME_TYPE_AXIS;
                                 // 60f60e010007f600d5002e00
                                 break;
                             case BeaconXInfo.VALID_DATA_FRAME_TYPE_TH:
+                                if (bytes.length != 7)
+                                    return null;
                                 type = BeaconXInfo.VALID_DATA_FRAME_TYPE_TH;
                                 // 700b1000fb02f5
+                                break;
+                        }
+                    }
+                    values = bytes;
+                } else if (parcelUuid.toString().startsWith("0000feac")) {
+                    isBeaconXPro = true;
+                    byte[] bytes = map.get(parcelUuid);
+                    if (bytes != null) {
+                        switch (bytes[0] & 0xff) {
+                            case BeaconXInfo.VALID_DATA_FRAME_TYPE_INFO:
+                                if (bytes.length != 15)
+                                    return null;
+                                type = BeaconXInfo.VALID_DATA_FRAME_TYPE_INFO;
+                                battery = MokoUtils.toInt(Arrays.copyOfRange(bytes, 3, 5));
+                                lockState = bytes[5] & 0xff;
+                                connectState = bytes[6] & 0xff;
+                                // 40000a0d0d0001ff02030405063001
                                 break;
                         }
                     }
@@ -131,12 +162,27 @@ if (parcelUuid.toString().startsWith("0000feaa")) {
 MokoSupport.getInstance().connDevice(context, address);
 ```
 
-"Demo Project" implements callback interface in Service. It uses `EventBus` to notify activity after receiving the status, and send and receive data after connecting to the device whit `broadcast`
+When connecting to the device, context, MAC address and callback by EventBus.
+
+```
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onConnectStatusEvent(ConnectStatusEvent event) {
+        String action = event.getAction();
+        if (MokoConstants.ACTION_CONN_STATUS_DISCONNECTED.equals(action)) {
+            ...
+        }
+        if (MokoConstants.ACTION_DISCOVER_SUCCESS.equals(action)) {
+            ...
+        }
+    }
+```
+
+It uses `EventBus` to notify activity after receiving the status
 
 ### 2.3 Send and receive data.
 
 All the request data is encapsulated into **TASK**, and sent to the device in a **QUEUE** way.
-SDK gets task status from task callback (`MokoOrderTaskCallback`) after sending tasks successfully.
+SDK gets task status from task callback (`OrderTaskResponse `) after sending tasks successfully.
 
 * **Task**
 
@@ -298,52 +344,53 @@ The task can be one or more.
 * **Task callback**
 
 ```java
-/**
- * @ClassPath com.moko.support.callback.OrderCallback
- */
-public interface MokoOrderTaskCallback {
-
-    void onOrderResult(OrderTaskResponse response);
-
-    void onOrderTimeout(OrderTaskResponse response);
-
-    void onOrderFinish();
-}
+	@Subscribe(threadMode = ThreadMode.MAIN)
+    public void onOrderTaskResponseEvent(OrderTaskResponseEvent event) {
+        final String action = event.getAction();
+        if (MokoConstants.ACTION_ORDER_TIMEOUT.equals(action)) {
+        }
+        if (MokoConstants.ACTION_ORDER_FINISH.equals(action)) {
+        }
+        if (MokoConstants.ACTION_ORDER_RESULT.equals(action)) {
+        }
+    }
+   
 ```
-`void onOrderResult(OrderTaskResponse response);`
+
+`ACTION_ORDER_RESULT `
 
 	After the task is sent to the device, the data returned by the device can be obtained by using the `onOrderResult` function, and you can determine witch class the task is according to the `response.orderType` function. The `response.responseValue` is the returned data.
 
-`void onOrderTimeout(OrderTaskResponse response);`
+`ACTION_ORDER_TIMEOUT `
 
 	Every task has a default timeout of 3 seconds to prevent the device from failing to return data due to a fault and the fail will cause other tasks in the queue can not execute normally. After the timeout, the `onOrderTimeout` will be called back. You can determine witch class the task is according to the `response.orderType` function and then the next task continues.
 
-`void onOrderFinish();`
+`ACTION_ORDER_FINISH `
 
 	When the task in the queue is empty, `onOrderFinish` will be called back.
 
 * **Listening task**
 
-If the task belongs to `NOTIFY` and ` WRITE_NO_RESPONSE` task has been sent, the task is in listening state. When there is data returned from the device, the data will be sent in the form of broadcast, and the action of receiving broadcast is `MokoConstants.ACTION_CURRENT_DATA`.
+When there is data returned from the device, the data will be sent in the form of broadcast, and the action of receiving broadcast is `MokoConstants.ACTION_CURRENT_DATA`.
 
 ```
 String action = intent.getAction();
 ...
 if (MokoConstants.ACTION_CURRENT_DATA.equals(action)) {
-                    OrderType orderType = (OrderType) intent.getSerializableExtra(MokoConstants.EXTRA_KEY_CURRENT_DATA_TYPE);
-                    byte[] value = intent.getByteArrayExtra(MokoConstants.EXTRA_KEY_RESPONSE_VALUE);
-                    ...
-                }
+    OrderTaskResponse response = event.getResponse();
+    OrderType orderType = response.orderType;
+    int responseType = response.responseType;
+    byte[] value = response.responseValue;
+    ...
+}
 ```
 
-Get `OrderTaskResponse` from the **intent** of `onReceive`, and the corresponding **key** value is `MokoConstants.EXTRA_KEY_RESPONSE_ORDER_TASK`.
+Get `OrderTaskResponse` from the `OrderTaskResponseEvent`, and the corresponding **key** value is `response.responseValue`.
 
 ## 3. Special instructions
 
 > 1. AndroidManifest.xml of SDK has declared to access SD card and get Bluetooth permissions.
 > 2. The SDK comes with logging, and if you want to view the log in the SD card, please to use "LogModule". The log path is : root directory of SD card/mokoBeaconXPro/mokoBeaconXPro.txt. It only records the log of the day and the day before.
-> 3. Just connecting to the device successfully, it needs to delay 1 second before sending data, otherwise the device can not return data normally.
-> 4. We suggest that sending and receiving data should be executed in the "Service". There will be a certain delay when the device returns data, and you can broadcast data to the "Activity" after receiving in the "Service". Please refer to the "Demo Project".
 
 
 

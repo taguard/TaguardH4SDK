@@ -469,7 +469,9 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                 //得到uri，后面就是将uri转化成file的过程。
                 Uri uri = data.getData();
                 String firmwareFilePath = FileUtils.getPath(this, uri);
-                //
+                if (TextUtils.isEmpty(firmwareFilePath)) {
+                    return;
+                }
                 final File firmwareFile = new File(firmwareFilePath);
                 if (firmwareFile.exists()) {
                     final DfuServiceInitiator starter = new DfuServiceInitiator(mDeviceMac)
