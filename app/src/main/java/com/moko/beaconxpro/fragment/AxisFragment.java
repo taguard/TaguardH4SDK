@@ -16,9 +16,13 @@ import com.moko.beaconxpro.able.ISlotDataAction;
 import com.moko.beaconxpro.activity.SlotDataActivity;
 import com.moko.beaconxpro.utils.ToastUtils;
 import com.moko.support.MokoSupport;
+import com.moko.support.OrderTaskAssembler;
 import com.moko.support.entity.SlotFrameTypeEnum;
 import com.moko.support.entity.TxPowerEnum;
+import com.moko.support.task.OrderTask;
 import com.moko.support.utils.MokoUtils;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -194,13 +198,13 @@ public class AxisFragment extends Fragment implements SeekBar.OnSeekBarChangeLis
     @Override
     public void sendData() {
         byte[] axisBytes = MokoUtils.hex2bytes(SlotFrameTypeEnum.AXIS.getFrameType());
-        MokoSupport.getInstance().sendOrder(
-                // 切换通道，保证通道是在当前设置通道里
-                activity.mMokoService.setSlot(activity.slotData.slotEnum),
-                activity.mMokoService.setSlotData(axisBytes),
-                activity.mMokoService.setRadioTxPower(txPowerBytes),
-                activity.mMokoService.setAdvTxPower(advTxPowerBytes),
-                activity.mMokoService.setAdvInterval(advIntervalBytes)
-        );
+        // 切换通道，保证通道是在当前设置通道里
+        ArrayList<OrderTask> orderTasks = new ArrayList<>();
+        orderTasks.add(OrderTaskAssembler.setSlot(activity.slotData.slotEnum));
+        orderTasks.add(OrderTaskAssembler.setSlotData(axisBytes));
+        orderTasks.add(OrderTaskAssembler.setRadioTxPower(txPowerBytes));
+        orderTasks.add(OrderTaskAssembler.setAdvTxPower(advTxPowerBytes));
+        orderTasks.add(OrderTaskAssembler.setAdvInterval(advIntervalBytes));
+        MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
     }
 }

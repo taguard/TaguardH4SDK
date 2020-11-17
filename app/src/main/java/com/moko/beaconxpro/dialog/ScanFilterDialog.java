@@ -7,7 +7,6 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-
 import com.moko.beaconxpro.R;
 
 import butterknife.Bind;

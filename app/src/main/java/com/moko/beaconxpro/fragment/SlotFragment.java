@@ -17,11 +17,14 @@ import com.moko.beaconxpro.activity.DeviceInfoActivity;
 import com.moko.beaconxpro.activity.SlotDataActivity;
 import com.moko.beaconxpro.utils.BeaconXParser;
 import com.moko.support.MokoSupport;
+import com.moko.support.OrderTaskAssembler;
 import com.moko.support.entity.SlotData;
 import com.moko.support.entity.SlotEnum;
 import com.moko.support.entity.SlotFrameTypeEnum;
+import com.moko.support.task.OrderTask;
 import com.moko.support.utils.MokoUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import butterknife.Bind;
@@ -174,14 +177,14 @@ public class SlotFragment extends Fragment {
 
     private void getSlotData(SlotEnum slotEnum) {
         activity.showSyncingProgressDialog();
-        MokoSupport.getInstance().sendOrder(
-                activity.mMokoService.setSlot(slotEnum),
-                activity.mMokoService.getSlotData(),
-                activity.mMokoService.getTrigger(),
-                activity.mMokoService.getAdvTxPower(),
-                activity.mMokoService.getRadioTxPower(),
-                activity.mMokoService.getAdvInterval()
-        );
+        ArrayList<OrderTask> orderTasks = new ArrayList<>();
+        orderTasks.add(OrderTaskAssembler.setSlot(slotEnum));
+        orderTasks.add(OrderTaskAssembler.getSlotData());
+        orderTasks.add(OrderTaskAssembler.getTrigger());
+        orderTasks.add(OrderTaskAssembler.getAdvTxPower());
+        orderTasks.add(OrderTaskAssembler.getRadioTxPower());
+        orderTasks.add(OrderTaskAssembler.getAdvInterval());
+        MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
     }
 
 //    private void getiBeaconData(SlotEnum slotEnum) {

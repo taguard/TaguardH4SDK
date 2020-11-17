@@ -2,14 +2,12 @@ package com.moko.beaconxpro.activity;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
+import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,16 +30,18 @@ import com.moko.beaconxpro.dialog.LoadingMessageDialog;
 import com.moko.beaconxpro.dialog.PasswordDialog;
 import com.moko.beaconxpro.dialog.ScanFilterDialog;
 import com.moko.beaconxpro.entity.BeaconXInfo;
-import com.moko.beaconxpro.service.MokoService;
 import com.moko.beaconxpro.utils.BeaconXInfoParseableImpl;
 import com.moko.beaconxpro.utils.ToastUtils;
 import com.moko.support.MokoConstants;
 import com.moko.support.MokoSupport;
+import com.moko.support.OrderTaskAssembler;
 import com.moko.support.callback.MokoScanDeviceCallback;
 import com.moko.support.entity.DeviceInfo;
 import com.moko.support.entity.MokoCharacteristic;
 import com.moko.support.entity.OrderType;
 import com.moko.support.event.ConnectStatusEvent;
+import com.moko.support.event.OrderTaskResponseEvent;
+import com.moko.support.handler.BaseMessageHandler;
 import com.moko.support.handler.MokoCharacteristicHandler;
 import com.moko.support.log.LogModule;
 import com.moko.support.task.OrderTask;
@@ -77,7 +77,6 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
     RelativeLayout rl_filter;
     @Bind(R.id.tv_filter)
     TextView tv_filter;
-    private MokoService mMokoService;
     private boolean mReceiverTag = false;
     private HashMap<String, BeaconXInfo> beaconXInfoHashMap;
     private ArrayList<BeaconXInfo> beaconXInfos;
@@ -89,10 +88,6 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        Intent intent = new Intent(this, MokoService.class);
-        startService(intent);
-        bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
-        EventBus.getDefault().register(this);
         beaconXInfoHashMap = new HashMap<>();
         beaconXInfos = new ArrayList<>();
         adapter = new BeaconXListAdapter();
@@ -104,36 +99,23 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
         itemDecoration.setDrawable(ContextCompat.getDrawable(this, R.drawable.shape_recycleview_divider));
         rvDevices.addItemDecoration(itemDecoration);
         rvDevices.setAdapter(adapter);
-    }
 
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            mMokoService = ((MokoService.LocalBinder) service).getService();
-            // 注册广播接收器
-            IntentFilter filter = new IntentFilter();
-            filter.addAction(MokoConstants.ACTION_ORDER_RESULT);
-            filter.addAction(MokoConstants.ACTION_ORDER_TIMEOUT);
-            filter.addAction(MokoConstants.ACTION_ORDER_FINISH);
-            filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-            filter.setPriority(100);
-            registerReceiver(mReceiver, filter);
-            mReceiverTag = true;
-            if (!MokoSupport.getInstance().isBluetoothOpen()) {
-                // 蓝牙未打开，开启蓝牙
-                MokoSupport.getInstance().enableBluetooth();
-            } else {
-                if (animation == null) {
-                    startScan();
-                }
+        mHandler = new CustomHandler(this);
+        EventBus.getDefault().register(this);
+        // 注册广播接收器
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        registerReceiver(mReceiver, filter);
+        mReceiverTag = true;
+        if (!MokoSupport.getInstance().isBluetoothOpen()) {
+            // 蓝牙未打开，开启蓝牙
+            MokoSupport.getInstance().enableBluetooth();
+        } else {
+            if (animation == null) {
+                startScan();
             }
         }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-        }
-    };
+    }
 
     private String unLockResponse;
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -142,97 +124,12 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
         public void onReceive(Context context, Intent intent) {
             if (intent != null) {
                 String action = intent.getAction();
-                if (MokoConstants.ACTION_ORDER_TIMEOUT.equals(action)) {
-
-                }
-                if (MokoConstants.ACTION_ORDER_FINISH.equals(action)) {
-
-                }
-                if (MokoConstants.ACTION_ORDER_RESULT.equals(action)) {
-                    OrderTaskResponse response = (OrderTaskResponse) intent.getSerializableExtra(MokoConstants.EXTRA_KEY_RESPONSE_ORDER_TASK);
-                    OrderType orderType = response.orderType;
-                    int responseType = response.responseType;
-                    byte[] value = response.responseValue;
-                    switch (orderType) {
-                        case lockState:
-                            String valueStr = MokoUtils.bytesToHexString(value);
-                            dismissLoadingMessageDialog();
-                            if ("00".equals(valueStr)) {
-                                MokoSupport.getInstance().disConnectBle();
-                                if (TextUtils.isEmpty(unLockResponse)) {
-                                    mInputPassword = true;
-                                    // 弹出密码框
-                                    PasswordDialog dialog = new PasswordDialog();
-                                    dialog.setPassword(mSavedPassword);
-                                    dialog.setOnPasswordClicked(new PasswordDialog.PasswordClickListener() {
-                                        @Override
-                                        public void onEnsureClicked(String password) {
-                                            if (!MokoSupport.getInstance().isBluetoothOpen()) {
-                                                // 蓝牙未打开，开启蓝牙
-                                                MokoSupport.getInstance().enableBluetooth();
-                                                return;
-                                            }
-                                            LogModule.i(password);
-                                            mPassword = password;
-                                            if (animation != null) {
-                                                mMokoService.mHandler.removeMessages(0);
-                                                MokoSupport.getInstance().stopScanDevice();
-                                            }
-                                            showLoadingProgressDialog();
-                                            ivRefresh.postDelayed(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    mMokoService.connectBluetoothDevice(mSelectedBeaconXMac);
-                                                }
-                                            }, 500);
-                                        }
-
-                                        @Override
-                                        public void onDismiss() {
-                                            unLockResponse = "";
-                                            if (animation == null) {
-                                                startScan();
-                                            }
-                                        }
-                                    });
-                                    dialog.show(MainActivity.this.getSupportFragmentManager());
-                                } else {
-                                    unLockResponse = "";
-                                    ToastUtils.showToast(MainActivity.this, "Password error");
-                                }
-                            } else if ("02".equals(valueStr)) {
-                                // 不需要密码验证
-                                Intent deviceInfoIntent = new Intent(MainActivity.this, DeviceInfoActivity.class);
-                                deviceInfoIntent.putExtra(AppConstants.EXTRA_KEY_PASSWORD, mPassword);
-                                startActivityForResult(deviceInfoIntent, AppConstants.REQUEST_CODE_DEVICE_INFO);
-                            } else {
-                                // 解锁成功
-                                LogModule.i("解锁成功");
-                                unLockResponse = "";
-                                mSavedPassword = mPassword;
-                                Intent deviceInfoIntent = new Intent(MainActivity.this, DeviceInfoActivity.class);
-                                deviceInfoIntent.putExtra(AppConstants.EXTRA_KEY_PASSWORD, mPassword);
-                                startActivityForResult(deviceInfoIntent, AppConstants.REQUEST_CODE_DEVICE_INFO);
-                            }
-                            break;
-                        case unLock:
-                            if (responseType == OrderTask.RESPONSE_TYPE_READ) {
-                                unLockResponse = MokoUtils.bytesToHexString(value);
-                                LogModule.i("返回的随机数：" + unLockResponse);
-                                MokoSupport.getInstance().sendOrder(mMokoService.setConfigNotify(), mMokoService.setUnLock(mPassword, value));
-                            }
-                            if (responseType == OrderTask.RESPONSE_TYPE_WRITE) {
-                                MokoSupport.getInstance().sendOrder(mMokoService.getLockState());
-                            }
-                            break;
-                    }
-                }
                 if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
                     int blueState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
                     switch (blueState) {
                         case BluetoothAdapter.STATE_TURNING_OFF:
                             if (animation != null) {
-                                mMokoService.mHandler.removeMessages(0);
+                                mHandler.removeMessages(0);
                                 MokoSupport.getInstance().stopScanDevice();
                                 onStopScan();
                             }
@@ -270,14 +167,18 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
             HashMap<OrderType, MokoCharacteristic> map = MokoCharacteristicHandler.getInstance().mokoCharacteristicMap;
             if (map.containsKey(OrderType.deviceType)) {
                 showLoadingMessageDialog();
-                mMokoService.mHandler.postDelayed(new Runnable() {
+                mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         if (TextUtils.isEmpty(mPassword)) {
-                            MokoSupport.getInstance().sendOrder(mMokoService.getLockState());
+                            ArrayList<OrderTask> orderTasks = new ArrayList<>();
+                            orderTasks.add(OrderTaskAssembler.getLockState());
+                            MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
                         } else {
                             LogModule.i("锁定状态，获取unLock，解锁");
-                            MokoSupport.getInstance().sendOrder(mMokoService.getUnLock());
+                            ArrayList<OrderTask> orderTasks = new ArrayList<>();
+                            orderTasks.add(OrderTaskAssembler.getUnLock());
+                            MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
                         }
                     }
                 }, 500);
@@ -288,6 +189,99 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                 dialog.setMessage("Oops! Something went wrong. Please check the device version or contact MOKO.");
                 dialog.show(getSupportFragmentManager());
 
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onOrderTaskResponseEvent(OrderTaskResponseEvent event) {
+        final String action = event.getAction();
+        if (MokoConstants.ACTION_ORDER_TIMEOUT.equals(action)) {
+        }
+        if (MokoConstants.ACTION_ORDER_FINISH.equals(action)) {
+        }
+        if (MokoConstants.ACTION_ORDER_RESULT.equals(action)) {
+            OrderTaskResponse response = event.getResponse();
+            OrderType orderType = response.orderType;
+            int responseType = response.responseType;
+            byte[] value = response.responseValue;
+            switch (orderType) {
+                case lockState:
+                    String valueStr = MokoUtils.bytesToHexString(value);
+                    dismissLoadingMessageDialog();
+                    if ("00".equals(valueStr)) {
+                        MokoSupport.getInstance().disConnectBle();
+                        if (TextUtils.isEmpty(unLockResponse)) {
+                            mInputPassword = true;
+                            // 弹出密码框
+                            PasswordDialog dialog = new PasswordDialog();
+                            dialog.setPassword(mSavedPassword);
+                            dialog.setOnPasswordClicked(new PasswordDialog.PasswordClickListener() {
+                                @Override
+                                public void onEnsureClicked(String password) {
+                                    if (!MokoSupport.getInstance().isBluetoothOpen()) {
+                                        // 蓝牙未打开，开启蓝牙
+                                        MokoSupport.getInstance().enableBluetooth();
+                                        return;
+                                    }
+                                    LogModule.i(password);
+                                    mPassword = password;
+                                    if (animation != null) {
+                                        mHandler.removeMessages(0);
+                                        MokoSupport.getInstance().stopScanDevice();
+                                    }
+                                    showLoadingProgressDialog();
+                                    ivRefresh.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            MokoSupport.getInstance().connDevice(MainActivity.this, mSelectedBeaconXMac);
+                                        }
+                                    }, 500);
+                                }
+
+                                @Override
+                                public void onDismiss() {
+                                    unLockResponse = "";
+                                    if (animation == null) {
+                                        startScan();
+                                    }
+                                }
+                            });
+                            dialog.show(MainActivity.this.getSupportFragmentManager());
+                        } else {
+                            unLockResponse = "";
+                            ToastUtils.showToast(MainActivity.this, "Password error");
+                        }
+                    } else if ("02".equals(valueStr)) {
+                        // 不需要密码验证
+                        Intent deviceInfoIntent = new Intent(MainActivity.this, DeviceInfoActivity.class);
+                        deviceInfoIntent.putExtra(AppConstants.EXTRA_KEY_PASSWORD, mPassword);
+                        startActivityForResult(deviceInfoIntent, AppConstants.REQUEST_CODE_DEVICE_INFO);
+                    } else {
+                        // 解锁成功
+                        LogModule.i("解锁成功");
+                        unLockResponse = "";
+                        mSavedPassword = mPassword;
+                        Intent deviceInfoIntent = new Intent(MainActivity.this, DeviceInfoActivity.class);
+                        deviceInfoIntent.putExtra(AppConstants.EXTRA_KEY_PASSWORD, mPassword);
+                        startActivityForResult(deviceInfoIntent, AppConstants.REQUEST_CODE_DEVICE_INFO);
+                    }
+                    break;
+                case unLock:
+                    if (responseType == OrderTask.RESPONSE_TYPE_READ) {
+                        unLockResponse = MokoUtils.bytesToHexString(value);
+                        LogModule.i("返回的随机数：" + unLockResponse);
+                        ArrayList<OrderTask> orderTasks = new ArrayList<>();
+                        orderTasks.add(OrderTaskAssembler.setConfigNotify());
+                        orderTasks.add(OrderTaskAssembler.setUnLock(mPassword, value));
+                        MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+                    }
+                    if (responseType == OrderTask.RESPONSE_TYPE_WRITE) {
+                        ArrayList<OrderTask> orderTasks = new ArrayList<>();
+                        orderTasks.add(OrderTaskAssembler.getLockState());
+                        MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+                    }
+                    break;
             }
         }
     }
@@ -316,7 +310,6 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
             // 注销广播
             unregisterReceiver(mReceiver);
         }
-        unbindService(mServiceConnection);
         EventBus.getDefault().unregister(this);
     }
 
@@ -424,7 +417,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                 if (animation == null) {
                     startScan();
                 } else {
-                    mMokoService.mHandler.removeMessages(0);
+                    mHandler.removeMessages(0);
                     MokoSupport.getInstance().stopScanDevice();
                 }
                 break;
@@ -434,7 +427,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
             case R.id.rl_edit_filter:
             case R.id.rl_filter:
                 if (animation != null) {
-                    mMokoService.mHandler.removeMessages(0);
+                    mHandler.removeMessages(0);
                     MokoSupport.getInstance().stopScanDevice();
                 }
                 ScanFilterDialog scanFilterDialog = new ScanFilterDialog(this);
@@ -483,7 +476,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                 break;
             case R.id.iv_filter_delete:
                 if (animation != null) {
-                    mMokoService.mHandler.removeMessages(0);
+                    mHandler.removeMessages(0);
                     MokoSupport.getInstance().stopScanDevice();
                 }
                 rl_filter.setVisibility(View.GONE);
@@ -509,7 +502,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
         findViewById(R.id.iv_refresh).startAnimation(animation);
         beaconXInfoParseable = new BeaconXInfoParseableImpl();
         MokoSupport.getInstance().startScanDevice(this);
-        mMokoService.mHandler.postDelayed(new Runnable() {
+        mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 MokoSupport.getInstance().stopScanDevice();
@@ -572,7 +565,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
         final BeaconXInfo beaconXInfo = (BeaconXInfo) adapter.getItem(position);
         if (beaconXInfo != null && !isFinishing()) {
             if (animation != null) {
-                mMokoService.mHandler.removeMessages(0);
+                mHandler.removeMessages(0);
                 MokoSupport.getInstance().stopScanDevice();
             }
             mSelectedBeaconXMac = beaconXInfo.mac;
@@ -580,9 +573,22 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
             ivRefresh.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    mMokoService.connectBluetoothDevice(beaconXInfo.mac);
+                    MokoSupport.getInstance().connDevice(MainActivity.this, beaconXInfo.mac);
                 }
             }, 500);
+        }
+    }
+
+    public CustomHandler mHandler;
+
+    public class CustomHandler extends BaseMessageHandler<MainActivity> {
+
+        public CustomHandler(MainActivity activity) {
+            super(activity);
+        }
+
+        @Override
+        protected void handleMessage(MainActivity activity, Message msg) {
         }
     }
 }

@@ -1,11 +1,9 @@
 package com.moko.beaconxpro;
 
 import android.app.Application;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
-import com.moko.beaconxpro.service.MokoService;
 import com.moko.beaconxpro.utils.IOUtils;
 import com.moko.support.MokoSupport;
 import com.moko.support.log.LogModule;
@@ -22,8 +20,6 @@ public class BaseApplication extends Application {
         super.onCreate();
         Toasty.Config.getInstance().apply();
         MokoSupport.getInstance().init(getApplicationContext());
-        // 启动服务
-        startService(new Intent(this, MokoService.class));
         Thread.setDefaultUncaughtExceptionHandler(new BTUncaughtExceptionHandler());
     }
 

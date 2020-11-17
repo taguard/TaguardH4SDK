@@ -5,14 +5,11 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -25,13 +22,15 @@ import android.widget.TextView;
 import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.dialog.AxisDataRateDialog;
 import com.moko.beaconxpro.dialog.AxisScaleDialog;
-import com.moko.beaconxpro.service.MokoService;
 import com.moko.beaconxpro.utils.ToastUtils;
 import com.moko.support.MokoConstants;
 import com.moko.support.MokoSupport;
+import com.moko.support.OrderTaskAssembler;
 import com.moko.support.entity.ConfigKeyEnum;
 import com.moko.support.entity.OrderType;
 import com.moko.support.event.ConnectStatusEvent;
+import com.moko.support.event.OrderTaskResponseEvent;
+import com.moko.support.task.OrderTask;
 import com.moko.support.task.OrderTaskResponse;
 import com.moko.support.utils.MokoUtils;
 
@@ -39,14 +38,14 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarChangeListener {
 
-
-    public MokoService mMokoService;
     @Bind(R.id.iv_sync)
     ImageView ivSync;
     @Bind(R.id.tv_sync)
@@ -78,49 +77,27 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_axis);
         ButterKnife.bind(this);
-
-        Intent intent = new Intent(this, MokoService.class);
-        bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
-
         axisDataRate = getResources().getStringArray(R.array.axis_data_rate);
         axisScales = getResources().getStringArray(R.array.axis_scales);
         sbTriggerSensitivity.setOnSeekBarChangeListener(this);
 
         EventBus.getDefault().register(this);
+
+        // 注册广播接收器
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        registerReceiver(mReceiver, filter);
+        mReceiverTag = true;
+        if (!MokoSupport.getInstance().isBluetoothOpen()) {
+            // 蓝牙未打开，开启蓝牙
+            MokoSupport.getInstance().enableBluetooth();
+        } else {
+            showSyncingProgressDialog();
+            ArrayList<OrderTask> orderTasks = new ArrayList<>();
+            orderTasks.add(OrderTaskAssembler.getAxisParams());
+            MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+        }
     }
-
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            mMokoService = ((MokoService.LocalBinder) service).getService();
-            // 注册广播接收器
-            IntentFilter filter = new IntentFilter();
-            filter.addAction(MokoConstants.ACTION_ORDER_RESULT);
-            filter.addAction(MokoConstants.ACTION_ORDER_TIMEOUT);
-            filter.addAction(MokoConstants.ACTION_ORDER_FINISH);
-            filter.addAction(MokoConstants.ACTION_CURRENT_DATA);
-            filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-            filter.setPriority(300);
-            registerReceiver(mReceiver, filter);
-            mReceiverTag = true;
-            if (!MokoSupport.getInstance().isBluetoothOpen()) {
-                // 蓝牙未打开，开启蓝牙
-                MokoSupport.getInstance().enableBluetooth();
-            } else {
-                if (mMokoService == null) {
-                    finish();
-                    return;
-                }
-                showSyncingProgressDialog();
-                MokoSupport.getInstance().sendOrder(mMokoService.getAxisParams());
-            }
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-        }
-    };
 
     @Subscribe(threadMode = ThreadMode.POSTING, priority = 200)
     public void onConnectStatusEvent(ConnectStatusEvent event) {
@@ -137,84 +114,89 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
                 }
             }
         });
+    }
 
+    @Subscribe(threadMode = ThreadMode.POSTING, priority = 200)
+    public void onOrderTaskResponseEvent(OrderTaskResponseEvent event) {
+        EventBus.getDefault().cancelEventDelivery(event);
+        final String action = event.getAction();
+        runOnUiThread(() -> {
+            if (MokoConstants.ACTION_ORDER_TIMEOUT.equals(action)) {
+            }
+            if (MokoConstants.ACTION_ORDER_FINISH.equals(action)) {
+                dismissSyncProgressDialog();
+            }
+            if (MokoConstants.ACTION_ORDER_RESULT.equals(action)) {
+                OrderTaskResponse response = event.getResponse();
+                OrderType orderType = response.orderType;
+                int responseType = response.responseType;
+                byte[] value = response.responseValue;
+                switch (orderType) {
+                    case writeConfig:
+                        if (value.length >= 2) {
+                            int key = value[1] & 0xff;
+                            ConfigKeyEnum configKeyEnum = ConfigKeyEnum.fromConfigKey(key);
+                            if (configKeyEnum == null) {
+                                return;
+                            }
+                            switch (configKeyEnum) {
+                                case GET_AXIX_PARAMS:
+                                    if (value.length > 6) {
+                                        mSelectedRate = value[4] & 0xff;
+                                        tvAxisDataRate.setText(axisDataRate[mSelectedRate]);
+                                        mSelectedScale = value[5] & 0xff;
+                                        tvAxisScale.setText(axisScales[mSelectedScale]);
+                                        mSelectedSensivity = value[6] & 0xff;
+                                        tvTriggerSensitivity.setText(mSelectedSensivity + "");
+                                        sbTriggerSensitivity.setProgress(mSelectedSensivity - 7);
+                                    }
+                                    break;
+                                case SET_AXIX_PARAMS:
+                                    if (value.length > 3 && value[3] == 0) {
+                                        ToastUtils.showToast(AxisDataActivity.this, "Success");
+                                    } else {
+                                        ToastUtils.showToast(AxisDataActivity.this, "Failed");
+                                    }
+                                    break;
+                            }
+                        }
+                        break;
+                }
+            }
+            if (MokoConstants.ACTION_CURRENT_DATA.equals(action)) {
+
+                OrderTaskResponse response = event.getResponse();
+                OrderType orderType = response.orderType;
+                int responseType = response.responseType;
+                byte[] value = response.responseValue;
+                switch (orderType) {
+                    case notifyConfig:
+                        String valueHexStr = MokoUtils.bytesToHexString(value);
+                        if ("eb63000100".equals(valueHexStr.toLowerCase())) {
+                            ToastUtils.showToast(AxisDataActivity.this, "Device Locked!");
+                            back();
+                        }
+                        break;
+                    case axisData:
+                        if (value.length > 5) {
+                            String axisHexStr = MokoUtils.bytesToHexString(value);
+                            int length = axisHexStr.length();
+                            tvZData.setText(String.format("Z-Data:0x%s", axisHexStr.substring(length - 4).toUpperCase()));
+                            tvYData.setText(String.format("Y-Data:0x%s", axisHexStr.substring(length - 8, length - 4).toUpperCase()));
+                            tvXData.setText(String.format("X-Data:0x%s", axisHexStr.substring(length - 12, length - 8).toUpperCase()));
+                        }
+                        break;
+                }
+            }
+        });
     }
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-
             if (intent != null) {
                 String action = intent.getAction();
-                if (!BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
-                    abortBroadcast();
-                }
-                if (MokoConstants.ACTION_ORDER_TIMEOUT.equals(action)) {
-                }
-                if (MokoConstants.ACTION_ORDER_FINISH.equals(action)) {
-                    dismissSyncProgressDialog();
-                }
-                if (MokoConstants.ACTION_ORDER_RESULT.equals(action)) {
-                    OrderTaskResponse response = (OrderTaskResponse) intent.getSerializableExtra(MokoConstants.EXTRA_KEY_RESPONSE_ORDER_TASK);
-                    OrderType orderType = response.orderType;
-                    int responseType = response.responseType;
-                    byte[] value = response.responseValue;
-                    switch (orderType) {
-                        case writeConfig:
-                            if (value.length >= 2) {
-                                int key = value[1] & 0xff;
-                                ConfigKeyEnum configKeyEnum = ConfigKeyEnum.fromConfigKey(key);
-                                if (configKeyEnum == null) {
-                                    return;
-                                }
-                                switch (configKeyEnum) {
-                                    case GET_AXIX_PARAMS:
-                                        if (value.length > 6) {
-                                            mSelectedRate = value[4] & 0xff;
-                                            tvAxisDataRate.setText(axisDataRate[mSelectedRate]);
-                                            mSelectedScale = value[5] & 0xff;
-                                            tvAxisScale.setText(axisScales[mSelectedScale]);
-                                            mSelectedSensivity = value[6] & 0xff;
-                                            tvTriggerSensitivity.setText(mSelectedSensivity + "");
-                                            sbTriggerSensitivity.setProgress(mSelectedSensivity - 7);
-                                        }
-                                        break;
-                                    case SET_AXIX_PARAMS:
-                                        if (value.length > 3 && value[3] == 0) {
-                                            ToastUtils.showToast(AxisDataActivity.this, "Success");
-                                        } else {
-                                            ToastUtils.showToast(AxisDataActivity.this, "Failed");
-                                        }
-                                        break;
-                                }
-                            }
-                            break;
-                    }
-                }
-
-                if (MokoConstants.ACTION_CURRENT_DATA.equals(action)) {
-                    OrderType orderType = (OrderType) intent.getSerializableExtra(MokoConstants.EXTRA_KEY_CURRENT_DATA_TYPE);
-                    byte[] value = intent.getByteArrayExtra(MokoConstants.EXTRA_KEY_RESPONSE_VALUE);
-                    switch (orderType) {
-                        case notifyConfig:
-                            String valueHexStr = MokoUtils.bytesToHexString(value);
-                            if ("eb63000100".equals(valueHexStr.toLowerCase())) {
-                                ToastUtils.showToast(AxisDataActivity.this, "Device Locked!");
-                                back();
-                            }
-                            break;
-                        case axisData:
-                            if (value.length > 5) {
-                                String axisHexStr = MokoUtils.bytesToHexString(value);
-                                int length = axisHexStr.length();
-                                tvZData.setText(String.format("Z-Data:0x%s", axisHexStr.substring(length - 4).toUpperCase()));
-                                tvYData.setText(String.format("Y-Data:0x%s", axisHexStr.substring(length - 8, length - 4).toUpperCase()));
-                                tvXData.setText(String.format("X-Data:0x%s", axisHexStr.substring(length - 12, length - 8).toUpperCase()));
-                            }
-                            break;
-                    }
-                }
                 if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
                     int blueState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
                     switch (blueState) {
@@ -246,7 +228,6 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
             // 注销广播
             unregisterReceiver(mReceiver);
         }
-        unbindService(mServiceConnection);
         EventBus.getDefault().unregister(this);
     }
 
@@ -280,13 +261,17 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
                 if (!isSync) {
                     isSync = true;
                     showSyncingProgressDialog();
-                    MokoSupport.getInstance().sendOrder(mMokoService.setAxisNotifyOpen());
+                    ArrayList<OrderTask> orderTasks = new ArrayList<>();
+                    orderTasks.add(OrderTaskAssembler.setAxisNotifyOpen());
+                    MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
                     Animation animation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh);
                     ivSync.startAnimation(animation);
                     tvSync.setText("Stop");
                 } else {
                     showSyncingProgressDialog();
-                    MokoSupport.getInstance().sendOrder(mMokoService.setAxisNotifyClose());
+                    ArrayList<OrderTask> orderTasks = new ArrayList<>();
+                    orderTasks.add(OrderTaskAssembler.setAxisNotifyClose());
+                    MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
                     isSync = false;
                     ivSync.clearAnimation();
                     tvSync.setText("Sync");
@@ -321,14 +306,18 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
             case R.id.iv_save:
                 // 保存
                 showSyncingProgressDialog();
-                MokoSupport.getInstance().sendOrder(mMokoService.setAxisParams(mSelectedRate, mSelectedScale, mSelectedSensivity));
+                ArrayList<OrderTask> orderTasks = new ArrayList<>();
+                orderTasks.add(OrderTaskAssembler.setAxisParams(mSelectedRate, mSelectedScale, mSelectedSensivity));
+                MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
                 break;
         }
     }
 
     private void back() {
         // 关闭通知
-        MokoSupport.getInstance().sendOrder(mMokoService.setAxisNotifyClose());
+        ArrayList<OrderTask> orderTasks = new ArrayList<>();
+        orderTasks.add(OrderTaskAssembler.setAxisNotifyClose());
+        MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
         finish();
     }
 

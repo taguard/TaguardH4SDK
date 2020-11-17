@@ -10,7 +10,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 
-
 import com.moko.beaconxpro.R;
 
 import butterknife.ButterKnife;
