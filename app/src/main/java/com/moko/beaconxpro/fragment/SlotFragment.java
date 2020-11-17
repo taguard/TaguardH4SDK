@@ -27,48 +27,48 @@ import com.moko.support.utils.MokoUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class SlotFragment extends Fragment {
 
     private static final String TAG = "SlotFragment";
-    @Bind(R.id.iv_slot1)
+    @BindView(R.id.iv_slot1)
     ImageView ivSlot1;
-    @Bind(R.id.tv_slot1)
+    @BindView(R.id.tv_slot1)
     TextView tvSlot1;
-    @Bind(R.id.rl_slot1)
+    @BindView(R.id.rl_slot1)
     RelativeLayout rlSlot1;
-    @Bind(R.id.iv_slot2)
+    @BindView(R.id.iv_slot2)
     ImageView ivSlot2;
-    @Bind(R.id.tv_slot2)
+    @BindView(R.id.tv_slot2)
     TextView tvSlot2;
-    @Bind(R.id.rl_slot2)
+    @BindView(R.id.rl_slot2)
     RelativeLayout rlSlot2;
-    @Bind(R.id.iv_slot3)
+    @BindView(R.id.iv_slot3)
     ImageView ivSlot3;
-    @Bind(R.id.tv_slot3)
+    @BindView(R.id.tv_slot3)
     TextView tvSlot3;
-    @Bind(R.id.rl_slot3)
+    @BindView(R.id.rl_slot3)
     RelativeLayout rlSlot3;
-    @Bind(R.id.iv_slot4)
+    @BindView(R.id.iv_slot4)
     ImageView ivSlot4;
-    @Bind(R.id.tv_slot4)
+    @BindView(R.id.tv_slot4)
     TextView tvSlot4;
-    @Bind(R.id.rl_slot4)
+    @BindView(R.id.rl_slot4)
     RelativeLayout rlSlot4;
-    @Bind(R.id.iv_slot5)
+    @BindView(R.id.iv_slot5)
     ImageView ivSlot5;
-    @Bind(R.id.tv_slot5)
+    @BindView(R.id.tv_slot5)
     TextView tvSlot5;
-    @Bind(R.id.rl_slot5)
+    @BindView(R.id.rl_slot5)
     RelativeLayout rlSlot5;
-    @Bind(R.id.iv_slot6)
+    @BindView(R.id.iv_slot6)
     ImageView ivSlot6;
-    @Bind(R.id.tv_slot6)
+    @BindView(R.id.tv_slot6)
     TextView tvSlot6;
-    @Bind(R.id.rl_slot6)
+    @BindView(R.id.rl_slot6)
     RelativeLayout rlSlot6;
 
     private DeviceInfoActivity activity;
@@ -111,13 +111,6 @@ public class SlotFragment extends Fragment {
     public void onPause() {
         Log.i(TAG, "onPause: ");
         super.onPause();
-    }
-
-    @Override
-    public void onDestroyView() {
-        Log.i(TAG, "onDestroyView: ");
-        super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 
     @Override

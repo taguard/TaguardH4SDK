@@ -9,12 +9,12 @@ import com.moko.beaconxpro.view.WheelView;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class AxisScaleDialog extends MokoBaseDialog {
-    @Bind(R.id.wv_scale)
+    @BindView(R.id.wv_scale)
     WheelView wvScale;
     private String[] axisScale;
     private int selected;
@@ -36,12 +36,6 @@ public class AxisScaleDialog extends MokoBaseDialog {
     @Override
     public float getDimAmount() {
         return 0.7f;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 
     @OnClick({R.id.tv_cancel, R.id.tv_confirm})

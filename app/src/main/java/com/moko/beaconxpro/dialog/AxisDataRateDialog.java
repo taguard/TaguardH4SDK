@@ -9,12 +9,12 @@ import com.moko.beaconxpro.view.WheelView;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class AxisDataRateDialog extends MokoBaseDialog {
-    @Bind(R.id.wv_data_rate)
+    @BindView(R.id.wv_data_rate)
     WheelView wvDataRate;
     private String[] axisDataRate;
     private int selected;
@@ -36,12 +36,6 @@ public class AxisDataRateDialog extends MokoBaseDialog {
     @Override
     public float getDimAmount() {
         return 0.7f;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 
     @OnClick({R.id.tv_cancel, R.id.tv_confirm})

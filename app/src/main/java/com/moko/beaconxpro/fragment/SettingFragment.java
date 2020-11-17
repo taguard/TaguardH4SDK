@@ -21,26 +21,26 @@ import com.moko.support.utils.MokoUtils;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class SettingFragment extends Fragment {
 
     private static final String TAG = "SettingFragment";
-    @Bind(R.id.iv_connectable)
+    @BindView(R.id.iv_connectable)
     ImageView ivConnectable;
-    @Bind(R.id.iv_power)
+    @BindView(R.id.iv_power)
     ImageView ivPower;
-    @Bind(R.id.rl_password)
+    @BindView(R.id.rl_password)
     RelativeLayout rlPassword;
-    @Bind(R.id.iv_no_password)
+    @BindView(R.id.iv_no_password)
     ImageView ivNoPassowrd;
-    @Bind(R.id.rl_axis)
+    @BindView(R.id.rl_axis)
     RelativeLayout rlAxis;
-    @Bind(R.id.rl_th)
+    @BindView(R.id.rl_th)
     RelativeLayout rlTh;
-    @Bind(R.id.rl_reset_facotry)
+    @BindView(R.id.rl_reset_facotry)
     RelativeLayout rlResetFacotry;
 
     private DeviceInfoActivity activity;
@@ -79,13 +79,6 @@ public class SettingFragment extends Fragment {
     public void onPause() {
         Log.i(TAG, "onPause: ");
         super.onPause();
-    }
-
-    @Override
-    public void onDestroyView() {
-        Log.i(TAG, "onDestroyView: ");
-        super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 
     @Override

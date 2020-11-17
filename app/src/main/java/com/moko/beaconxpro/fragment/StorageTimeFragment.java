@@ -12,16 +12,16 @@ import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.activity.THDataActivity;
 import com.moko.beaconxpro.dialog.StorageTimeDialog;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class StorageTimeFragment extends Fragment {
 
     private static final String TAG = "StorageTimeFragment";
-    @Bind(R.id.tv_storage_time_only)
+    @BindView(R.id.tv_storage_time_only)
     TextView tvStorageTimeOnly;
-    @Bind(R.id.tv_time_tips)
+    @BindView(R.id.tv_time_tips)
     TextView tvTimeTips;
 
     private THDataActivity activity;
@@ -62,13 +62,6 @@ public class StorageTimeFragment extends Fragment {
     public void onPause() {
         Log.i(TAG, "onPause: ");
         super.onPause();
-    }
-
-    @Override
-    public void onDestroyView() {
-        Log.i(TAG, "onDestroyView: ");
-        super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 
     @Override

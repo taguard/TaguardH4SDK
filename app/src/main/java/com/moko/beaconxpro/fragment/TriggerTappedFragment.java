@@ -18,7 +18,7 @@ import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.activity.SlotDataActivity;
 import com.moko.beaconxpro.utils.ToastUtils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class TriggerTappedFragment extends Fragment implements RadioGroup.OnCheckedChangeListener {
@@ -26,19 +26,19 @@ public class TriggerTappedFragment extends Fragment implements RadioGroup.OnChec
     private static final String TAG = "TappedFragment";
 
 
-    @Bind(R.id.tv_trigger_tips)
+    @BindView(R.id.tv_trigger_tips)
     TextView tvTriggerTips;
-    @Bind(R.id.rb_always_start)
+    @BindView(R.id.rb_always_start)
     RadioButton rbAlwaysStart;
-    @Bind(R.id.rb_start_advertising)
+    @BindView(R.id.rb_start_advertising)
     RadioButton rbStartAdvertising;
-    @Bind(R.id.rb_stop_advertising)
+    @BindView(R.id.rb_stop_advertising)
     RadioButton rbStopAdvertising;
-    @Bind(R.id.rg_tapped)
+    @BindView(R.id.rg_tapped)
     RadioGroup rgTapped;
-    @Bind(R.id.et_start)
+    @BindView(R.id.et_start)
     EditText etStart;
-    @Bind(R.id.et_stop)
+    @BindView(R.id.et_stop)
     EditText etStop;
 
 
@@ -148,13 +148,6 @@ public class TriggerTappedFragment extends Fragment implements RadioGroup.OnChec
     public void onPause() {
         Log.i(TAG, "onPause: ");
         super.onPause();
-    }
-
-    @Override
-    public void onDestroyView() {
-        Log.i(TAG, "onDestroyView: ");
-        super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 
     @Override

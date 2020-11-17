@@ -12,16 +12,16 @@ import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.activity.THDataActivity;
 import com.moko.beaconxpro.dialog.StorageHumidityDialog;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class StorageHumidityFragment extends Fragment {
 
     private static final String TAG = "StorageHumidityFragment";
-    @Bind(R.id.tv_storage_humidity_only)
+    @BindView(R.id.tv_storage_humidity_only)
     TextView tvStorageHumidityOnly;
-    @Bind(R.id.tv_humidity_only_tips)
+    @BindView(R.id.tv_humidity_only_tips)
     TextView tvHumidityOnlyTips;
 
     private THDataActivity activity;
@@ -61,13 +61,6 @@ public class StorageHumidityFragment extends Fragment {
     public void onPause() {
         Log.i(TAG, "onPause: ");
         super.onPause();
-    }
-
-    @Override
-    public void onDestroyView() {
-        Log.i(TAG, "onDestroyView: ");
-        super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 
     @Override

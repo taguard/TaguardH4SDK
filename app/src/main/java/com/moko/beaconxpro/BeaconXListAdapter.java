@@ -25,8 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import butterknife.ButterKnife;
-
 public class BeaconXListAdapter extends BaseQuickAdapter<BeaconXInfo, BaseViewHolder> {
     public BeaconXListAdapter() {
         super(R.layout.list_item_device);
@@ -91,9 +89,9 @@ public class BeaconXListAdapter extends BaseQuickAdapter<BeaconXInfo, BaseViewHo
 
     private View createUIDView(BeaconXUID uid) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.beaconx_uid, null);
-        TextView tvTxPower = ButterKnife.findById(view, R.id.tv_tx_power);
-        TextView tvNameSpace = ButterKnife.findById(view, R.id.tv_namespace);
-        TextView tvInstanceId = ButterKnife.findById(view, R.id.tv_instance_id);
+        TextView tvTxPower = view.findViewById(R.id.tv_tx_power);
+        TextView tvNameSpace = view.findViewById(R.id.tv_namespace);
+        TextView tvInstanceId = view.findViewById(R.id.tv_instance_id);
         tvTxPower.setText(String.format("RSSI@0m:%sdBm", uid.rangingData));
         tvNameSpace.setText("0x" + uid.namespace.toUpperCase());
         tvInstanceId.setText("0x" + uid.instanceId.toUpperCase());
@@ -102,8 +100,8 @@ public class BeaconXListAdapter extends BaseQuickAdapter<BeaconXInfo, BaseViewHo
 
     private View createURLView(final BeaconXURL url) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.beaconx_url, null);
-        TextView tvTxPower = ButterKnife.findById(view, R.id.tv_tx_power);
-        TextView tvUrl = ButterKnife.findById(view, R.id.tv_url);
+        TextView tvTxPower = view.findViewById(R.id.tv_tx_power);
+        TextView tvUrl = view.findViewById(R.id.tv_url);
         tvTxPower.setText(String.format("RSSI@0m:%sdBm", url.rangingData));
         tvUrl.setText(url.url);
         tvUrl.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
@@ -121,10 +119,10 @@ public class BeaconXListAdapter extends BaseQuickAdapter<BeaconXInfo, BaseViewHo
 
     private View createTLMView(BeaconXTLM tlm) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.beaconx_tlm, null);
-        TextView tv_vbatt = ButterKnife.findById(view, R.id.tv_vbatt);
-        TextView tv_temp = ButterKnife.findById(view, R.id.tv_temp);
-        TextView tv_adv_cnt = ButterKnife.findById(view, R.id.tv_adv_cnt);
-        TextView tv_sec_cnt = ButterKnife.findById(view, R.id.tv_sec_cnt);
+        TextView tv_vbatt = view.findViewById(R.id.tv_vbatt);
+        TextView tv_temp = view.findViewById(R.id.tv_temp);
+        TextView tv_adv_cnt = view.findViewById(R.id.tv_adv_cnt);
+        TextView tv_sec_cnt = view.findViewById(R.id.tv_sec_cnt);
         tv_vbatt.setText(String.format("%smV", tlm.vbatt));
         tv_temp.setText(tlm.temp);
         tv_adv_cnt.setText(tlm.adv_cnt);
@@ -134,12 +132,12 @@ public class BeaconXListAdapter extends BaseQuickAdapter<BeaconXInfo, BaseViewHo
 
     private View createiBeaconView(BeaconXiBeacon iBeacon) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.beaconx_ibeacon, null);
-        TextView tv_tx_power = ButterKnife.findById(view, R.id.tv_tx_power);
-        TextView tv_rssi_1m = ButterKnife.findById(view, R.id.tv_rssi_1m);
-        TextView tv_uuid = ButterKnife.findById(view, R.id.tv_uuid);
-        TextView tv_major = ButterKnife.findById(view, R.id.tv_major);
-        TextView tv_minor = ButterKnife.findById(view, R.id.tv_minor);
-        TextView tv_distance = ButterKnife.findById(view, R.id.tv_distance);
+        TextView tv_tx_power = view.findViewById(R.id.tv_tx_power);
+        TextView tv_rssi_1m = view.findViewById(R.id.tv_rssi_1m);
+        TextView tv_uuid = view.findViewById(R.id.tv_uuid);
+        TextView tv_major = view.findViewById(R.id.tv_major);
+        TextView tv_minor = view.findViewById(R.id.tv_minor);
+        TextView tv_distance = view.findViewById(R.id.tv_distance);
 
         tv_rssi_1m.setText(String.format("RSSI@1m:%sdBm", iBeacon.rangingData));
         tv_tx_power.setText(String.format("%sdBm", iBeacon.txPower));
@@ -152,10 +150,10 @@ public class BeaconXListAdapter extends BaseQuickAdapter<BeaconXInfo, BaseViewHo
 
     private View createTHView(BeaconXTH beaconXTH) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.beaconx_th, null);
-        TextView tv_tx_power = ButterKnife.findById(view, R.id.tv_tx_power);
-        TextView tv_rssi_0m = ButterKnife.findById(view, R.id.tv_rssi_0m);
-        TextView tv_temperature = ButterKnife.findById(view, R.id.tv_temperature);
-        TextView tv_humidity = ButterKnife.findById(view, R.id.tv_humidity);
+        TextView tv_tx_power = view.findViewById(R.id.tv_tx_power);
+        TextView tv_rssi_0m = view.findViewById(R.id.tv_rssi_0m);
+        TextView tv_temperature = view.findViewById(R.id.tv_temperature);
+        TextView tv_humidity = view.findViewById(R.id.tv_humidity);
 
         tv_rssi_0m.setText(String.format("RSSI@0m:%sdBm", beaconXTH.rangingData));
         tv_tx_power.setText(String.format("%sdBm", beaconXTH.txPower));
@@ -166,11 +164,11 @@ public class BeaconXListAdapter extends BaseQuickAdapter<BeaconXInfo, BaseViewHo
 
     private View createAxisView(BeaconXAxis beaconXAxis) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.beaconx_axis, null);
-        TextView tv_tx_power = ButterKnife.findById(view, R.id.tv_tx_power);
-        TextView tv_rssi_0m = ButterKnife.findById(view, R.id.tv_rssi_0m);
-        TextView tv_data_rate = ButterKnife.findById(view, R.id.tv_data_rate);
-        TextView tv_scale = ButterKnife.findById(view, R.id.tv_scale);
-        TextView tv_sampled_data = ButterKnife.findById(view, R.id.tv_sampled_data);
+        TextView tv_tx_power = view.findViewById(R.id.tv_tx_power);
+        TextView tv_rssi_0m = view.findViewById(R.id.tv_rssi_0m);
+        TextView tv_data_rate = view.findViewById(R.id.tv_data_rate);
+        TextView tv_scale = view.findViewById(R.id.tv_scale);
+        TextView tv_sampled_data = view.findViewById(R.id.tv_sampled_data);
 
         tv_rssi_0m.setText(String.format("RSSI@0m:%sdBm", beaconXAxis.rangingData));
         tv_tx_power.setText(String.format("%sdBm", beaconXAxis.txPower));

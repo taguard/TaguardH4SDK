@@ -47,24 +47,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.carbswang.android.numberpickerview.library.NumberPickerView;
 
 public class THDataActivity extends BaseActivity implements NumberPickerView.OnValueChangeListener {
 
-    @Bind(R.id.tv_temp)
+    @BindView(R.id.tv_temp)
     TextView tvTemp;
-    @Bind(R.id.tv_humidity)
+    @BindView(R.id.tv_humidity)
     TextView tvHumidity;
-    @Bind(R.id.npv_storage_condition)
+    @BindView(R.id.npv_storage_condition)
     NumberPickerView npvStorageCondition;
-    //    @Bind(R.id.frame_storage_condition)
+    //    @BindView(R.id.frame_storage_condition)
 //    FrameLayout frameStorageCondition;
-    @Bind(R.id.tv_update_date)
+    @BindView(R.id.tv_update_date)
     TextView tvUpdateDate;
-    @Bind(R.id.et_period)
+    @BindView(R.id.et_period)
     EditText etPeriod;
 
     private FragmentManager fragmentManager;

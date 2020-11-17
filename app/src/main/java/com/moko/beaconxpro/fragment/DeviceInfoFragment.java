@@ -26,24 +26,24 @@ import com.moko.support.utils.MokoUtils;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class DeviceInfoFragment extends Fragment implements SeekBar.OnSeekBarChangeListener, ISlotDataAction {
 
     private static final String TAG = "DeviceInfoFragment";
     private final String FILTER_ASCII = "\\A\\p{ASCII}*\\z";
-    @Bind(R.id.et_device_name)
+    @BindView(R.id.et_device_name)
     EditText etDeviceName;
-    @Bind(R.id.sb_adv_tx_power)
+    @BindView(R.id.sb_adv_tx_power)
     SeekBar sbAdvTxPower;
-    @Bind(R.id.sb_tx_power)
+    @BindView(R.id.sb_tx_power)
     SeekBar sbTxPower;
-    @Bind(R.id.tv_adv_tx_power)
+    @BindView(R.id.tv_adv_tx_power)
     TextView tvAdvTxPower;
-    @Bind(R.id.tv_tx_power)
+    @BindView(R.id.tv_tx_power)
     TextView tvTxPower;
-    @Bind(R.id.et_adv_interval)
+    @BindView(R.id.et_adv_interval)
     EditText etAdvInterval;
 
 
@@ -133,13 +133,6 @@ public class DeviceInfoFragment extends Fragment implements SeekBar.OnSeekBarCha
     public void onPause() {
         Log.i(TAG, "onPause: ");
         super.onPause();
-    }
-
-    @Override
-    public void onDestroyView() {
-        Log.i(TAG, "onDestroyView: ");
-        super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 
     @Override

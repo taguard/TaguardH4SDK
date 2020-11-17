@@ -47,20 +47,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class ExportDataActivity extends BaseActivity {
 
 
-    @Bind(R.id.iv_sync)
+    @BindView(R.id.iv_sync)
     ImageView ivSync;
-    @Bind(R.id.tv_export)
+    @BindView(R.id.tv_export)
     TextView tvExport;
-    @Bind(R.id.ll_data)
+    @BindView(R.id.ll_data)
     LinearLayout llData;
-    @Bind(R.id.tv_sync)
+    @BindView(R.id.tv_sync)
     TextView tvSync;
 
     private boolean mReceiverTag = false;
@@ -198,9 +198,9 @@ public class ExportDataActivity extends BaseActivity {
                             calendar1.set(Calendar.MINUTE, minute1);
                             calendar1.set(Calendar.SECOND, second1);
                             View v1 = getLayoutInflater().inflate(R.layout.item_export_data, llData, false);
-                            TextView tvTime1 = ButterKnife.findById(v1, R.id.tv_time);
-                            TextView tvTemp1 = ButterKnife.findById(v1, R.id.tv_temp);
-                            TextView tvHumidity1 = ButterKnife.findById(v1, R.id.tv_humidity);
+                            TextView tvTime1 = v1.findViewById(R.id.tv_time);
+                            TextView tvTemp1 = v1.findViewById(R.id.tv_temp);
+                            TextView tvHumidity1 = v1.findViewById(R.id.tv_humidity);
                             String time1 = Utils.calendar2strDate(calendar1, AppConstants.PATTERN_YYYY_MM_DD_HH_MM_SS);
                             String tempStr1 = MokoUtils.getDecimalFormat("0.0").format(temp1);
                             String humidityStr1 = MokoUtils.getDecimalFormat("0.0").format(humidity1);
@@ -229,9 +229,9 @@ public class ExportDataActivity extends BaseActivity {
                             calendar2.set(Calendar.MINUTE, minute2);
                             calendar2.set(Calendar.SECOND, second2);
                             View v2 = getLayoutInflater().inflate(R.layout.item_export_data, llData, false);
-                            TextView tvTime2 = ButterKnife.findById(v2, R.id.tv_time);
-                            TextView tvTemp2 = ButterKnife.findById(v2, R.id.tv_temp);
-                            TextView tvHumidity2 = ButterKnife.findById(v2, R.id.tv_humidity);
+                            TextView tvTime2 = v2.findViewById(R.id.tv_time);
+                            TextView tvTemp2 = v2.findViewById(R.id.tv_temp);
+                            TextView tvHumidity2 = v2.findViewById(R.id.tv_humidity);
                             String time2 = Utils.calendar2strDate(calendar2, AppConstants.PATTERN_YYYY_MM_DD_HH_MM_SS);
                             String tempStr2 = MokoUtils.getDecimalFormat("0.0").format(temp2);
                             String humidityStr2 = MokoUtils.getDecimalFormat("0.0").format(humidity2);
@@ -260,9 +260,9 @@ public class ExportDataActivity extends BaseActivity {
                             calendar.set(Calendar.MINUTE, minute);
                             calendar.set(Calendar.SECOND, second);
                             View v = getLayoutInflater().inflate(R.layout.item_export_data, llData, false);
-                            TextView tvTime = ButterKnife.findById(v, R.id.tv_time);
-                            TextView tvTemp = ButterKnife.findById(v, R.id.tv_temp);
-                            TextView tvHumidity = ButterKnife.findById(v, R.id.tv_humidity);
+                            TextView tvTime = v.findViewById(R.id.tv_time);
+                            TextView tvTemp = v.findViewById(R.id.tv_temp);
+                            TextView tvHumidity = v.findViewById(R.id.tv_humidity);
                             String time = Utils.calendar2strDate(calendar, AppConstants.PATTERN_YYYY_MM_DD_HH_MM_SS);
                             String tempStr = MokoUtils.getDecimalFormat("0.0").format(temp);
                             String humidityStr = MokoUtils.getDecimalFormat("0.0").format(humidity);

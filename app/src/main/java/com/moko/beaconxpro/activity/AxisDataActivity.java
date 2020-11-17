@@ -40,29 +40,29 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarChangeListener {
 
-    @Bind(R.id.iv_sync)
+    @BindView(R.id.iv_sync)
     ImageView ivSync;
-    @Bind(R.id.tv_sync)
+    @BindView(R.id.tv_sync)
     TextView tvSync;
-    @Bind(R.id.tv_x_data)
+    @BindView(R.id.tv_x_data)
     TextView tvXData;
-    @Bind(R.id.tv_y_data)
+    @BindView(R.id.tv_y_data)
     TextView tvYData;
-    @Bind(R.id.tv_z_data)
+    @BindView(R.id.tv_z_data)
     TextView tvZData;
-    @Bind(R.id.tv_axis_scale)
+    @BindView(R.id.tv_axis_scale)
     TextView tvAxisScale;
-    @Bind(R.id.tv_axis_data_rate)
+    @BindView(R.id.tv_axis_data_rate)
     TextView tvAxisDataRate;
-    @Bind(R.id.sb_trigger_sensitivity)
+    @BindView(R.id.sb_trigger_sensitivity)
     SeekBar sbTriggerSensitivity;
-    @Bind(R.id.tv_trigger_sensitivity)
+    @BindView(R.id.tv_trigger_sensitivity)
     TextView tvTriggerSensitivity;
     private boolean mReceiverTag = false;
     private String[] axisDataRate;

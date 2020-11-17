@@ -14,25 +14,25 @@ import android.widget.TextView;
 import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.activity.SlotDataActivity;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class TriggerTempFragment extends Fragment implements SeekBar.OnSeekBarChangeListener, RadioGroup.OnCheckedChangeListener {
 
     private static final String TAG = "TempFragment";
-    @Bind(R.id.sb_trigger_temp)
+    @BindView(R.id.sb_trigger_temp)
     SeekBar sbTriggerTemp;
-    @Bind(R.id.tv_trigger_temp)
+    @BindView(R.id.tv_trigger_temp)
     TextView tvTriggerTemp;
-    @Bind(R.id.rb_start)
+    @BindView(R.id.rb_start)
     RadioButton rbStart;
-    @Bind(R.id.rb_stop)
+    @BindView(R.id.rb_stop)
     RadioButton rbStop;
-    @Bind(R.id.rg_advertising)
+    @BindView(R.id.rg_advertising)
     RadioGroup rgAdvertising;
-    @Bind(R.id.tv_trigger_tips)
+    @BindView(R.id.tv_trigger_tips)
     TextView tvTriggerTips;
-    @Bind(R.id.trigger_temp)
+    @BindView(R.id.trigger_temp)
     TextView triggerTemp;
 
 
@@ -85,13 +85,6 @@ public class TriggerTempFragment extends Fragment implements SeekBar.OnSeekBarCh
     public void onPause() {
         Log.i(TAG, "onPause: ");
         super.onPause();
-    }
-
-    @Override
-    public void onDestroyView() {
-        Log.i(TAG, "onDestroyView: ");
-        super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 
     @Override

@@ -9,12 +9,12 @@ import com.moko.beaconxpro.view.WheelView;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class TriggerTypeDialog extends MokoBaseDialog {
-    @Bind(R.id.wv_trigger_type)
+    @BindView(R.id.wv_trigger_type)
     WheelView wvTriggerType;
     private int selected;
     private String[] datas;
@@ -34,12 +34,6 @@ public class TriggerTypeDialog extends MokoBaseDialog {
     @Override
     public float getDimAmount() {
         return 0.7f;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 
     @OnClick({R.id.tv_cancel, R.id.tv_confirm})

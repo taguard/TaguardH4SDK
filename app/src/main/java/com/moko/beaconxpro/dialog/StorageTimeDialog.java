@@ -8,13 +8,13 @@ import com.moko.beaconxpro.view.WheelView;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class StorageTimeDialog extends MokoBaseDialog {
 
-    @Bind(R.id.wv_storage_time)
+    @BindView(R.id.wv_storage_time)
     WheelView wvStorageTime;
     private int selected;
 
@@ -43,12 +43,6 @@ public class StorageTimeDialog extends MokoBaseDialog {
     @Override
     public float getDimAmount() {
         return 0.7f;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 
     @OnClick({R.id.tv_cancel, R.id.tv_confirm})

@@ -12,14 +12,14 @@ import android.widget.EditText;
 import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.utils.ToastUtils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class PasswordDialog extends MokoBaseDialog {
     public static final String TAG = PasswordDialog.class.getSimpleName();
 
-    @Bind(R.id.et_password)
+    @BindView(R.id.et_password)
     EditText etPassword;
     private final String FILTER_ASCII = "\\A\\p{ASCII}*\\z";
 
@@ -113,12 +113,6 @@ public class PasswordDialog extends MokoBaseDialog {
     @Override
     public boolean getCancellable() {
         return true;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 
     private PasswordClickListener passwordClickListener;

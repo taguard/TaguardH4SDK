@@ -8,13 +8,13 @@ import com.moko.beaconxpro.view.WheelView;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class StorageHumidityDialog extends MokoBaseDialog {
 
-    @Bind(R.id.wv_storage_humidity)
+    @BindView(R.id.wv_storage_humidity)
     WheelView wvStorageHumidity;
     private int selected;
 
@@ -43,12 +43,6 @@ public class StorageHumidityDialog extends MokoBaseDialog {
     @Override
     public float getDimAmount() {
         return 0.7f;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 
     @OnClick({R.id.tv_cancel, R.id.tv_confirm})

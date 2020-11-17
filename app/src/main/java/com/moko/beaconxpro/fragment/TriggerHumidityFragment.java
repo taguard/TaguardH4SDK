@@ -14,26 +14,26 @@ import android.widget.TextView;
 import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.activity.SlotDataActivity;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class TriggerHumidityFragment extends Fragment implements SeekBar.OnSeekBarChangeListener, RadioGroup.OnCheckedChangeListener {
 
     private static final String TAG = "HumidityFragment";
 
-    @Bind(R.id.sb_trigger_humidity)
+    @BindView(R.id.sb_trigger_humidity)
     SeekBar sbTriggerHumidity;
-    @Bind(R.id.tv_trigger_humidiy)
+    @BindView(R.id.tv_trigger_humidiy)
     TextView tvTriggerHumidiy;
-    @Bind(R.id.rb_start)
+    @BindView(R.id.rb_start)
     RadioButton rbStart;
-    @Bind(R.id.rb_stop)
+    @BindView(R.id.rb_stop)
     RadioButton rbStop;
-    @Bind(R.id.rg_advertising)
+    @BindView(R.id.rg_advertising)
     RadioGroup rgAdvertising;
-    @Bind(R.id.tv_trigger_tips)
+    @BindView(R.id.tv_trigger_tips)
     TextView tvTriggerTips;
-    @Bind(R.id.trigger_humidiy)
+    @BindView(R.id.trigger_humidiy)
     TextView triggerHumidiy;
 
 
@@ -86,13 +86,6 @@ public class TriggerHumidityFragment extends Fragment implements SeekBar.OnSeekB
     public void onPause() {
         Log.i(TAG, "onPause: ");
         super.onPause();
-    }
-
-    @Override
-    public void onDestroyView() {
-        Log.i(TAG, "onDestroyView: ");
-        super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 
     @Override
