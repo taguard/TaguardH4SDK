@@ -140,10 +140,19 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
             triggerArray = getResources().getStringArray(R.array.trigger_type_3);
         }
         npvSlotType.setOnValueChangedListener(this);
-
-        npvSlotType.setValue(slotData.frameTypeEnum.ordinal());
+        if (deviceType != 2) {
+            npvSlotType.setValue(slotData.frameTypeEnum.ordinal());
+            showFragment(slotData.frameTypeEnum.ordinal());
+        } else {
+            if (slotData.frameTypeEnum.ordinal() == 7) {
+                npvSlotType.setValue(6);
+                showFragment(6);
+            } else {
+                npvSlotType.setValue(slotData.frameTypeEnum.ordinal());
+                showFragment(slotData.frameTypeEnum.ordinal());
+            }
+        }
         tvSlotTitle.setText(slotData.slotEnum.getTitle());
-        showFragment(slotData.frameTypeEnum.ordinal());
         seekBarProgressHashMap = new HashMap<>();
         if (slotData.frameTypeEnum != SlotFrameTypeEnum.NO_DATA) {
             rlTriggerSwitch.setVisibility(View.VISIBLE);

@@ -99,11 +99,8 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
         validParams = new ValidParams();
         mPassword = getIntent().getStringExtra(AppConstants.EXTRA_KEY_PASSWORD);
         fragmentManager = getFragmentManager();
-        showDeviceFragment();
-        showSettingFragment();
-        showSlotFragment();
+        initFragment();
         rgOptions.setOnCheckedChangeListener(this);
-        radioBtnSlot.setChecked(true);
         EventBus.getDefault().register(this);
         // 注册广播接收器
         IntentFilter filter = new IntentFilter();
@@ -536,32 +533,50 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
         return super.onKeyDown(keyCode, event);
     }
 
+    private void initFragment() {
+        slotFragment = SlotFragment.newInstance();
+        settingFragment = SettingFragment.newInstance();
+        deviceFragment = DeviceFragment.newInstance();
+        fragmentManager.beginTransaction()
+                .add(R.id.frame_container, slotFragment)
+                .add(R.id.frame_container, settingFragment)
+                .add(R.id.frame_container, deviceFragment)
+                .show(slotFragment)
+                .hide(settingFragment)
+                .hide(deviceFragment)
+                .commit();
+
+    }
+
     private void showSlotFragment() {
-        if (slotFragment == null) {
-            slotFragment = SlotFragment.newInstance();
-            fragmentManager.beginTransaction().add(R.id.frame_container, slotFragment).commit();
-        } else {
-            fragmentManager.beginTransaction().hide(settingFragment).hide(deviceFragment).show(slotFragment).commit();
+        if (slotFragment != null) {
+            fragmentManager.beginTransaction()
+                    .hide(settingFragment)
+                    .hide(deviceFragment)
+                    .show(slotFragment)
+                    .commit();
         }
         tvTitle.setText(getString(R.string.slot_title));
     }
 
     private void showSettingFragment() {
-        if (settingFragment == null) {
-            settingFragment = SettingFragment.newInstance();
-            fragmentManager.beginTransaction().add(R.id.frame_container, settingFragment).commit();
-        } else {
-            fragmentManager.beginTransaction().hide(slotFragment).hide(deviceFragment).show(settingFragment).commit();
+        if (settingFragment != null) {
+            fragmentManager.beginTransaction()
+                    .hide(slotFragment)
+                    .hide(deviceFragment)
+                    .show(settingFragment)
+                    .commit();
         }
         tvTitle.setText(getString(R.string.setting_title));
     }
 
     private void showDeviceFragment() {
-        if (deviceFragment == null) {
-            deviceFragment = DeviceFragment.newInstance();
-            fragmentManager.beginTransaction().add(R.id.frame_container, deviceFragment).commit();
-        } else {
-            fragmentManager.beginTransaction().hide(slotFragment).hide(settingFragment).show(deviceFragment).commit();
+        if (deviceFragment != null) {
+            fragmentManager.beginTransaction()
+                    .hide(slotFragment)
+                    .hide(settingFragment)
+                    .show(deviceFragment)
+                    .commit();
         }
         tvTitle.setText(getString(R.string.device_title));
     }
