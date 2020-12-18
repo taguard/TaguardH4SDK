@@ -168,7 +168,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                             orderTasks.add(OrderTaskAssembler.getLockState());
                             MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
                         }
-                    }, 500);
+                    }, 1500);
                 }
             }
         });
@@ -392,7 +392,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                 orderTasks.add(OrderTaskAssembler.getSlotType());
                 MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
             }
-        }, 500);
+        }, 1500);
     }
 
     private void getDeviceInfo() {

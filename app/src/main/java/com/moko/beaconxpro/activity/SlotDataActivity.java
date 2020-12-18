@@ -699,7 +699,11 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
                 break;
 
         }
-        slotData.frameTypeEnum = SlotFrameTypeEnum.fromEnumOrdinal(newVal);
+        if (deviceType == 2 && newVal == 6) {
+            slotData.frameTypeEnum = SlotFrameTypeEnum.TH;
+        } else {
+            slotData.frameTypeEnum = SlotFrameTypeEnum.fromEnumOrdinal(newVal);
+        }
     }
 
 
