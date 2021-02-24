@@ -82,8 +82,9 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
     private ArrayList<BeaconXInfo> beaconXInfos;
     private BeaconXListAdapter adapter;
     private boolean mInputPassword;
-    private Handler mHandler;
     private MokoBleScanner mokoBleScanner;
+    private Handler mHandler;
+    private boolean isPasswordError;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,7 +160,11 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
             dismissLoadingProgressDialog();
             dismissLoadingMessageDialog();
             if (!mInputPassword && animation == null) {
-                ToastUtils.showToast(MainActivity.this, "Disconnected");
+                if (isPasswordError) {
+                    isPasswordError = false;
+                } else {
+                    ToastUtils.showToast(MainActivity.this, "Disconnected");
+                }
                 startScan();
             } else {
                 mInputPassword = false;
@@ -253,6 +258,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                             });
                             dialog.show(MainActivity.this.getSupportFragmentManager());
                         } else {
+                            isPasswordError = true;
                             unLockResponse = "";
                             ToastUtils.showToast(MainActivity.this, "Password error");
                         }

@@ -22,7 +22,6 @@ final class MokoBleConfig extends MokoBleManager {
     private MokoResponseCallback mMokoResponseCallback;
     private BluetoothGattCharacteristic thCharacteristic;
     private BluetoothGattCharacteristic lockedCharacteristic;
-    private BluetoothGattCharacteristic paramsCharacteristic;
     private BluetoothGattCharacteristic threeAxisCharacteristic;
     private BluetoothGattCharacteristic storeCharacteristic;
 
@@ -39,9 +38,7 @@ final class MokoBleConfig extends MokoBleManager {
             lockedCharacteristic = service.getCharacteristic(OrderCHAR.CHAR_LOCKED_NOTIFY.getUuid());
             threeAxisCharacteristic = service.getCharacteristic(OrderCHAR.CHAR_THREE_AXIS_NOTIFY.getUuid());
             storeCharacteristic = service.getCharacteristic(OrderCHAR.CHAR_STORE_NOTIFY.getUuid());
-            paramsCharacteristic = service.getCharacteristic(OrderCHAR.CHAR_PARAMS.getUuid());
             enableLockedNotify();
-            enableParamNotify();
             return true;
         }
         return false;
@@ -60,7 +57,7 @@ final class MokoBleConfig extends MokoBleManager {
     @Override
     public void discovered(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
         UUID lastCharacteristicUUID = characteristic.getUuid();
-        if (paramsCharacteristic.getUuid().equals(lastCharacteristicUUID))
+        if (lockedCharacteristic.getUuid().equals(lastCharacteristicUUID))
             mMokoResponseCallback.onServicesDiscovered(gatt);
     }
 
@@ -119,7 +116,7 @@ final class MokoBleConfig extends MokoBleManager {
     }
 
     public void disableStoreNotify() {
-        disableNotifications(thCharacteristic).enqueue();
+        disableNotifications(storeCharacteristic).enqueue();
     }
 
     public void enableThreeAxisNotify() {
@@ -148,20 +145,6 @@ final class MokoBleConfig extends MokoBleManager {
     }
 
     public void disableLockedNotify() {
-        disableNotifications(threeAxisCharacteristic).enqueue();
-    }
-
-    public void enableParamNotify() {
-        setIndicationCallback(paramsCharacteristic).with((device, data) -> {
-            final byte[] value = data.getValue();
-            XLog.e("onDataReceived");
-            XLog.e("device to app : " + MokoUtils.bytesToHexString(value));
-            mMokoResponseCallback.onCharacteristicChanged(paramsCharacteristic, value);
-        });
-        enableNotifications(paramsCharacteristic).enqueue();
-    }
-
-    public void disableParamNotify() {
-        disableNotifications(paramsCharacteristic).enqueue();
+        disableNotifications(lockedCharacteristic).enqueue();
     }
 }

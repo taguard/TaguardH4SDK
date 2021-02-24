@@ -320,9 +320,9 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                         }
                         break;
                     case CHAR_LOCK_STATE:
-                        String valueStr = MokoUtils.bytesToHexString(value);
+                        String valueHexStr = MokoUtils.bytesToHexString(value);
                         if (responseType == OrderTask.RESPONSE_TYPE_WRITE) {
-                            if ("eb63000100".equals(valueStr.toLowerCase())) {
+                            if ("eb63000100".equals(valueHexStr.toLowerCase())) {
                                 // 设备上锁
                                 if (isModifyPassword) {
                                     isModifyPassword = false;
@@ -342,10 +342,10 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                             }
                         }
                         if (responseType == OrderTask.RESPONSE_TYPE_READ) {
-                            if ("01".equals(valueStr.toLowerCase())) {
+                            if ("01".equals(valueHexStr.toLowerCase())) {
                                 lockState = 1;
                                 settingFragment.setNoPassword(false);
-                            } else if ("02".equals(valueStr.toLowerCase())) {
+                            } else if ("02".equals(valueHexStr.toLowerCase())) {
                                 lockState = 2;
                                 settingFragment.setNoPassword(true);
                             }
