@@ -16,12 +16,12 @@ import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.activity.DeviceInfoActivity;
 import com.moko.beaconxpro.activity.SlotDataActivity;
 import com.moko.beaconxpro.utils.BeaconXParser;
+import com.moko.ble.lib.task.OrderTask;
 import com.moko.support.MokoSupport;
 import com.moko.support.OrderTaskAssembler;
 import com.moko.support.entity.SlotData;
 import com.moko.support.entity.SlotEnum;
 import com.moko.support.entity.SlotFrameTypeEnum;
-import com.moko.support.task.OrderTask;
 import com.moko.support.utils.MokoUtils;
 
 import java.util.ArrayList;

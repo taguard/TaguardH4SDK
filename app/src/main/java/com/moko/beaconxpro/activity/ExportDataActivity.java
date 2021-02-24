@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -26,16 +27,15 @@ import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.dialog.AlertMessageDialog;
 import com.moko.beaconxpro.utils.ToastUtils;
 import com.moko.beaconxpro.utils.Utils;
-import com.moko.support.MokoConstants;
+import com.moko.ble.lib.MokoConstants;
+import com.moko.ble.lib.event.ConnectStatusEvent;
+import com.moko.ble.lib.event.OrderTaskResponseEvent;
+import com.moko.ble.lib.task.OrderTask;
+import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.support.MokoSupport;
 import com.moko.support.OrderTaskAssembler;
-import com.moko.support.entity.ConfigKeyEnum;
-import com.moko.support.entity.OrderType;
-import com.moko.support.event.ConnectStatusEvent;
-import com.moko.support.event.OrderTaskResponseEvent;
-import com.moko.support.log.LogModule;
-import com.moko.support.task.OrderTask;
-import com.moko.support.task.OrderTaskResponse;
+import com.moko.support.entity.OrderCHAR;
+import com.moko.support.entity.ParamsKeyEnum;
 import com.moko.support.utils.MokoUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -43,6 +43,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -53,7 +55,9 @@ import butterknife.OnClick;
 
 public class ExportDataActivity extends BaseActivity {
 
+    private static final String TRACKED_FILE = "tracked.txt";
 
+    private static String PATH_LOGCAT;
     @BindView(R.id.iv_sync)
     ImageView ivSync;
     @BindView(R.id.tv_export)
@@ -75,6 +79,14 @@ public class ExportDataActivity extends BaseActivity {
         setContentView(R.layout.activity_export_data);
         ButterKnife.bind(this);
 
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            // 优先保存到SD卡中
+            PATH_LOGCAT = Environment.getExternalStorageDirectory().getAbsolutePath() + "mokoBeaconXPro" + File.separator + TRACKED_FILE;
+        } else {
+            // 如果SD卡不存在，就保存到本应用的目录下
+            PATH_LOGCAT = getFilesDir().getAbsolutePath() + File.separator + "mokoBeaconXPro" + File.separator + TRACKED_FILE;
+        }
+
         EventBus.getDefault().register(this);
         // 注册广播接收器
         IntentFilter filter = new IntentFilter();
@@ -85,10 +97,7 @@ public class ExportDataActivity extends BaseActivity {
             // 蓝牙未打开，开启蓝牙
             MokoSupport.getInstance().enableBluetooth();
         } else {
-            showSyncingProgressDialog();
-            ArrayList<OrderTask> orderTasks = new ArrayList<>();
-            orderTasks.add(OrderTaskAssembler.setSavedTHNotifyOpen());
-            MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+            MokoSupport.getInstance().enableStoreNotify();
             Animation animation = AnimationUtils.loadAnimation(ExportDataActivity.this, R.anim.rotate_refresh);
             ivSync.startAnimation(animation);
             tvSync.setText("Stop");
@@ -102,7 +111,7 @@ public class ExportDataActivity extends BaseActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (MokoConstants.ACTION_CONN_STATUS_DISCONNECTED.equals(action)) {
+                if (MokoConstants.ACTION_DISCONNECTED.equals(action)) {
                     // 设备断开，通知页面更新
                     finish();
                 }
@@ -125,14 +134,14 @@ public class ExportDataActivity extends BaseActivity {
             }
             if (MokoConstants.ACTION_ORDER_RESULT.equals(action)) {
                 OrderTaskResponse response = event.getResponse();
-                OrderType orderType = response.orderType;
+                OrderCHAR orderCHAR = (OrderCHAR) response.orderCHAR;
                 int responseType = response.responseType;
                 byte[] value = response.responseValue;
-                switch (orderType) {
-                    case writeConfig:
+                switch (orderCHAR) {
+                    case CHAR_PARAMS:
                         if (value.length >= 2) {
                             int key = value[1] & 0xff;
-                            ConfigKeyEnum configKeyEnum = ConfigKeyEnum.fromConfigKey(key);
+                            ParamsKeyEnum configKeyEnum = ParamsKeyEnum.fromParamKey(key);
                             if (configKeyEnum == null) {
                                 return;
                             }
@@ -140,7 +149,7 @@ public class ExportDataActivity extends BaseActivity {
                                 case SET_TH_EMPTY:
                                     if (value.length > 3 && value[3] == 0) {
                                         storeString = new StringBuffer();
-                                        LogModule.writeTHFile("");
+                                        writeTHFile("");
                                         mIsShown = false;
                                         llData.removeViews(1, llData.getChildCount() - 1);
                                         llData.setVisibility(View.GONE);
@@ -158,18 +167,18 @@ public class ExportDataActivity extends BaseActivity {
             }
             if (MokoConstants.ACTION_CURRENT_DATA.equals(action)) {
                 OrderTaskResponse response = event.getResponse();
-                OrderType orderType = response.orderType;
+                OrderCHAR orderCHAR = (OrderCHAR) response.orderCHAR;
                 int responseType = response.responseType;
                 byte[] value = response.responseValue;
-                switch (orderType) {
-                    case notifyConfig:
+                switch (orderCHAR) {
+                    case CHAR_LOCKED_NOTIFY:
                         String valueHexStr = MokoUtils.bytesToHexString(value);
                         if ("eb63000100".equals(valueHexStr.toLowerCase())) {
                             ToastUtils.showToast(ExportDataActivity.this, "Device Locked!");
                             back();
                         }
                         break;
-                    case htSavedData:
+                    case CHAR_STORE_NOTIFY:
                         if (!mIsShown) {
                             mIsShown = true;
                             llData.setVisibility(View.VISIBLE);
@@ -363,18 +372,13 @@ public class ExportDataActivity extends BaseActivity {
             case R.id.ll_sync:
                 if (!isSync) {
                     isSync = true;
-                    showSyncingProgressDialog();
-                    ArrayList<OrderTask> orderTasks = new ArrayList<>();
-                    orderTasks.add(OrderTaskAssembler.setSavedTHNotifyOpen());
-                    MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+
+                    MokoSupport.getInstance().enableStoreNotify();
                     Animation animation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh);
                     ivSync.startAnimation(animation);
                     tvSync.setText("Stop");
                 } else {
-                    showSyncingProgressDialog();
-                    ArrayList<OrderTask> orderTasks = new ArrayList<>();
-                    orderTasks.add(OrderTaskAssembler.setSavedTHNotifyClose());
-                    MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+                    MokoSupport.getInstance().disableStoreNotify();
                     isSync = false;
                     ivSync.clearAnimation();
                     tvSync.setText("Sync");
@@ -383,15 +387,15 @@ public class ExportDataActivity extends BaseActivity {
             case R.id.tv_export:
                 if (mIsShown) {
                     showSyncingProgressDialog();
-                    LogModule.writeTHFile("");
+                    writeTHFile("");
                     tvExport.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             dismissSyncProgressDialog();
                             String log = storeString.toString();
                             if (!TextUtils.isEmpty(log)) {
-                                LogModule.writeTHFile(log);
-                                File file = LogModule.getTHFile();
+                                writeTHFile(log);
+                                File file = getTHFile();
                                 // 发送邮件
                                 String address = "Development@mokotechnology.com";
                                 String title = "T&H Log";
@@ -407,9 +411,7 @@ public class ExportDataActivity extends BaseActivity {
 
     private void back() {
         // 关闭通知
-        ArrayList<OrderTask> orderTasks = new ArrayList<>();
-        orderTasks.add(OrderTaskAssembler.setSavedTHNotifyClose());
-        MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+        MokoSupport.getInstance().disableStoreNotify();
         finish();
     }
 
@@ -420,5 +422,32 @@ public class ExportDataActivity extends BaseActivity {
             return false;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    public static void writeTHFile(String thLog) {
+        File file = new File(PATH_LOGCAT);
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fileWriter = new FileWriter(file);
+            fileWriter.write(thLog);
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static File getTHFile() {
+        File file = new File(PATH_LOGCAT);
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return file;
     }
 }

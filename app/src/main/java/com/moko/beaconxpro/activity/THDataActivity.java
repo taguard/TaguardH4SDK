@@ -19,6 +19,7 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.elvishew.xlog.XLog;
 import com.moko.beaconxpro.AppConstants;
 import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.fragment.StorageHumidityFragment;
@@ -27,16 +28,15 @@ import com.moko.beaconxpro.fragment.StorageTempFragment;
 import com.moko.beaconxpro.fragment.StorageTimeFragment;
 import com.moko.beaconxpro.utils.ToastUtils;
 import com.moko.beaconxpro.utils.Utils;
-import com.moko.support.MokoConstants;
+import com.moko.ble.lib.MokoConstants;
+import com.moko.ble.lib.event.ConnectStatusEvent;
+import com.moko.ble.lib.event.OrderTaskResponseEvent;
+import com.moko.ble.lib.task.OrderTask;
+import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.support.MokoSupport;
 import com.moko.support.OrderTaskAssembler;
-import com.moko.support.entity.ConfigKeyEnum;
-import com.moko.support.entity.OrderType;
-import com.moko.support.event.ConnectStatusEvent;
-import com.moko.support.event.OrderTaskResponseEvent;
-import com.moko.support.log.LogModule;
-import com.moko.support.task.OrderTask;
-import com.moko.support.task.OrderTaskResponse;
+import com.moko.support.entity.OrderCHAR;
+import com.moko.support.entity.ParamsKeyEnum;
 import com.moko.support.utils.MokoUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -106,12 +106,12 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
             // 蓝牙未打开，开启蓝牙
             MokoSupport.getInstance().enableBluetooth();
         } else {
+            MokoSupport.getInstance().enableTHNotify();
             showSyncingProgressDialog();
             ArrayList<OrderTask> orderTasks = new ArrayList<>();
             orderTasks.add(OrderTaskAssembler.getTHPeriod());
             orderTasks.add(OrderTaskAssembler.getStorageCondition());
             orderTasks.add(OrderTaskAssembler.getDeviceTime());
-            orderTasks.add(OrderTaskAssembler.setTHNotifyOpen());
             MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
         }
     }
@@ -131,9 +131,9 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
 
     @Override
     public void onValueChange(NumberPickerView picker, int oldVal, int newVal) {
-        LogModule.i(newVal + "");
+        XLog.i(newVal + "");
         mStorageType = newVal;
-        LogModule.i(picker.getContentByCurrValue());
+        XLog.i(picker.getContentByCurrValue());
         showFragment(newVal);
     }
 
@@ -161,7 +161,7 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (MokoConstants.ACTION_CONN_STATUS_DISCONNECTED.equals(action)) {
+                if (MokoConstants.ACTION_DISCONNECTED.equals(action)) {
                     // 设备断开，通知页面更新
                     finish();
                 }
@@ -185,14 +185,14 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
             }
             if (MokoConstants.ACTION_ORDER_RESULT.equals(action)) {
                 OrderTaskResponse response = event.getResponse();
-                OrderType orderType = response.orderType;
+                OrderCHAR orderCHAR = (OrderCHAR) response.orderCHAR;
                 int responseType = response.responseType;
                 byte[] value = response.responseValue;
-                switch (orderType) {
-                    case writeConfig:
+                switch (orderCHAR) {
+                    case CHAR_PARAMS:
                         if (value.length >= 2) {
                             int key = value[1] & 0xff;
-                            ConfigKeyEnum configKeyEnum = ConfigKeyEnum.fromConfigKey(key);
+                            ParamsKeyEnum configKeyEnum = ParamsKeyEnum.fromParamKey(key);
                             if (configKeyEnum == null) {
                                 return;
                             }
@@ -277,18 +277,18 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
             }
             if (MokoConstants.ACTION_CURRENT_DATA.equals(action)) {
                 OrderTaskResponse response = event.getResponse();
-                OrderType orderType = response.orderType;
+                OrderCHAR orderCHAR = (OrderCHAR) response.orderCHAR;
                 int responseType = response.responseType;
                 byte[] value = response.responseValue;
-                switch (orderType) {
-                    case notifyConfig:
+                switch (orderCHAR) {
+                    case CHAR_LOCKED_NOTIFY:
                         String valueHexStr = MokoUtils.bytesToHexString(value);
                         if ("eb63000100".equals(valueHexStr.toLowerCase())) {
                             ToastUtils.showToast(THDataActivity.this, "Device Locked!");
                             back();
                         }
                         break;
-                    case htData:
+                    case CHAR_TH_NOTIFY:
                         if (value.length > 3) {
                             byte[] tempBytes = Arrays.copyOfRange(value, 0, 2);
                             float temp = MokoUtils.byte2short(tempBytes) * 0.1f;
@@ -423,9 +423,7 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
 
     private void back() {
         // 关闭通知
-        ArrayList<OrderTask> orderTasks = new ArrayList<>();
-        orderTasks.add(OrderTaskAssembler.setTHNotifyClose());
-        MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+        MokoSupport.getInstance().disableTHNotify();
         finish();
     }
 

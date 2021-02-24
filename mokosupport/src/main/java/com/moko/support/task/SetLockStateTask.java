@@ -3,13 +3,12 @@ package com.moko.support.task;
 import com.moko.ble.lib.task.OrderTask;
 import com.moko.support.entity.OrderCHAR;
 
-
-public class ResetDeviceTask extends OrderTask {
+public class SetLockStateTask extends OrderTask {
 
     public byte[] data;
 
-    public ResetDeviceTask() {
-        super(OrderCHAR.CHAR_RESET_DEVICE, OrderTask.RESPONSE_TYPE_WRITE);
+    public SetLockStateTask() {
+        super(OrderCHAR.CHAR_LOCK_STATE, OrderTask.RESPONSE_TYPE_WRITE);
     }
 
     @Override

@@ -23,15 +23,15 @@ import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.dialog.AxisDataRateDialog;
 import com.moko.beaconxpro.dialog.AxisScaleDialog;
 import com.moko.beaconxpro.utils.ToastUtils;
-import com.moko.support.MokoConstants;
+import com.moko.ble.lib.MokoConstants;
+import com.moko.ble.lib.event.ConnectStatusEvent;
+import com.moko.ble.lib.event.OrderTaskResponseEvent;
+import com.moko.ble.lib.task.OrderTask;
+import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.support.MokoSupport;
 import com.moko.support.OrderTaskAssembler;
-import com.moko.support.entity.ConfigKeyEnum;
-import com.moko.support.entity.OrderType;
-import com.moko.support.event.ConnectStatusEvent;
-import com.moko.support.event.OrderTaskResponseEvent;
-import com.moko.support.task.OrderTask;
-import com.moko.support.task.OrderTaskResponse;
+import com.moko.support.entity.OrderCHAR;
+import com.moko.support.entity.ParamsKeyEnum;
 import com.moko.support.utils.MokoUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -93,9 +93,7 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
             MokoSupport.getInstance().enableBluetooth();
         } else {
             showSyncingProgressDialog();
-            ArrayList<OrderTask> orderTasks = new ArrayList<>();
-            orderTasks.add(OrderTaskAssembler.getAxisParams());
-            MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+            MokoSupport.getInstance().sendOrder(OrderTaskAssembler.getAxisParams());
         }
     }
 
@@ -105,7 +103,7 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (MokoConstants.ACTION_CONN_STATUS_DISCONNECTED.equals(action)) {
+                if (MokoConstants.ACTION_DISCONNECTED.equals(action)) {
                     // 设备断开，通知页面更新
                     finish();
                 }
@@ -128,14 +126,14 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
             }
             if (MokoConstants.ACTION_ORDER_RESULT.equals(action)) {
                 OrderTaskResponse response = event.getResponse();
-                OrderType orderType = response.orderType;
+                OrderCHAR orderCHAR = (OrderCHAR) response.orderCHAR;
                 int responseType = response.responseType;
                 byte[] value = response.responseValue;
-                switch (orderType) {
-                    case writeConfig:
+                switch (orderCHAR) {
+                    case CHAR_PARAMS:
                         if (value.length >= 2) {
                             int key = value[1] & 0xff;
-                            ConfigKeyEnum configKeyEnum = ConfigKeyEnum.fromConfigKey(key);
+                            ParamsKeyEnum configKeyEnum = ParamsKeyEnum.fromParamKey(key);
                             if (configKeyEnum == null) {
                                 return;
                             }
@@ -166,18 +164,18 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
             if (MokoConstants.ACTION_CURRENT_DATA.equals(action)) {
 
                 OrderTaskResponse response = event.getResponse();
-                OrderType orderType = response.orderType;
+                OrderCHAR orderCHAR = (OrderCHAR) response.orderCHAR;
                 int responseType = response.responseType;
                 byte[] value = response.responseValue;
-                switch (orderType) {
-                    case notifyConfig:
+                switch (orderCHAR) {
+                    case CHAR_LOCKED_NOTIFY:
                         String valueHexStr = MokoUtils.bytesToHexString(value);
                         if ("eb63000100".equals(valueHexStr.toLowerCase())) {
                             ToastUtils.showToast(AxisDataActivity.this, "Device Locked!");
                             back();
                         }
                         break;
-                    case axisData:
+                    case CHAR_THREE_AXIS_NOTIFY:
                         if (value.length > 5) {
                             String axisHexStr = MokoUtils.bytesToHexString(value);
                             int length = axisHexStr.length();
@@ -260,18 +258,12 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
             case R.id.ll_sync:
                 if (!isSync) {
                     isSync = true;
-                    showSyncingProgressDialog();
-                    ArrayList<OrderTask> orderTasks = new ArrayList<>();
-                    orderTasks.add(OrderTaskAssembler.setAxisNotifyOpen());
-                    MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+                    MokoSupport.getInstance().enableThreeAxisNotify();
                     Animation animation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh);
                     ivSync.startAnimation(animation);
                     tvSync.setText("Stop");
                 } else {
-                    showSyncingProgressDialog();
-                    ArrayList<OrderTask> orderTasks = new ArrayList<>();
-                    orderTasks.add(OrderTaskAssembler.setAxisNotifyClose());
-                    MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+                    MokoSupport.getInstance().disableThreeAxisNotify();
                     isSync = false;
                     ivSync.clearAnimation();
                     tvSync.setText("Sync");
@@ -315,9 +307,7 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
 
     private void back() {
         // 关闭通知
-        ArrayList<OrderTask> orderTasks = new ArrayList<>();
-        orderTasks.add(OrderTaskAssembler.setAxisNotifyClose());
-        MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+        MokoSupport.getInstance().disableThreeAxisNotify();
         finish();
     }
 

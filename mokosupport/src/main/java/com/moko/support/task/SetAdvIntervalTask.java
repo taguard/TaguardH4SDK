@@ -3,13 +3,12 @@ package com.moko.support.task;
 import com.moko.ble.lib.task.OrderTask;
 import com.moko.support.entity.OrderCHAR;
 
-
-public class ResetDeviceTask extends OrderTask {
+public class SetAdvIntervalTask extends OrderTask {
 
     public byte[] data;
 
-    public ResetDeviceTask() {
-        super(OrderCHAR.CHAR_RESET_DEVICE, OrderTask.RESPONSE_TYPE_WRITE);
+    public SetAdvIntervalTask() {
+        super(OrderCHAR.CHAR_ADV_INTERVAL, OrderTask.RESPONSE_TYPE_WRITE);
     }
 
     @Override

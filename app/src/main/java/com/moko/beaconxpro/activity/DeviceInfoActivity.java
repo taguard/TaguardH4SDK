@@ -23,6 +23,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.elvishew.xlog.XLog;
 import com.moko.beaconxpro.AppConstants;
 import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.dialog.AlertMessageDialog;
@@ -34,16 +35,15 @@ import com.moko.beaconxpro.fragment.SlotFragment;
 import com.moko.beaconxpro.service.DfuService;
 import com.moko.beaconxpro.utils.FileUtils;
 import com.moko.beaconxpro.utils.ToastUtils;
-import com.moko.support.MokoConstants;
+import com.moko.ble.lib.MokoConstants;
+import com.moko.ble.lib.event.ConnectStatusEvent;
+import com.moko.ble.lib.event.OrderTaskResponseEvent;
+import com.moko.ble.lib.task.OrderTask;
+import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.support.MokoSupport;
 import com.moko.support.OrderTaskAssembler;
-import com.moko.support.entity.ConfigKeyEnum;
-import com.moko.support.entity.OrderType;
-import com.moko.support.event.ConnectStatusEvent;
-import com.moko.support.event.OrderTaskResponseEvent;
-import com.moko.support.log.LogModule;
-import com.moko.support.task.OrderTask;
-import com.moko.support.task.OrderTaskResponse;
+import com.moko.support.entity.OrderCHAR;
+import com.moko.support.entity.ParamsKeyEnum;
 import com.moko.support.utils.MokoUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -113,7 +113,6 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
         } else {
             showSyncingProgressDialog();
             ArrayList<OrderTask> orderTasks = new ArrayList<>();
-            orderTasks.add(OrderTaskAssembler.setConfigNotify());
             orderTasks.add(OrderTaskAssembler.getDeviceType());
             orderTasks.add(OrderTaskAssembler.getSlotType());
             orderTasks.add(OrderTaskAssembler.getDeviceMac());
@@ -137,7 +136,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (MokoConstants.ACTION_CONN_STATUS_DISCONNECTED.equals(action)) {
+                if (MokoConstants.ACTION_DISCONNECTED.equals(action)) {
                     // 设备断开，通知页面更新
                     if (mIsClose) {
                         return;
@@ -164,9 +163,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                     tvTitle.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            ArrayList<OrderTask> orderTasks = new ArrayList<>();
-                            orderTasks.add(OrderTaskAssembler.getLockState());
-                            MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+                            MokoSupport.getInstance().sendOrder(OrderTaskAssembler.getLockState());
                         }
                     }, 1500);
                 }
@@ -198,23 +195,23 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
             }
             if (MokoConstants.ACTION_ORDER_RESULT.equals(action)) {
                 OrderTaskResponse response = event.getResponse();
-                OrderType orderType = response.orderType;
+                OrderCHAR orderCHAR = (OrderCHAR) response.orderCHAR;
                 int responseType = response.responseType;
                 byte[] value = response.responseValue;
-                switch (orderType) {
-                    case deviceType:
+                switch (orderCHAR) {
+                    case CHAR_DEVICE_TYPE:
                         if (value.length >= 1) {
                             int deviceType = value[0] & 0xff;
                             slotFragment.setDeviceType(deviceType);
                             settingFragment.setDeviceType(deviceType);
                         }
                         break;
-                    case slotType:
+                    case CHAR_SLOT_TYPE:
                         if (value.length >= 6) {
                             slotFragment.updateSlotType(value);
                         }
                         break;
-                    case connectable:
+                    case CHAR_CONNECTABLE:
                         if (responseType == OrderTask.RESPONSE_TYPE_READ) {
                             if (value.length >= 1) {
                                 settingFragment.setConnectable(value);
@@ -225,10 +222,10 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                             ToastUtils.showToast(DeviceInfoActivity.this, "Success!");
                         }
                         break;
-                    case writeConfig:
+                    case CHAR_PARAMS:
                         if (value.length >= 2) {
                             int key = value[1] & 0xff;
-                            ConfigKeyEnum configKeyEnum = ConfigKeyEnum.fromConfigKey(key);
+                            ParamsKeyEnum configKeyEnum = ParamsKeyEnum.fromParamKey(key);
                             if (configKeyEnum == null) {
                                 return;
                             }
@@ -274,55 +271,55 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                             }
                         }
                         break;
-                    case manufacturer:
+                    case CHAR_MANUFACTURER_NAME:
                         deviceFragment.setManufacturer(value);
                         validParams.manufacture = "1";
                         break;
-                    case deviceModel:
+                    case CHAR_MODEL_NUMBER:
                         deviceFragment.setDeviceModel(value);
                         validParams.productModel = "1";
                         break;
-                    case productDate:
+                    case CHAR_SERIAL_NUMBER:
                         deviceFragment.setProductDate(value);
                         validParams.manufactureDate = "1";
                         break;
-                    case hardwareVersion:
+                    case CHAR_HARDWARE_REVISION:
                         deviceFragment.setHardwareVersion(value);
                         validParams.hardwareVersion = "1";
                         break;
-                    case firmwareVersion:
+                    case CHAR_FIRMWARE_REVISION:
                         deviceFragment.setFirmwareVersion(value);
                         validParams.firmwareVersion = "1";
                         break;
-                    case softwareVersion:
+                    case CHAR_SOFTWARE_REVISION:
                         deviceFragment.setSoftwareVersion(value);
                         validParams.softwareVersion = "1";
                         break;
-                    case battery:
+                    case CHAR_BATTERY:
                         deviceFragment.setBattery(value);
                         validParams.battery = "1";
                         break;
-                    case advSlotData:
+                    case CHAR_ADV_SLOT_DATA:
                         if (value.length >= 1) {
                             slotFragment.setSlotData(value);
                         }
                         break;
-                    case radioTxPower:
+                    case CHAR_RADIO_TX_POWER:
                         if (value.length >= 1) {
                             slotFragment.setTxPower(value);
                         }
                         break;
-                    case advInterval:
+                    case CHAR_ADV_INTERVAL:
                         if (value.length >= 2) {
                             slotFragment.setAdvInterval(value);
                         }
                         break;
-                    case advTxPower:
+                    case CHAR_ADV_TX_POWER:
                         if (value.length >= 1) {
                             slotFragment.setAdvTxPower(value);
                         }
                         break;
-                    case lockState:
+                    case CHAR_LOCK_STATE:
                         String valueStr = MokoUtils.bytesToHexString(value);
                         if (responseType == OrderTask.RESPONSE_TYPE_WRITE) {
                             if ("eb63000100".equals(valueStr.toLowerCase())) {
@@ -355,23 +352,18 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                             settingFragment.setModifyPasswordVisiable(!TextUtils.isEmpty(mPassword));
                         }
                         break;
-                    case unLock:
+                    case CHAR_UNLOCK:
                         if (responseType == OrderTask.RESPONSE_TYPE_READ) {
                             unLockResponse = MokoUtils.bytesToHexString(value);
-                            LogModule.i("返回的随机数：" + unLockResponse);
+                            XLog.i("返回的随机数：" + unLockResponse);
                             showSyncingProgressDialog();
-                            ArrayList<OrderTask> orderTasks = new ArrayList<>();
-                            orderTasks.add(OrderTaskAssembler.setConfigNotify());
-                            orderTasks.add(OrderTaskAssembler.setUnLock(mPassword, value));
-                            MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+                            MokoSupport.getInstance().sendOrder(OrderTaskAssembler.setUnLock(mPassword, value));
                         }
                         if (responseType == OrderTask.RESPONSE_TYPE_WRITE) {
-                            ArrayList<OrderTask> orderTasks = new ArrayList<>();
-                            orderTasks.add(OrderTaskAssembler.getLockState());
-                            MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+                            MokoSupport.getInstance().sendOrder(OrderTaskAssembler.getLockState());
                         }
                         break;
-                    case resetDevice:
+                    case CHAR_RESET_DEVICE:
                         if (lockState == 2) {
                             ToastUtils.showToast(DeviceInfoActivity.this, "Communication Timeout!");
                         } else {
@@ -388,9 +380,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
         tvTitle.postDelayed(new Runnable() {
             @Override
             public void run() {
-                ArrayList<OrderTask> orderTasks = new ArrayList<>();
-                orderTasks.add(OrderTaskAssembler.getSlotType());
-                MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+                MokoSupport.getInstance().sendOrder(OrderTaskAssembler.getSlotType());
             }
         }, 1500);
     }
@@ -604,16 +594,12 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
     public void modifyPassword(String password) {
         isModifyPassword = true;
         showSyncingProgressDialog();
-        ArrayList<OrderTask> orderTasks = new ArrayList<>();
-        orderTasks.add(OrderTaskAssembler.setLockState(password));
-        MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+        MokoSupport.getInstance().sendOrder(OrderTaskAssembler.setLockState(password));
     }
 
     public void resetDevice() {
         showSyncingProgressDialog();
-        ArrayList<OrderTask> orderTasks = new ArrayList<>();
-        orderTasks.add(OrderTaskAssembler.resetDevice());
-        MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+        MokoSupport.getInstance().sendOrder(OrderTaskAssembler.resetDevice());
     }
 
 
@@ -636,9 +622,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
     public void setClose() {
         mIsClose = true;
         showSyncingProgressDialog();
-        ArrayList<OrderTask> orderTasks = new ArrayList<>();
-        orderTasks.add(OrderTaskAssembler.setClose());
-        MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+        MokoSupport.getInstance().sendOrder(OrderTaskAssembler.setClose());
     }
 
     public void chooseFirmwareFile() {
@@ -703,7 +687,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
     private final DfuProgressListener mDfuProgressListener = new DfuProgressListenerAdapter() {
         @Override
         public void onDeviceConnecting(String deviceAddress) {
-            LogModule.w("onDeviceConnecting...");
+            XLog.w("onDeviceConnecting...");
             mDeviceConnectCount++;
             if (mDeviceConnectCount > 3) {
                 Toast.makeText(DeviceInfoActivity.this, "Error:DFU Failed", Toast.LENGTH_SHORT).show();
@@ -717,7 +701,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
 
         @Override
         public void onDeviceDisconnecting(String deviceAddress) {
-            LogModule.w("onDeviceDisconnecting...");
+            XLog.w("onDeviceDisconnecting...");
         }
 
         @Override
@@ -756,7 +740,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
         @Override
         public void onError(String deviceAddress, int error, int errorType, String message) {
             ToastUtils.showToast(DeviceInfoActivity.this, "Opps!DFU Failed. Please try again!");
-            LogModule.i("Error:" + message);
+            XLog.i("Error:" + message);
             dismissDFUProgressDialog();
         }
     };

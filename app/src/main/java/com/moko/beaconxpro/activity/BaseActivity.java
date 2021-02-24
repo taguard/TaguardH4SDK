@@ -7,7 +7,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.SystemClock;
 
-import com.moko.support.log.LogModule;
+import com.elvishew.xlog.XLog;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -34,7 +34,7 @@ public class BaseActivity extends FragmentActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        LogModule.i("onConfigurationChanged...");
+        XLog.i("onConfigurationChanged...");
         finish();
     }
 

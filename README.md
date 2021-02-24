@@ -168,7 +168,7 @@ When connecting to the device, context, MAC address and callback by EventBus.
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onConnectStatusEvent(ConnectStatusEvent event) {
         String action = event.getAction();
-        if (MokoConstants.ACTION_CONN_STATUS_DISCONNECTED.equals(action)) {
+        if (MokoConstants.ACTION_DISCONNECTED.equals(action)) {
             ...
         }
         if (MokoConstants.ACTION_DISCOVER_SUCCESS.equals(action)) {
@@ -378,7 +378,7 @@ String action = intent.getAction();
 ...
 if (MokoConstants.ACTION_CURRENT_DATA.equals(action)) {
     OrderTaskResponse response = event.getResponse();
-    OrderType orderType = response.orderType;
+    OrderCHAR orderCHAR = (OrderCHAR) response.orderCHAR;
     int responseType = response.responseType;
     byte[] value = response.responseValue;
     ...

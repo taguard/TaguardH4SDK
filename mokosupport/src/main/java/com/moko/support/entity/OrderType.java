@@ -19,6 +19,7 @@ public enum OrderType implements Serializable {
     battery("battery", "e62a0006-1362-4f28-9327-f5b74e970801"),
     notifyConfig("notifyConfig", "e62a0003-1362-4f28-9327-f5b74e970801"),
     writeConfig("writeConfig", "e62a0002-1362-4f28-9327-f5b74e970801"),
+
     advSlot("advSlot", "a3c87502-8ed3-4bdf-8a39-a01bebede295"),
     advInterval("advInterval", "a3c87503-8ed3-4bdf-8a39-a01bebede295"),
     radioTxPower("radioTxPower", "a3c87504-8ed3-4bdf-8a39-a01bebede295"),
@@ -28,6 +29,7 @@ public enum OrderType implements Serializable {
     advSlotData("advSlotData", "a3c8750a-8ed3-4bdf-8a39-a01bebede295"),
     resetDevice("resetDevice", "a3c8750b-8ed3-4bdf-8a39-a01bebede295"),
     connectable("connectable", "a3c8750c-8ed3-4bdf-8a39-a01bebede295"),
+
     deviceType("deviceType", "e62a0004-1362-4f28-9327-f5b74e970801"),
     slotType("slotType", "e62a0005-1362-4f28-9327-f5b74e970801"),
     axisData("axisData", "e62a0008-1362-4f28-9327-f5b74e970801"),

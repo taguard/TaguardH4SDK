@@ -1,32 +1,35 @@
 package com.moko.support;
 
-import com.moko.support.entity.ConfigKeyEnum;
+import com.elvishew.xlog.XLog;
+import com.moko.ble.lib.task.OrderTask;
+import com.moko.support.entity.ParamsKeyEnum;
 import com.moko.support.entity.SlotEnum;
-import com.moko.support.log.LogModule;
-import com.moko.support.task.AdvIntervalTask;
-import com.moko.support.task.AdvSlotDataTask;
-import com.moko.support.task.AdvSlotTask;
-import com.moko.support.task.AdvTxPowerTask;
-import com.moko.support.task.BatteryTask;
-import com.moko.support.task.ConnectableTask;
-import com.moko.support.task.DeviceModelTask;
-import com.moko.support.task.DeviceTypeTask;
-import com.moko.support.task.FirmwareVersionTask;
-import com.moko.support.task.HardwareVersionTask;
-import com.moko.support.task.LockStateTask;
-import com.moko.support.task.ManufacturerTask;
-import com.moko.support.task.NotifyAxisTask;
-import com.moko.support.task.NotifyConfigTask;
-import com.moko.support.task.NotifyHTTask;
-import com.moko.support.task.NotifySavedHTTask;
-import com.moko.support.task.OrderTask;
-import com.moko.support.task.ProductDateTask;
-import com.moko.support.task.RadioTxPowerTask;
+import com.moko.support.task.GetAdvIntervalTask;
+import com.moko.support.task.GetAdvSlotDataTask;
+import com.moko.support.task.GetAdvTxPowerTask;
+import com.moko.support.task.GetBatteryTask;
+import com.moko.support.task.GetConnectableTask;
+import com.moko.support.task.GetDeviceTypeTask;
+import com.moko.support.task.GetFirmwareRevisionTask;
+import com.moko.support.task.GetHardwareRevisionTask;
+import com.moko.support.task.GetLockStateTask;
+import com.moko.support.task.GetManufacturerNameTask;
+import com.moko.support.task.GetModelNumberTask;
+import com.moko.support.task.GetRadioTxPowerTask;
+import com.moko.support.task.GetSerialNumberTask;
+import com.moko.support.task.GetSlotTypeTask;
+import com.moko.support.task.GetSoftwareRevisionTask;
+import com.moko.support.task.GetUnlockTask;
+import com.moko.support.task.ParamsTask;
 import com.moko.support.task.ResetDeviceTask;
-import com.moko.support.task.SlotTypeTask;
-import com.moko.support.task.SoftwareVersionTask;
-import com.moko.support.task.UnLockTask;
-import com.moko.support.task.WriteConfigTask;
+import com.moko.support.task.SetAdvIntervalTask;
+import com.moko.support.task.SetAdvSlotDataTask;
+import com.moko.support.task.SetAdvSlotTask;
+import com.moko.support.task.SetAdvTxPowerTask;
+import com.moko.support.task.SetConnectableTask;
+import com.moko.support.task.SetLockStateTask;
+import com.moko.support.task.SetRadioTxPowerTask;
+import com.moko.support.task.SetUnlockTask;
 import com.moko.support.utils.MokoUtils;
 
 import java.util.Arrays;
@@ -40,17 +43,17 @@ public class OrderTaskAssembler {
      * @Description 获取设备锁状态get lock state
      */
     public static OrderTask getLockState() {
-        LockStateTask lockStateTask = new LockStateTask(OrderTask.RESPONSE_TYPE_READ);
-        return lockStateTask;
+        GetLockStateTask task = new GetLockStateTask();
+        return task;
     }
 
     /**
      * @Description 设置设备锁方式
      */
     public static OrderTask setLockStateDirected(boolean isDirected) {
-        LockStateTask lockStateTask = new LockStateTask(OrderTask.RESPONSE_TYPE_WRITE);
-        lockStateTask.setData(isDirected ? new byte[]{0x02} : new byte[]{0x01});
-        return lockStateTask;
+        SetLockStateTask task = new SetLockStateTask();
+        task.setData(isDirected ? new byte[]{0x02} : new byte[]{0x01});
+        return task;
     }
 
     /**
@@ -58,7 +61,7 @@ public class OrderTaskAssembler {
      */
     public static OrderTask setLockState(String newPassword) {
         if (passwordBytes != null) {
-            LogModule.i("旧密码：" + MokoUtils.bytesToHexString(passwordBytes));
+            XLog.i("旧密码：" + MokoUtils.bytesToHexString(passwordBytes));
             byte[] bt1 = newPassword.getBytes();
             byte[] newPasswordBytes = new byte[16];
             for (int i = 0; i < newPasswordBytes.length; i++) {
@@ -68,16 +71,16 @@ public class OrderTaskAssembler {
                     newPasswordBytes[i] = (byte) 0xff;
                 }
             }
-            LogModule.i("新密码：" + MokoUtils.bytesToHexString(newPasswordBytes));
+            XLog.i("新密码：" + MokoUtils.bytesToHexString(newPasswordBytes));
             // 用旧密码加密新密码
             byte[] newPasswordEncryptBytes = encrypt(newPasswordBytes, passwordBytes);
             if (newPasswordEncryptBytes != null) {
-                LockStateTask lockStateTask = new LockStateTask(OrderTask.RESPONSE_TYPE_WRITE);
+                SetLockStateTask task = new SetLockStateTask();
                 byte[] unLockBytes = new byte[newPasswordEncryptBytes.length + 1];
                 unLockBytes[0] = 0;
                 System.arraycopy(newPasswordEncryptBytes, 0, unLockBytes, 1, newPasswordEncryptBytes.length);
-                lockStateTask.setData(unLockBytes);
-                return lockStateTask;
+                task.setData(unLockBytes);
+                return task;
             }
         }
         return null;
@@ -87,8 +90,8 @@ public class OrderTaskAssembler {
      * @Description 获取解锁加密内容get unlock
      */
     public static OrderTask getUnLock() {
-        UnLockTask unLockTask = new UnLockTask(OrderTask.RESPONSE_TYPE_READ);
-        return unLockTask;
+        GetUnlockTask task = new GetUnlockTask();
+        return task;
     }
 
     private static byte[] passwordBytes;
@@ -106,12 +109,12 @@ public class OrderTaskAssembler {
                 passwordBytes[i] = (byte) 0xff;
             }
         }
-        LogModule.i("密码：" + MokoUtils.bytesToHexString(passwordBytes));
+        XLog.i("密码：" + MokoUtils.bytesToHexString(passwordBytes));
         byte[] unLockBytes = encrypt(value, passwordBytes);
         if (unLockBytes != null) {
-            UnLockTask unLockTask = new UnLockTask(OrderTask.RESPONSE_TYPE_WRITE);
-            unLockTask.setData(unLockBytes);
-            return unLockTask;
+            SetUnlockTask task = new SetUnlockTask();
+            task.setData(unLockBytes);
+            return task;
         }
         return null;
     }
@@ -139,8 +142,8 @@ public class OrderTaskAssembler {
      * @Description 获取通道类型
      */
     public static OrderTask getSlotType() {
-        SlotTypeTask slotTypeTask = new SlotTypeTask();
-        return slotTypeTask;
+        GetSlotTypeTask task = new GetSlotTypeTask();
+        return task;
     }
 
 
@@ -148,235 +151,235 @@ public class OrderTaskAssembler {
      * @Description 获取设备类型
      */
     public static OrderTask getDeviceType() {
-        DeviceTypeTask deviceTypeTask = new DeviceTypeTask();
-        return deviceTypeTask;
+        GetDeviceTypeTask task = new GetDeviceTypeTask();
+        return task;
     }
 
     /**
      * @Description 获取3轴参数
      */
     public static OrderTask getAxisParams() {
-        WriteConfigTask writeConfigTask = new WriteConfigTask();
-        writeConfigTask.setData(ConfigKeyEnum.GET_AXIX_PARAMS);
-        return writeConfigTask;
+        ParamsTask task = new ParamsTask();
+        task.setData(ParamsKeyEnum.GET_AXIX_PARAMS);
+        return task;
     }
 
     /**
      * @Description 设置3轴参数
      */
     public static OrderTask setAxisParams(int rate, int scale, int sensitivity) {
-        WriteConfigTask writeConfigTask = new WriteConfigTask();
-        writeConfigTask.setAxisParams(rate, scale, sensitivity);
-        return writeConfigTask;
+        ParamsTask task = new ParamsTask();
+        task.setAxisParams(rate, scale, sensitivity);
+        return task;
     }
 
     /**
      * @Description 获取温湿度采样率
      */
     public static OrderTask getTHPeriod() {
-        WriteConfigTask writeConfigTask = new WriteConfigTask();
-        writeConfigTask.setData(ConfigKeyEnum.GET_TH_PERIOD);
-        return writeConfigTask;
+        ParamsTask task = new ParamsTask();
+        task.setData(ParamsKeyEnum.GET_TH_PERIOD);
+        return task;
     }
 
     /**
      * @Description 设置温湿度采样率
      */
     public static OrderTask setTHPeriod(int period) {
-        WriteConfigTask writeConfigTask = new WriteConfigTask();
-        writeConfigTask.setTHPriod(period);
-        return writeConfigTask;
+        ParamsTask task = new ParamsTask();
+        task.setTHPriod(period);
+        return task;
     }
 
     /**
      * @Description 获取存储条件
      */
     public static OrderTask getStorageCondition() {
-        WriteConfigTask writeConfigTask = new WriteConfigTask();
-        writeConfigTask.setData(ConfigKeyEnum.GET_STORAGE_CONDITION);
-        return writeConfigTask;
+        ParamsTask task = new ParamsTask();
+        task.setData(ParamsKeyEnum.GET_STORAGE_CONDITION);
+        return task;
     }
 
     /**
      * @Description 设置存储条件
      */
     public static OrderTask setStorageCondition(int storageType, String storageData) {
-        WriteConfigTask writeConfigTask = new WriteConfigTask();
-        writeConfigTask.setStorageCondition(storageType, storageData);
-        return writeConfigTask;
+        ParamsTask task = new ParamsTask();
+        task.setStorageCondition(storageType, storageData);
+        return task;
     }
 
     /**
      * @Description 获取设备时间
      */
     public static OrderTask getDeviceTime() {
-        WriteConfigTask writeConfigTask = new WriteConfigTask();
-        writeConfigTask.setData(ConfigKeyEnum.GET_DEVICE_TIME);
-        return writeConfigTask;
+        ParamsTask task = new ParamsTask();
+        task.setData(ParamsKeyEnum.GET_DEVICE_TIME);
+        return task;
     }
 
     /**
      * @Description 设置设备时间
      */
     public static OrderTask setDeviceTime(int year, int month, int day, int hour, int minute, int second) {
-        WriteConfigTask writeConfigTask = new WriteConfigTask();
-        writeConfigTask.setDeviceTime(year, month, day, hour, minute, second);
-        return writeConfigTask;
+        ParamsTask task = new ParamsTask();
+        task.setDeviceTime(year, month, day, hour, minute, second);
+        return task;
     }
 
     public static OrderTask setTHEmpty() {
-        WriteConfigTask writeConfigTask = new WriteConfigTask();
-        writeConfigTask.setData(ConfigKeyEnum.SET_TH_EMPTY);
-        return writeConfigTask;
+        ParamsTask task = new ParamsTask();
+        task.setData(ParamsKeyEnum.SET_TH_EMPTY);
+        return task;
     }
 
     /**
      * @Description 获取设备MAC
      */
     public static OrderTask getDeviceMac() {
-        WriteConfigTask writeConfigTask = new WriteConfigTask();
-        writeConfigTask.setData(ConfigKeyEnum.GET_DEVICE_MAC);
-        return writeConfigTask;
+        ParamsTask task = new ParamsTask();
+        task.setData(ParamsKeyEnum.GET_DEVICE_MAC);
+        return task;
     }
 
     /**
      * @Description 获取连接状态
      */
     public static OrderTask getConnectable() {
-        ConnectableTask connectableTask = new ConnectableTask(OrderTask.RESPONSE_TYPE_READ);
-        return connectableTask;
+        GetConnectableTask task = new GetConnectableTask();
+        return task;
     }
 
     /**
      * @Description 设置连接状态
      */
     public static OrderTask setConnectable(boolean isConnectable) {
-        ConnectableTask connectableTask = new ConnectableTask(OrderTask.RESPONSE_TYPE_WRITE);
-        connectableTask.setData(isConnectable ? MokoUtils.toByteArray(1, 1) : MokoUtils.toByteArray(0, 1));
-        return connectableTask;
+        SetConnectableTask task = new SetConnectableTask();
+        task.setData(isConnectable ? MokoUtils.toByteArray(1, 1) : MokoUtils.toByteArray(0, 1));
+        return task;
     }
 
     /**
      * @Description 获取制造商
      */
     public static OrderTask getManufacturer() {
-        ManufacturerTask manufacturerTask = new ManufacturerTask();
-        return manufacturerTask;
+        GetManufacturerNameTask task = new GetManufacturerNameTask();
+        return task;
     }
 
     /**
      * @Description 获取设备型号
      */
     public static OrderTask getDeviceModel() {
-        DeviceModelTask deviceModelTask = new DeviceModelTask();
-        return deviceModelTask;
+        GetModelNumberTask task = new GetModelNumberTask();
+        return task;
     }
 
     /**
      * @Description 获取生产日期
      */
     public static OrderTask getProductDate() {
-        ProductDateTask productDateTask = new ProductDateTask();
-        return productDateTask;
+        GetSerialNumberTask task = new GetSerialNumberTask();
+        return task;
     }
 
     /**
      * @Description 获取硬件版本
      */
     public static OrderTask getHardwareVersion() {
-        HardwareVersionTask hardwareVersionTask = new HardwareVersionTask();
-        return hardwareVersionTask;
+        GetHardwareRevisionTask task = new GetHardwareRevisionTask();
+        return task;
     }
 
     /**
      * @Description 获取固件版本
      */
     public static OrderTask getFirmwareVersion() {
-        FirmwareVersionTask firmwareVersionTask = new FirmwareVersionTask();
-        return firmwareVersionTask;
+        GetFirmwareRevisionTask task = new GetFirmwareRevisionTask();
+        return task;
     }
 
     /**
      * @Description 获取软件版本
      */
     public static OrderTask getSoftwareVersion() {
-        SoftwareVersionTask softwareVersionTask = new SoftwareVersionTask();
-        return softwareVersionTask;
+        GetSoftwareRevisionTask task = new GetSoftwareRevisionTask();
+        return task;
     }
 
     /**
      * @Description 获取电池电量
      */
     public static OrderTask getBattery() {
-        BatteryTask batteryTask = new BatteryTask();
-        return batteryTask;
+        GetBatteryTask task = new GetBatteryTask();
+        return task;
     }
 
     /**
      * @Description 切换通道
      */
     public static OrderTask setSlot(SlotEnum slot) {
-        AdvSlotTask advSlotTask = new AdvSlotTask(OrderTask.RESPONSE_TYPE_WRITE);
-        advSlotTask.setData(slot);
-        return advSlotTask;
+        SetAdvSlotTask task = new SetAdvSlotTask();
+        task.setData(slot);
+        return task;
     }
 
     /**
      * @Description 获取通道数据
      */
     public static OrderTask getSlotData() {
-        AdvSlotDataTask advSlotDataTask = new AdvSlotDataTask(OrderTask.RESPONSE_TYPE_READ);
-        return advSlotDataTask;
+        GetAdvSlotDataTask task = new GetAdvSlotDataTask();
+        return task;
     }
 
     /**
      * @Description 设置通道信息
      */
     public static OrderTask setSlotData(byte[] data) {
-        AdvSlotDataTask advSlotDataTask = new AdvSlotDataTask(OrderTask.RESPONSE_TYPE_WRITE);
-        advSlotDataTask.setData(data);
-        return advSlotDataTask;
+        SetAdvSlotDataTask task = new SetAdvSlotDataTask();
+        task.setData(data);
+        return task;
     }
 
     /**
      * @Description 获取信号强度
      */
     public static OrderTask getRadioTxPower() {
-        RadioTxPowerTask radioTxPowerTask = new RadioTxPowerTask(OrderTask.RESPONSE_TYPE_READ);
-        return radioTxPowerTask;
+        GetRadioTxPowerTask task = new GetRadioTxPowerTask();
+        return task;
     }
 
     /**
      * @Description 设置信号强度
      */
     public static OrderTask setRadioTxPower(byte[] data) {
-        RadioTxPowerTask radioTxPowerTask = new RadioTxPowerTask(OrderTask.RESPONSE_TYPE_WRITE);
-        radioTxPowerTask.setData(data);
-        return radioTxPowerTask;
+        SetRadioTxPowerTask task = new SetRadioTxPowerTask();
+        task.setData(data);
+        return task;
     }
 
     /**
      * @Description 获取广播间隔
      */
     public static OrderTask getAdvInterval() {
-        AdvIntervalTask advIntervalTask = new AdvIntervalTask(OrderTask.RESPONSE_TYPE_READ);
-        return advIntervalTask;
+        GetAdvIntervalTask task = new GetAdvIntervalTask();
+        return task;
     }
 
     /**
      * @Description 设置广播间隔
      */
     public static OrderTask setAdvInterval(byte[] data) {
-        AdvIntervalTask advIntervalTask = new AdvIntervalTask(OrderTask.RESPONSE_TYPE_WRITE);
-        advIntervalTask.setData(data);
-        return advIntervalTask;
+        SetAdvIntervalTask task = new SetAdvIntervalTask();
+        task.setData(data);
+        return task;
     }
 
     /**
      * @Description 设置广播强度
      */
     public static OrderTask setAdvTxPower(byte[] data) {
-        AdvTxPowerTask advTxPowerTask = new AdvTxPowerTask(OrderTask.RESPONSE_TYPE_WRITE);
+        SetAdvTxPowerTask advTxPowerTask = new SetAdvTxPowerTask();
         advTxPowerTask.setData(data);
         return advTxPowerTask;
     }
@@ -385,113 +388,75 @@ public class OrderTaskAssembler {
      * @Description 设置广播强度
      */
     public static OrderTask getAdvTxPower() {
-        AdvTxPowerTask advTxPowerTask = new AdvTxPowerTask(OrderTask.RESPONSE_TYPE_READ);
-        return advTxPowerTask;
+        GetAdvTxPowerTask task = new GetAdvTxPowerTask();
+        return task;
     }
 
     /**
      * @Description 获取iBeaconUUID
      */
     public static OrderTask getiBeaconUUID() {
-        WriteConfigTask writeConfigTask = new WriteConfigTask();
-        writeConfigTask.setData(ConfigKeyEnum.GET_IBEACON_UUID);
-        return writeConfigTask;
+        ParamsTask task = new ParamsTask();
+        task.setData(ParamsKeyEnum.GET_IBEACON_UUID);
+        return task;
     }
 
     /**
      * @Description 设置iBeaconUUID
      */
     public static OrderTask setiBeaconUUID(String uuidHex) {
-        WriteConfigTask writeConfigTask = new WriteConfigTask();
-        writeConfigTask.setiBeaconUUID(uuidHex);
-        return writeConfigTask;
+        ParamsTask task = new ParamsTask();
+        task.setiBeaconUUID(uuidHex);
+        return task;
     }
 
     /**
      * @Description 获取iBeaconInfo
      */
     public static OrderTask getiBeaconInfo() {
-        WriteConfigTask writeConfigTask = new WriteConfigTask();
-        writeConfigTask.setData(ConfigKeyEnum.GET_IBEACON_INFO);
-        return writeConfigTask;
+        ParamsTask task = new ParamsTask();
+        task.setData(ParamsKeyEnum.GET_IBEACON_INFO);
+        return task;
     }
 
     /**
      * @Description 关机
      */
     public static OrderTask setClose() {
-        WriteConfigTask writeConfigTask = new WriteConfigTask();
-        writeConfigTask.setData(ConfigKeyEnum.SET_CLOSE);
-        return writeConfigTask;
+        ParamsTask task = new ParamsTask();
+        task.setData(ParamsKeyEnum.SET_CLOSE);
+        return task;
     }
 
     /**
      * @Description 恢复出厂设置
      */
     public static OrderTask resetDevice() {
-        ResetDeviceTask resetDeviceTask = new ResetDeviceTask();
-        return resetDeviceTask;
+        ResetDeviceTask task = new ResetDeviceTask();
+        return task;
     }
 
     public static OrderTask getTrigger() {
-        WriteConfigTask writeConfigTask = new WriteConfigTask();
-        writeConfigTask.setData(ConfigKeyEnum.GET_TRIGGER_DATA);
-        return writeConfigTask;
+        ParamsTask task = new ParamsTask();
+        task.setData(ParamsKeyEnum.GET_TRIGGER_DATA);
+        return task;
     }
 
     public static OrderTask setTriggerClose() {
-        WriteConfigTask writeConfigTask = new WriteConfigTask();
-        writeConfigTask.setTriggerData();
-        return writeConfigTask;
+        ParamsTask task = new ParamsTask();
+        task.setTriggerData();
+        return task;
     }
 
     public static OrderTask setTHTrigger(int triggerType, boolean isAbove, int params, boolean isStart) {
-        WriteConfigTask writeConfigTask = new WriteConfigTask();
-        writeConfigTask.setTriggerData(triggerType, isAbove, params, isStart);
-        return writeConfigTask;
+        ParamsTask task = new ParamsTask();
+        task.setTriggerData(triggerType, isAbove, params, isStart);
+        return task;
     }
 
     public static OrderTask setTappedMovesTrigger(int triggerType, int params, boolean isStart) {
-        WriteConfigTask writeConfigTask = new WriteConfigTask();
-        writeConfigTask.setTriggerData(triggerType, params, isStart);
-        return writeConfigTask;
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // NOTIFY
-    ///////////////////////////////////////////////////////////////////////////
-    public static OrderTask setConfigNotify() {
-        NotifyConfigTask notifyConfigTask = new NotifyConfigTask(OrderTask.RESPONSE_TYPE_NOTIFY);
-        return notifyConfigTask;
-    }
-
-    public static OrderTask setAxisNotifyOpen() {
-        NotifyAxisTask notifyAxisTask = new NotifyAxisTask(OrderTask.RESPONSE_TYPE_NOTIFY);
-        return notifyAxisTask;
-    }
-
-    public static OrderTask setAxisNotifyClose() {
-        NotifyAxisTask notifyAxisTask = new NotifyAxisTask(OrderTask.RESPONSE_TYPE_DISABLE_NOTIFY);
-        return notifyAxisTask;
-    }
-
-    public static OrderTask setTHNotifyOpen() {
-        NotifyHTTask notifyHTTask = new NotifyHTTask(OrderTask.RESPONSE_TYPE_NOTIFY);
-        return notifyHTTask;
-    }
-
-    public static OrderTask setTHNotifyClose() {
-        NotifyHTTask notifyHTTask = new NotifyHTTask(OrderTask.RESPONSE_TYPE_DISABLE_NOTIFY);
-        return notifyHTTask;
-    }
-
-    public static OrderTask setSavedTHNotifyOpen() {
-        NotifySavedHTTask notifySavedHTTask = new NotifySavedHTTask(OrderTask.RESPONSE_TYPE_NOTIFY);
-        return notifySavedHTTask;
-    }
-
-    public static OrderTask setSavedTHNotifyClose() {
-        NotifySavedHTTask notifySavedHTTask = new NotifySavedHTTask(OrderTask.RESPONSE_TYPE_DISABLE_NOTIFY);
-        return notifySavedHTTask;
+        ParamsTask task = new ParamsTask();
+        task.setTriggerData(triggerType, params, isStart);
+        return task;
     }
 }

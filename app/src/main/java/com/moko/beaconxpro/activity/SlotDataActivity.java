@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.elvishew.xlog.XLog;
 import com.moko.beaconxpro.AppConstants;
 import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.able.ISlotDataAction;
@@ -33,17 +34,16 @@ import com.moko.beaconxpro.fragment.TriggerTempFragment;
 import com.moko.beaconxpro.fragment.UidFragment;
 import com.moko.beaconxpro.fragment.UrlFragment;
 import com.moko.beaconxpro.utils.ToastUtils;
-import com.moko.support.MokoConstants;
+import com.moko.ble.lib.MokoConstants;
+import com.moko.ble.lib.event.ConnectStatusEvent;
+import com.moko.ble.lib.event.OrderTaskResponseEvent;
+import com.moko.ble.lib.task.OrderTask;
+import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.support.MokoSupport;
 import com.moko.support.OrderTaskAssembler;
-import com.moko.support.entity.OrderType;
+import com.moko.support.entity.OrderCHAR;
 import com.moko.support.entity.SlotData;
 import com.moko.support.entity.SlotFrameTypeEnum;
-import com.moko.support.event.ConnectStatusEvent;
-import com.moko.support.event.OrderTaskResponseEvent;
-import com.moko.support.log.LogModule;
-import com.moko.support.task.OrderTask;
-import com.moko.support.task.OrderTaskResponse;
 import com.moko.support.utils.MokoUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -114,7 +114,7 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
             if (!TextUtils.isEmpty(triggerDataStr)) {
                 triggerData = MokoUtils.hex2bytes(triggerDataStr);
             }
-            LogModule.i(slotData.toString());
+            XLog.i(slotData.toString());
         }
         fragmentManager = getFragmentManager();
         createFragments();
@@ -336,7 +336,7 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (MokoConstants.ACTION_CONN_STATUS_DISCONNECTED.equals(action)) {
+                if (MokoConstants.ACTION_DISCONNECTED.equals(action)) {
                     // 设备断开，通知页面更新
                     SlotDataActivity.this.finish();
                 }
@@ -359,21 +359,21 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
             }
             if (MokoConstants.ACTION_ORDER_RESULT.equals(action)) {
                 OrderTaskResponse response = event.getResponse();
-                OrderType orderType = response.orderType;
+                OrderCHAR orderCHAR = (OrderCHAR) response.orderCHAR;
                 int responseType = response.responseType;
                 byte[] value = response.responseValue;
-                switch (orderType) {
-                    case advInterval:
+                switch (orderCHAR) {
+                    case CHAR_ADV_INTERVAL:
                         break;
                 }
             }
             if (MokoConstants.ACTION_CURRENT_DATA.equals(action)) {
                 OrderTaskResponse response = event.getResponse();
-                OrderType orderType = response.orderType;
+                OrderCHAR orderCHAR = (OrderCHAR) response.orderCHAR;
                 int responseType = response.responseType;
                 byte[] value = response.responseValue;
-                switch (orderType) {
-                    case notifyConfig:
+                switch (orderCHAR) {
+                    case CHAR_LOCKED_NOTIFY:
                         String valueHexStr = MokoUtils.bytesToHexString(value);
                         if ("eb63000100".equals(valueHexStr.toLowerCase())) {
                             // 设备上锁
@@ -573,8 +573,8 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
 
     @Override
     public void onValueChange(NumberPickerView picker, int oldVal, int newVal) {
-        LogModule.i(newVal + "");
-        LogModule.i(picker.getContentByCurrValue());
+        XLog.i(newVal + "");
+        XLog.i(picker.getContentByCurrValue());
         showFragment(newVal);
         if (SlotFrameTypeEnum.fromEnumOrdinal(newVal) != SlotFrameTypeEnum.NO_DATA) {
             rlTriggerSwitch.setVisibility(View.VISIBLE);

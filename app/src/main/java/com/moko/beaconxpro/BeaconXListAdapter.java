@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.elvishew.xlog.XLog;
 import com.moko.beaconxpro.entity.BeaconXAxis;
 import com.moko.beaconxpro.entity.BeaconXInfo;
 import com.moko.beaconxpro.entity.BeaconXTH;
@@ -19,7 +20,6 @@ import com.moko.beaconxpro.entity.BeaconXUID;
 import com.moko.beaconxpro.entity.BeaconXURL;
 import com.moko.beaconxpro.entity.BeaconXiBeacon;
 import com.moko.beaconxpro.utils.BeaconXParser;
-import com.moko.support.log.LogModule;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,7 +56,7 @@ public class BeaconXListAdapter extends BaseQuickAdapter<BeaconXInfo, BaseViewHo
         });
 
         for (BeaconXInfo.ValidData validData : validDatas) {
-            LogModule.i(validData.toString());
+            XLog.i(validData.toString());
             if (validData.type == BeaconXInfo.VALID_DATA_FRAME_TYPE_UID) {
                 parent.addView(createUIDView(BeaconXParser.getUID(validData.data)));
             }
