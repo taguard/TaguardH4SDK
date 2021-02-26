@@ -32,6 +32,8 @@ public class SettingFragment extends Fragment {
     ImageView ivConnectable;
     @BindView(R.id.iv_power)
     ImageView ivPower;
+    @BindView(R.id.iv_button_power)
+    ImageView ivButtonPower;
     @BindView(R.id.rl_password)
     RelativeLayout rlPassword;
     @BindView(R.id.iv_no_password)
@@ -88,7 +90,7 @@ public class SettingFragment extends Fragment {
     }
 
     @OnClick({R.id.rl_password, R.id.rl_update_firmware, R.id.rl_reset_facotry, R.id.iv_connectable,
-            R.id.iv_power, R.id.iv_no_password, R.id.rl_axis, R.id.rl_th})
+            R.id.iv_power, R.id.iv_button_power, R.id.iv_no_password, R.id.rl_axis, R.id.rl_th})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.rl_password:
@@ -129,16 +131,16 @@ public class SettingFragment extends Fragment {
                 resetDeviceDialog.show(activity.getSupportFragmentManager());
                 break;
             case R.id.iv_connectable:
-                final AlertMessageDialog connectAlertDialog = new AlertMessageDialog();
-                connectAlertDialog.setMessage(isConneacted ? "Are you sure to make device disconnectable?" : "Are you sure to make device connectable?");
-                connectAlertDialog.setOnAlertConfirmListener(new AlertMessageDialog.OnAlertConfirmListener() {
-                    @Override
-                    public void onClick() {
-                        isConneacted = !isConneacted;
-                        activity.setConnectable(isConneacted);
-                    }
-                });
-                connectAlertDialog.show(activity.getSupportFragmentManager());
+                if (isConneacted) {
+                    final AlertMessageDialog connectAlertDialog = new AlertMessageDialog();
+                    connectAlertDialog.setMessage("Are you sure to set the device non-connectable？");
+                    connectAlertDialog.setOnAlertConfirmListener(() -> {
+                        activity.setConnectable(false);
+                    });
+                    connectAlertDialog.show(activity.getSupportFragmentManager());
+                } else {
+                    activity.setConnectable(true);
+                }
                 break;
             case R.id.iv_power:
                 final AlertMessageDialog powerAlertDialog = new AlertMessageDialog();
@@ -151,20 +153,32 @@ public class SettingFragment extends Fragment {
                 });
                 powerAlertDialog.show(activity.getSupportFragmentManager());
                 break;
-            case R.id.iv_no_password:
-                final AlertMessageDialog directAlertDialog = new AlertMessageDialog();
-                if (noPassowrd) {
-                    directAlertDialog.setMessage("Are you sure to revert the password？");
+            case R.id.iv_button_power:
+                if (enableButtonPower) {
+                    final AlertMessageDialog buttonPowerAlertDialog = new AlertMessageDialog();
+                    buttonPowerAlertDialog.setMessage("If disable Button Power OFF, then it  cannot power off beacon by press button operation.");
+                    buttonPowerAlertDialog.setOnAlertConfirmListener(new AlertMessageDialog.OnAlertConfirmListener() {
+                        @Override
+                        public void onClick() {
+                            activity.setButtonPower(false);
+                        }
+                    });
+                    buttonPowerAlertDialog.show(activity.getSupportFragmentManager());
                 } else {
-                    directAlertDialog.setMessage("Are you sure to remove the password？");
+                    activity.setButtonPower(true);
                 }
-                directAlertDialog.setOnAlertConfirmListener(new AlertMessageDialog.OnAlertConfirmListener() {
-                    @Override
-                    public void onClick() {
-                        activity.setDirectedConnectable(!noPassowrd);
-                    }
-                });
-                directAlertDialog.show(activity.getSupportFragmentManager());
+                break;
+            case R.id.iv_no_password:
+                if (!noPassowrd) {
+                    final AlertMessageDialog directAlertDialog = new AlertMessageDialog();
+                    directAlertDialog.setMessage("Are you sure to disable password verification？");
+                    directAlertDialog.setOnAlertConfirmListener(() -> {
+                        activity.setDirectedConnectable(true);
+                    });
+                    directAlertDialog.show(activity.getSupportFragmentManager());
+                } else {
+                    activity.setDirectedConnectable(false);
+                }
                 break;
             case R.id.rl_axis:
                 // 3轴配置
@@ -198,6 +212,13 @@ public class SettingFragment extends Fragment {
     public void setNoPassword(boolean noPassword) {
         this.noPassowrd = noPassword;
         ivNoPassowrd.setImageResource(noPassword ? R.drawable.connectable_checked : R.drawable.connectable_unchecked);
+    }
+
+    private boolean enableButtonPower;
+
+    public void setButtonPower(boolean enable) {
+        this.enableButtonPower = enable;
+        ivButtonPower.setImageResource(enable ? R.drawable.connectable_checked : R.drawable.connectable_unchecked);
     }
 
     public void setModifyPasswordVisiable(boolean isSupportModifyPassword) {

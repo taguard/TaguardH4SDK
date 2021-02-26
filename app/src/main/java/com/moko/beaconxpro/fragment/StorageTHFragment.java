@@ -10,9 +10,10 @@ import android.widget.TextView;
 
 import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.activity.THDataActivity;
-import com.moko.beaconxpro.dialog.StorageHumidityDialog;
-import com.moko.beaconxpro.dialog.StorageTempDialog;
+import com.moko.beaconxpro.dialog.BottomDialog;
 import com.moko.support.utils.MokoUtils;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,6 +28,8 @@ public class StorageTHFragment extends Fragment {
     TextView tvStorageHumidity;
     @BindView(R.id.tv_t_h_tips)
     TextView tvTHTips;
+    private ArrayList<String> mHumidityDatas;
+    private ArrayList<String> mTempDatas;
 
     private THDataActivity activity;
 
@@ -52,6 +55,14 @@ public class StorageTHFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_storage_t_h, container, false);
         ButterKnife.bind(this, view);
         activity = (THDataActivity) getActivity();
+        mHumidityDatas = new ArrayList<>();
+        for (int i = 0; i <= 100; i++) {
+            mHumidityDatas.add(i + "");
+        }
+        mTempDatas = new ArrayList<>();
+        for (int i = 0; i <= 200; i++) {
+            mTempDatas.add(MokoUtils.getDecimalFormat("0.0").format(i * 0.5));
+        }
         return view;
     }
 
@@ -77,50 +88,43 @@ public class StorageTHFragment extends Fragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_storage_temp:
-                StorageTempDialog tempDialog = new StorageTempDialog();
-                tempDialog.setListener(new StorageTempDialog.OnDataSelectedListener() {
-                    @Override
-                    public void onDataSelected(String data) {
-                        float temp = Float.parseFloat(data);
-                        mTempSelected = (int) (temp * 2);
-                        if (temp > 0 && mHumiditySelected > 0) {
-                            tvTHTips.setText(getString(R.string.t_h_tips_0, data, mHumiditySelected));
-                        } else if (temp == 0 && mHumiditySelected > 0) {
-                            tvTHTips.setText(getString(R.string.t_h_tips_1, mHumiditySelected));
-                        } else if (temp > 0 && mHumiditySelected == 0) {
-                            tvTHTips.setText(getString(R.string.t_h_tips_2, data));
-                        } else if (temp == 0 && mHumiditySelected == 0) {
-                            tvTHTips.setText(R.string.t_h_tips_3);
-                        }
-                        tvStorageTemp.setText(data);
-                        activity.setSelectedTemp(mTempSelected);
+                BottomDialog tempDialog = new BottomDialog();
+                tempDialog.setListener(value -> {
+                    mTempSelected = value;
+                    if (mTempSelected > 0 && mHumiditySelected > 0) {
+                        tvTHTips.setText(getString(R.string.t_h_tips_0, mTempDatas.get(value), mHumiditySelected));
+                    } else if (mTempSelected == 0 && mHumiditySelected > 0) {
+                        tvTHTips.setText(getString(R.string.t_h_tips_1, mHumiditySelected));
+                    } else if (mTempSelected > 0 && mHumiditySelected == 0) {
+                        tvTHTips.setText(getString(R.string.t_h_tips_2, mTempDatas.get(value)));
+                    } else if (mTempSelected == 0 && mHumiditySelected == 0) {
+                        tvTHTips.setText(R.string.t_h_tips_3);
                     }
+                    tvStorageTemp.setText(mTempDatas.get(value));
+                    activity.setSelectedTemp(mTempSelected);
                 });
-                tempDialog.setSelected(mTempSelected);
+
                 tempDialog.show(activity.getSupportFragmentManager());
                 break;
             case R.id.tv_storage_humidity:
-                StorageHumidityDialog humidityDialog = new StorageHumidityDialog();
-                humidityDialog.setListener(new StorageHumidityDialog.OnDataSelectedListener() {
-                    @Override
-                    public void onDataSelected(String data) {
-                        mHumiditySelected = Integer.parseInt(data);
-                        if (mTempSelected > 0 && mHumiditySelected > 0) {
-                            String tempStr = MokoUtils.getDecimalFormat("0.0").format(mTempSelected * 0.5);
-                            tvTHTips.setText(getString(R.string.t_h_tips_0, tempStr, mHumiditySelected));
-                        } else if (mTempSelected == 0 && mHumiditySelected > 0) {
-                            tvTHTips.setText(getString(R.string.t_h_tips_1, mHumiditySelected));
-                        } else if (mTempSelected > 0 && mHumiditySelected == 0) {
-                            String tempStr = MokoUtils.getDecimalFormat("0.0").format(mTempSelected * 0.5);
-                            tvTHTips.setText(getString(R.string.t_h_tips_2, tempStr));
-                        } else if (mTempSelected == 0 && mHumiditySelected == 0) {
-                            tvTHTips.setText(R.string.t_h_tips_3);
-                        }
-                        tvStorageHumidity.setText(data);
-                        activity.setSelectedHumidity(mHumiditySelected);
+                BottomDialog humidityDialog = new BottomDialog();
+                humidityDialog.setDatas(mHumidityDatas, mHumiditySelected);
+                humidityDialog.setListener(value -> {
+                    mHumiditySelected = value;
+                    if (mTempSelected > 0 && mHumiditySelected > 0) {
+                        String tempStr = MokoUtils.getDecimalFormat("0.0").format(mTempSelected * 0.5);
+                        tvTHTips.setText(getString(R.string.t_h_tips_0, tempStr, mHumiditySelected));
+                    } else if (mTempSelected == 0 && mHumiditySelected > 0) {
+                        tvTHTips.setText(getString(R.string.t_h_tips_1, mHumiditySelected));
+                    } else if (mTempSelected > 0 && mHumiditySelected == 0) {
+                        String tempStr = MokoUtils.getDecimalFormat("0.0").format(mTempSelected * 0.5);
+                        tvTHTips.setText(getString(R.string.t_h_tips_2, tempStr));
+                    } else if (mTempSelected == 0 && mHumiditySelected == 0) {
+                        tvTHTips.setText(R.string.t_h_tips_3);
                     }
+                    tvStorageHumidity.setText(String.valueOf(value));
+                    activity.setSelectedHumidity(value);
                 });
-                humidityDialog.setSelected(mHumiditySelected);
                 humidityDialog.show(activity.getSupportFragmentManager());
                 break;
         }

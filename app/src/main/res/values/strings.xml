@@ -22,7 +22,7 @@
     <string name="company_name">MOKO TECHNOLOGY LTD.</string>
     <string name="about_title">ABOUT</string>
 
-    <string name="company_website">www.mokosmart.com</string>
+    <string name="company_website">www.mokoblue.com</string>
     <string name="please_enter_password">Please enter password</string>
     <string name="device_name_null">The device name cannot be empty!</string>
     <string name="password_length">Length should be 16 bits</string>
@@ -64,7 +64,7 @@
         <item>iBeacon</item>
         <item>Device Info</item>
         <item>NO DATA</item>
-        <item>3-axis Sensor</item>
+        <item>Accel</item>
     </string-array>
     <string-array name="slot_type_th">
         <item>TLM</item>
@@ -82,52 +82,13 @@
         <item>iBeacon</item>
         <item>Device Info</item>
         <item>NO DATA</item>
-        <item>3-axis Sensor</item>
+        <item>Accel</item>
         <item><![CDATA[T&H]]></item>
-    </string-array>
-    <string-array name="axis_data_rate">
-        <item>1Hz</item>
-        <item>10Hz</item>
-        <item>25Hz</item>
-        <item>50Hz</item>
-        <item>100Hz</item>
-    </string-array>
-    <string-array name="axis_scales">
-        <item>±2g</item>
-        <item>±4g</item>
-        <item>±8g</item>
-        <item>±16g</item>
     </string-array>
     <string-array name="storage_condition">
         <item>Temperature</item>
         <item>Humidity</item>
         <item><![CDATA[T&H]]></item>
         <item>Time</item>
-    </string-array>
-    <string-array name="trigger_type_0">
-        <item>Button double tapped</item>
-        <item>Button triple tapped</item>
-    </string-array>
-    <string-array name="trigger_type_1">
-        <item>Button double tapped</item>
-        <item>Button triple tapped</item>
-        <item>Device moves</item>
-    </string-array>
-    <string-array name="trigger_type_2">
-        <item>Button double tapped</item>
-        <item>Button triple tapped</item>
-        <item>Temperature above</item>
-        <item>Temperature below</item>
-        <item>Humidity above</item>
-        <item>Humidity below</item>
-    </string-array>
-    <string-array name="trigger_type_3">
-        <item>Button double tapped</item>
-        <item>Button triple tapped</item>
-        <item>Temperature above</item>
-        <item>Temperature below</item>
-        <item>Humidity above</item>
-        <item>Humidity below</item>
-        <item>Device moves</item>
     </string-array>
 </resources>

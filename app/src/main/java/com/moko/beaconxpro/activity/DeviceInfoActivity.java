@@ -246,6 +246,12 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                                         validParams.connectable = MokoUtils.byte2HexString(value[4]);
                                     }
                                     break;
+                                case GET_BUTTON_POWER:
+                                    if (value.length >= 5) {
+                                        boolean enable = value[4] == 1;
+                                        settingFragment.setButtonPower(enable);
+                                    }
+                                    break;
 //                                    case GET_IBEACON_UUID:
 //                                        if (value.length >= 20) {
 //                                            slotFragment.setiBeaconUUID(value);
@@ -280,6 +286,10 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                         validParams.productModel = "1";
                         break;
                     case CHAR_SERIAL_NUMBER:
+                        // 判断新旧版本
+                        String serialNumber = MokoUtils.hex2String(MokoUtils.bytesToHexString(value));
+                        int year = Integer.parseInt(serialNumber.substring(0, 4));
+                        MokoSupport.isNewVersion = year >= 2021;
                         deviceFragment.setProductDate(value);
                         validParams.manufactureDate = "1";
                         break;
@@ -328,7 +338,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                                     isModifyPassword = false;
                                     dismissSyncProgressDialog();
                                     AlertMessageDialog dialog = new AlertMessageDialog();
-                                    dialog.setMessage("Password changed successfully! Please reconnect the Device.");
+                                    dialog.setMessage("Modify password success!\nPlease reconnect the Device.");
                                     dialog.setCancelGone();
                                     dialog.setOnAlertConfirmListener(new AlertMessageDialog.OnAlertConfirmListener() {
                                         @Override
@@ -367,7 +377,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                         if (lockState == 2) {
                             ToastUtils.showToast(DeviceInfoActivity.this, "Communication Timeout!");
                         } else {
-                            ToastUtils.showToast(DeviceInfoActivity.this, "Reset successfully!");
+                            ToastUtils.showToast(DeviceInfoActivity.this, "Reset successfully!\nPlease reconnect the Device.");
                         }
                         break;
                 }
@@ -391,6 +401,9 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
         ArrayList<OrderTask> orderTasks = new ArrayList<>();
         orderTasks.add(OrderTaskAssembler.getDeviceMac());
         orderTasks.add(OrderTaskAssembler.getConnectable());
+        if (MokoSupport.isNewVersion) {
+            orderTasks.add(OrderTaskAssembler.getButtonPower());
+        }
         orderTasks.add(OrderTaskAssembler.getManufacturer());
         orderTasks.add(OrderTaskAssembler.getDeviceModel());
         orderTasks.add(OrderTaskAssembler.getProductDate());
@@ -611,6 +624,14 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
         MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
     }
 
+    public void setButtonPower(boolean enable) {
+        showSyncingProgressDialog();
+        ArrayList<OrderTask> orderTasks = new ArrayList<>();
+        orderTasks.add(OrderTaskAssembler.setButtonPower(enable));
+        orderTasks.add(OrderTaskAssembler.getButtonPower());
+        MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+    }
+
     public void setDirectedConnectable(boolean noPassword) {
         showSyncingProgressDialog();
         ArrayList<OrderTask> orderTasks = new ArrayList<>();
@@ -723,7 +744,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
 
         @Override
         public void onDfuCompleted(String deviceAddress) {
-            ToastUtils.showToast(DeviceInfoActivity.this, "DFU Successfully!");
+            ToastUtils.showToast(DeviceInfoActivity.this, "DFU Successfully!\nPlease reconnect the Device.");
             dismissDFUProgressDialog();
         }
 
@@ -739,7 +760,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
 
         @Override
         public void onError(String deviceAddress, int error, int errorType, String message) {
-            ToastUtils.showToast(DeviceInfoActivity.this, "Opps!DFU Failed. Please try again!");
+            ToastUtils.showToast(DeviceInfoActivity.this, "Opps!DFU Failed.\nPlease try again!");
             XLog.i("Error:" + message);
             dismissDFUProgressDialog();
         }

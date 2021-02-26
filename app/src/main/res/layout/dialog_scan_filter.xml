@@ -1,23 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
         android:layout_marginTop="58dp"
+        android:layout_marginRight="10dp"
         android:background="@drawable/shape_radius_white_bg"
         android:orientation="vertical"
         android:padding="15dp">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BLE Name"
+            android:textColor="@color/text_black_4d4d4d"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="@id/ll_filter_ble_name"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="@id/ll_filter_ble_name" />
+
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/ll_filter_ble_name"
+            android:layout_width="0dp"
             android:layout_height="50dp"
             android:background="@drawable/shape_radius_blue_frame"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.75">
 
             <EditText
                 android:id="@+id/et_filter_name"
@@ -26,13 +43,13 @@
                 android:layout_weight="1.0"
                 android:background="@color/transparent"
                 android:gravity="center_vertical"
-                android:hint="Device name or mac address"
+                android:hint="1-20 characters"
                 android:paddingLeft="10dp"
                 android:singleLine="true"
                 android:textColorHint="@color/grey_ebebeb" />
 
             <ImageView
-                android:id="@+id/iv_filter_delete"
+                android:id="@+id/iv_filter_name_delete"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:paddingLeft="10dp"
@@ -40,18 +57,75 @@
                 android:src="@drawable/filter_delete" />
         </LinearLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mac Addr"
+            android:textColor="@color/text_black_4d4d4d"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="@id/ll_filter_mac_addr"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="@id/ll_filter_mac_addr" />
+
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/ll_filter_mac_addr"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_radius_blue_frame"
+            android:gravity="center_vertical"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ll_filter_ble_name"
+            app:layout_constraintWidth_percent="0.75">
+
+            <EditText
+                android:id="@+id/et_filter_mac"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.0"
+                android:background="@color/transparent"
+                android:gravity="center_vertical"
+                android:hint="1-6bytes HEX"
+                android:paddingLeft="10dp"
+                android:singleLine="true"
+                android:textColorHint="@color/grey_ebebeb" />
+
+            <ImageView
+                android:id="@+id/iv_filter_mac_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:src="@drawable/filter_delete" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Min. RSSI"
+            android:textColor="@color/text_black_4d4d4d"
+            android:textSize="15sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="@id/ll_filter_rssi" />
+
+        <LinearLayout
+            android:id="@+id/ll_filter_rssi"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:gravity="center_vertical">
+            android:paddingTop="5dp"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ll_filter_mac_addr"
+            app:layout_constraintWidth_percent="0.75">
 
-            <TextView
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/wifi"
-                android:drawablePadding="10dp"
-                android:text="RSSI:" />
+                android:src="@drawable/wifi" />
 
             <SeekBar
                 android:id="@+id/sb_rssi"
@@ -72,17 +146,20 @@
 
         <TextView
             android:id="@+id/tv_done"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@drawable/shape_radius_blue_btn_bg"
             android:gravity="center"
-            android:paddingBottom="10dp"
             android:paddingTop="10dp"
-            android:text="Done"
+            android:paddingBottom="10dp"
+            android:text="Apply"
             android:textColor="@color/white_ffffff"
-            android:textSize="20dp" />
+            android:textSize="20dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ll_filter_rssi" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </RelativeLayout>

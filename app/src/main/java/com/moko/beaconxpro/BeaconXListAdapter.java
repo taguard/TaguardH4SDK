@@ -35,8 +35,8 @@ public class BeaconXListAdapter extends BaseQuickAdapter<BeaconXInfo, BaseViewHo
         helper.setText(R.id.tv_name, TextUtils.isEmpty(item.name) ? "N/A" : item.name);
         helper.setText(R.id.tv_mac, "MAC:" + item.mac);
         helper.setText(R.id.tv_rssi, item.rssi + "");
-        helper.setText(R.id.tv_conn_state, item.connectState < 0 ? "N/A" : item.connectState == 0 ? "Unconnectable" : "Connectable");
-        helper.setText(R.id.tv_lock_state, item.lockState < 0 ? "Lock State:N/A" : String.format("Lock State:0x%02x", item.lockState));
+//        helper.setText(R.id.tv_conn_state, item.connectState < 0 ? "N/A" : item.connectState == 0 ? "Unconnectable" : "Connectable");
+//        helper.setText(R.id.tv_lock_state, item.lockState < 0 ? "Lock State:N/A" : String.format("Lock State:0x%02x", item.lockState));
         helper.setText(R.id.tv_interval_time, item.intervalTime == 0 ? "<->N/A" : String.format("<->%dms", item.intervalTime));
         helper.setText(R.id.tv_battery, item.battery < 0 ? "N/A" : String.format("%dmV", item.battery));
         helper.addOnClickListener(R.id.tv_connect);
@@ -89,10 +89,10 @@ public class BeaconXListAdapter extends BaseQuickAdapter<BeaconXInfo, BaseViewHo
 
     private View createUIDView(BeaconXUID uid) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.beaconx_uid, null);
-        TextView tvTxPower = view.findViewById(R.id.tv_tx_power);
+        TextView tvRSSI0M = view.findViewById(R.id.tv_rssi_0m);
         TextView tvNameSpace = view.findViewById(R.id.tv_namespace);
         TextView tvInstanceId = view.findViewById(R.id.tv_instance_id);
-        tvTxPower.setText(String.format("RSSI@0m:%sdBm", uid.rangingData));
+        tvRSSI0M.setText(String.format("%sdBm", uid.rangingData));
         tvNameSpace.setText("0x" + uid.namespace.toUpperCase());
         tvInstanceId.setText("0x" + uid.instanceId.toUpperCase());
         return view;
@@ -100,19 +100,16 @@ public class BeaconXListAdapter extends BaseQuickAdapter<BeaconXInfo, BaseViewHo
 
     private View createURLView(final BeaconXURL url) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.beaconx_url, null);
-        TextView tvTxPower = view.findViewById(R.id.tv_tx_power);
+        TextView tvRSSI0M = view.findViewById(R.id.tv_rssi_0m);
         TextView tvUrl = view.findViewById(R.id.tv_url);
-        tvTxPower.setText(String.format("RSSI@0m:%sdBm", url.rangingData));
+        tvRSSI0M.setText(String.format("%sdBm", url.rangingData));
         tvUrl.setText(url.url);
         tvUrl.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
         tvUrl.getPaint().setAntiAlias(true);//抗锯齿
-        tvUrl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Uri uri = Uri.parse(url.url);
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                mContext.startActivity(intent);
-            }
+        tvUrl.setOnClickListener(v -> {
+            Uri uri = Uri.parse(url.url);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            mContext.startActivity(intent);
         });
         return view;
     }
@@ -137,11 +134,11 @@ public class BeaconXListAdapter extends BaseQuickAdapter<BeaconXInfo, BaseViewHo
         TextView tv_uuid = view.findViewById(R.id.tv_uuid);
         TextView tv_major = view.findViewById(R.id.tv_major);
         TextView tv_minor = view.findViewById(R.id.tv_minor);
-        TextView tv_distance = view.findViewById(R.id.tv_distance);
+        TextView tv_proximity_state = view.findViewById(R.id.tv_proximity_state);
 
-        tv_rssi_1m.setText(String.format("RSSI@1m:%sdBm", iBeacon.rangingData));
+        tv_rssi_1m.setText(String.format("%sdBm", iBeacon.rangingData));
         tv_tx_power.setText(String.format("%sdBm", iBeacon.txPower));
-        tv_distance.setText(iBeacon.distanceDesc);
+        tv_proximity_state.setText(iBeacon.distanceDesc);
         tv_uuid.setText(iBeacon.uuid.toUpperCase());
         tv_major.setText(iBeacon.major);
         tv_minor.setText(iBeacon.minor);
@@ -155,10 +152,10 @@ public class BeaconXListAdapter extends BaseQuickAdapter<BeaconXInfo, BaseViewHo
         TextView tv_temperature = view.findViewById(R.id.tv_temperature);
         TextView tv_humidity = view.findViewById(R.id.tv_humidity);
 
-        tv_rssi_0m.setText(String.format("RSSI@0m:%sdBm", beaconXTH.rangingData));
+        tv_rssi_0m.setText(String.format("%sdBm", beaconXTH.rangingData));
         tv_tx_power.setText(String.format("%sdBm", beaconXTH.txPower));
         tv_temperature.setText(String.format("%s°C", beaconXTH.temperature));
-        tv_humidity.setText(String.format("%s%%", beaconXTH.humidity));
+        tv_humidity.setText(String.format("%s%%RH", beaconXTH.humidity));
         return view;
     }
 

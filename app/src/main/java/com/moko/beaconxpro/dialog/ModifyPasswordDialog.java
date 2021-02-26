@@ -1,12 +1,14 @@
 package com.moko.beaconxpro.dialog;
 
 import android.content.Context;
+import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
-import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.utils.ToastUtils;
@@ -22,6 +24,10 @@ public class ModifyPasswordDialog extends BaseDialog {
     EditText etNewPassword;
     @BindView(R.id.et_new_password_re)
     EditText etNewPasswordRe;
+    @BindView(R.id.tv_password_ensure)
+    TextView tvPasswordEnsure;
+    private boolean passwordEnable;
+    private boolean confirmPasswordEnable;
 
 
     public ModifyPasswordDialog(Context context) {
@@ -47,6 +53,40 @@ public class ModifyPasswordDialog extends BaseDialog {
         };
         etNewPassword.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16), filter});
         etNewPasswordRe.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16), filter});
+        etNewPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                passwordEnable = count > 0;
+                tvPasswordEnsure.setEnabled(passwordEnable || confirmPasswordEnable);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        etNewPasswordRe.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                confirmPasswordEnable = count > 0;
+                tvPasswordEnsure.setEnabled(passwordEnable || confirmPasswordEnable);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     @OnClick({R.id.tv_cancel, R.id.tv_ensure})
@@ -58,14 +98,6 @@ public class ModifyPasswordDialog extends BaseDialog {
             case R.id.tv_ensure:
                 String newPassword = etNewPassword.getText().toString();
                 String newPasswordRe = etNewPasswordRe.getText().toString();
-                if (TextUtils.isEmpty(newPassword)) {
-                    ToastUtils.showToast(getContext(), getContext().getString(R.string.password_length));
-                    return;
-                }
-                if (TextUtils.isEmpty(newPasswordRe)) {
-                    ToastUtils.showToast(getContext(), "Password do not match! Please try again.");
-                    return;
-                }
                 if (!newPasswordRe.equals(newPassword)) {
                     ToastUtils.showToast(getContext(), "Password do not match! Please try again.");
                     return;

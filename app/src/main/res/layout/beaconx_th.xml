@@ -21,19 +21,34 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:text="@string/h_t"
-            android:textStyle="bold"
             android:textColor="@color/black_333333"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="RSSI@0m"
+            android:textColor="@color/grey_999999"
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/tv_rssi_0m"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="170dp"
-            android:text="RSSI@0m:0dBm"
+            android:text="0dBm"
             android:textColor="@color/grey_666666"
             android:textSize="12sp" />
     </RelativeLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

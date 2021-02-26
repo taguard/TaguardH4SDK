@@ -94,14 +94,20 @@ public class BeaconXInfoParseableImpl implements DeviceInfoParseable<BeaconXInfo
                                 // 50ee0c0102030405060708090a0b0c0d0e0f1000010002
                                 break;
                             case BeaconXInfo.VALID_DATA_FRAME_TYPE_AXIS:
-                                if (bytes.length != 12)
+                                if (bytes.length != 12 && bytes.length != 21)
                                     return null;
+                                if (bytes.length == 21) {
+                                    battery = MokoUtils.toInt(Arrays.copyOfRange(bytes, 12, 14));
+                                }
                                 type = BeaconXInfo.VALID_DATA_FRAME_TYPE_AXIS;
                                 // 60f60e010007f600d5002e00
                                 break;
                             case BeaconXInfo.VALID_DATA_FRAME_TYPE_TH:
-                                if (bytes.length != 7)
+                                if (bytes.length != 7 && bytes.length != 16)
                                     return null;
+                                if (bytes.length == 16) {
+                                    battery = MokoUtils.toInt(Arrays.copyOfRange(bytes, 7, 9));
+                                }
                                 type = BeaconXInfo.VALID_DATA_FRAME_TYPE_TH;
                                 // 700b1000fb02f5
                                 break;

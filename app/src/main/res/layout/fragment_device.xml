@@ -9,17 +9,10 @@
         android:layout_width="match_parent"
         android:layout_height="50dp">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:src="@drawable/soc" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="40dp"
             android:text="Battery Voltage"
             android:textColor="@color/black_333333"
             android:textSize="15sp" />
@@ -43,17 +36,10 @@
         android:layout_width="match_parent"
         android:layout_height="50dp">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:src="@drawable/mac_address" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="40dp"
             android:text="Mac Address"
             android:textColor="@color/black_333333"
             android:textSize="15sp" />
@@ -77,17 +63,10 @@
         android:layout_width="match_parent"
         android:layout_height="50dp">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:src="@drawable/running_time" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="40dp"
             android:text="Manufacture Date"
             android:textColor="@color/black_333333"
             android:textSize="15sp" />
@@ -111,17 +90,10 @@
         android:layout_width="match_parent"
         android:layout_height="50dp">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:src="@drawable/product_model" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="40dp"
             android:text="Product Model"
             android:textColor="@color/black_333333"
             android:textSize="15sp" />
@@ -145,17 +117,10 @@
         android:layout_width="match_parent"
         android:layout_height="50dp">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:src="@drawable/software_version" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="40dp"
             android:text="Software Version"
             android:textColor="@color/black_333333"
             android:textSize="15sp" />
@@ -179,17 +144,10 @@
         android:layout_width="match_parent"
         android:layout_height="50dp">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:src="@drawable/firmware_version" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="40dp"
             android:text="Firmware Version"
             android:textColor="@color/black_333333"
             android:textSize="15sp" />
@@ -213,17 +171,10 @@
         android:layout_width="match_parent"
         android:layout_height="50dp">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:src="@drawable/hardware_version" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="40dp"
             android:text="Hardware Version"
             android:textColor="@color/black_333333"
             android:textSize="15sp" />
@@ -247,18 +198,11 @@
         android:layout_width="match_parent"
         android:layout_height="50dp">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:src="@drawable/manufacture" />
-
         <TextView
             android:id="@+id/manufacturer_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="40dp"
             android:text="Manufacture"
             android:textColor="@color/black_333333"
             android:textSize="15sp" />

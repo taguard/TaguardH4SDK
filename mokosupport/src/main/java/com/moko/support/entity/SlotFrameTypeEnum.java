@@ -9,7 +9,7 @@ public enum SlotFrameTypeEnum implements Serializable {
     IBEACON("iBeacon", "50"),
     DEVICE("Device Info", "40"),
     NO_DATA("NO DATA", "FF"),
-    AXIS("3-axis Sensor", "60"),
+    AXIS("Accel", "60"),
     TH("T&H", "70"),
     ;
     private String frameType;

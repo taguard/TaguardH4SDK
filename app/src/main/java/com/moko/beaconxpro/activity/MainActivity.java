@@ -163,7 +163,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                 if (isPasswordError) {
                     isPasswordError = false;
                 } else {
-                    ToastUtils.showToast(MainActivity.this, "Disconnected");
+                    ToastUtils.showToast(MainActivity.this, "Connection failed");
                 }
                 startScan();
             } else {
@@ -260,7 +260,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                         } else {
                             isPasswordError = true;
                             unLockResponse = "";
-                            ToastUtils.showToast(MainActivity.this, "Password error");
+                            ToastUtils.showToast(MainActivity.this, "Password Incorrect");
                         }
                     } else if ("02".equals(valueStr)) {
                         // 不需要密码验证

@@ -160,7 +160,7 @@ public class OrderTaskAssembler {
      */
     public static OrderTask getAxisParams() {
         ParamsTask task = new ParamsTask();
-        task.setData(ParamsKeyEnum.GET_AXIX_PARAMS);
+        task.setData(ParamsKeyEnum.GET_AXIS_PARAMS);
         return task;
     }
 
@@ -256,6 +256,24 @@ public class OrderTaskAssembler {
     public static OrderTask setConnectable(boolean isConnectable) {
         SetConnectableTask task = new SetConnectableTask();
         task.setData(isConnectable ? MokoUtils.toByteArray(1, 1) : MokoUtils.toByteArray(0, 1));
+        return task;
+    }
+
+    /**
+     * @Description 获取按键关键
+     */
+    public static OrderTask getButtonPower() {
+        ParamsTask task = new ParamsTask();
+        task.setData(ParamsKeyEnum.GET_BUTTON_POWER);
+        return task;
+    }
+
+    /**
+     * @Description 设置按键关键
+     */
+    public static OrderTask setButtonPower(boolean enable) {
+        ParamsTask task = new ParamsTask();
+        task.setButtonPower(enable);
         return task;
     }
 

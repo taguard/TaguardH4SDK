@@ -80,4 +80,19 @@
         android:text="@string/company_website"
         android:textColor="@color/blue_2f84d0"
         android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/tv_feedback_log"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/tv_company_website"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="60dp"
+        android:background="@drawable/shape_radius_blue_btn_bg"
+        android:gravity="center"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:text="Feedback log"
+        android:textColor="@color/white_ffffff"
+        android:textSize="20dp" />
 </RelativeLayout>

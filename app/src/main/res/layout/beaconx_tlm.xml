@@ -58,7 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:text="Temperature"
+            android:text="Chip Temperature"
             android:textColor="@color/grey_999999"
             android:textSize="12sp" />
 
@@ -104,7 +104,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:text="Time Since"
+            android:text="Running time"
             android:textColor="@color/grey_999999"
             android:textSize="12sp" />
 

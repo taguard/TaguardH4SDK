@@ -21,7 +21,7 @@ import com.elvishew.xlog.XLog;
 import com.moko.beaconxpro.AppConstants;
 import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.able.ISlotDataAction;
-import com.moko.beaconxpro.dialog.TriggerTypeDialog;
+import com.moko.beaconxpro.dialog.BottomDialog;
 import com.moko.beaconxpro.fragment.AxisFragment;
 import com.moko.beaconxpro.fragment.DeviceInfoFragment;
 import com.moko.beaconxpro.fragment.IBeaconFragment;
@@ -98,7 +98,7 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
     private boolean mReceiverTag = false;
     private int triggerType;
     private byte[] triggerData;
-    private String[] triggerArray;
+    private ArrayList<String> triggerTypes;
     private int triggerTypeSelected;
 
     @Override
@@ -118,26 +118,41 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
         }
         fragmentManager = getFragmentManager();
         createFragments();
+        triggerTypes = new ArrayList<>();
         if (deviceType == 0) {
             npvSlotType.setDisplayedValues(getResources().getStringArray(R.array.slot_type_no_sensor));
             npvSlotType.setMinValue(0);
             npvSlotType.setMaxValue(5);
-            triggerArray = getResources().getStringArray(R.array.trigger_type_0);
+            triggerTypes.add("Button double tapped");
+            triggerTypes.add("Button triple tapped");
         } else if (deviceType == 1) {
             npvSlotType.setDisplayedValues(getResources().getStringArray(R.array.slot_type_axis));
             npvSlotType.setMinValue(0);
             npvSlotType.setMaxValue(6);
-            triggerArray = getResources().getStringArray(R.array.trigger_type_1);
+            triggerTypes.add("Button double tapped");
+            triggerTypes.add("Button triple tapped");
+            triggerTypes.add("Device moves");
         } else if (deviceType == 2) {
             npvSlotType.setDisplayedValues(getResources().getStringArray(R.array.slot_type_th));
             npvSlotType.setMinValue(0);
             npvSlotType.setMaxValue(6);
-            triggerArray = getResources().getStringArray(R.array.trigger_type_2);
+            triggerTypes.add("Button double tapped");
+            triggerTypes.add("Button triple tapped");
+            triggerTypes.add("Temperature above");
+            triggerTypes.add("Temperature below");
+            triggerTypes.add("Humidity above");
+            triggerTypes.add("Humidity below");
         } else if (deviceType == 3) {
             npvSlotType.setDisplayedValues(getResources().getStringArray(R.array.slot_type_all));
             npvSlotType.setMinValue(0);
             npvSlotType.setMaxValue(7);
-            triggerArray = getResources().getStringArray(R.array.trigger_type_3);
+            triggerTypes.add("Button double tapped");
+            triggerTypes.add("Button triple tapped");
+            triggerTypes.add("Temperature above");
+            triggerTypes.add("Temperature below");
+            triggerTypes.add("Humidity above");
+            triggerTypes.add("Humidity below");
+            triggerTypes.add("Device moves");
         }
         npvSlotType.setOnValueChangedListener(this);
         if (deviceType != 2) {
@@ -187,7 +202,7 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
         switch (triggerType) {
             case 1:
                 boolean isTempAbove = (triggerData[0] & 0xff) == 1;
-                tvTriggerType.setText(isTempAbove ? triggerArray[2] : triggerArray[3]);
+                tvTriggerType.setText(isTempAbove ? triggerTypes.get(2) : triggerTypes.get(3));
 
                 triggerTypeSelected = isTempAbove ? 2 : 3;
                 tempFragment.setTempType(isTempAbove);
@@ -196,7 +211,7 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
                 break;
             case 2:
                 boolean isHumidityAbove = (triggerData[0] & 0xff) == 1;
-                tvTriggerType.setText(isHumidityAbove ? triggerArray[4] : triggerArray[5]);
+                tvTriggerType.setText(isHumidityAbove ? triggerTypes.get(4) : triggerTypes.get(5));
 
                 triggerTypeSelected = isHumidityAbove ? 4 : 5;
                 humidityFragment.setHumidityType(isHumidityAbove);
@@ -205,7 +220,7 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
                 humidityFragment.setStart((triggerData[3] & 0xff) == 1);
                 break;
             case 3:
-                tvTriggerType.setText(triggerArray[0]);
+                tvTriggerType.setText(triggerTypes.get(0));
 
                 triggerTypeSelected = 0;
                 tappedFragment.setIsDouble(true);
@@ -214,7 +229,7 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
                 tappedFragment.setStart((triggerData[2] & 0xff) == 1);
                 break;
             case 4:
-                tvTriggerType.setText(triggerArray[1]);
+                tvTriggerType.setText(triggerTypes.get(1));
 
                 triggerTypeSelected = 1;
                 tappedFragment.setIsDouble(false);
@@ -224,10 +239,10 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
                 break;
             case 5:
                 if (deviceType == 1) {
-                    tvTriggerType.setText(triggerArray[2]);
+                    tvTriggerType.setText(triggerTypes.get(2));
                     triggerTypeSelected = 2;
                 } else {
-                    tvTriggerType.setText(triggerArray[6]);
+                    tvTriggerType.setText(triggerTypes.get(6));
                     triggerTypeSelected = 6;
                 }
                 byte[] movesBytes = Arrays.copyOfRange(triggerData, 0, 2);
@@ -491,69 +506,64 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
                 break;
             case R.id.tv_trigger_type:
                 // 选择触发条件
-                TriggerTypeDialog dialog = new TriggerTypeDialog();
-                dialog.setListener(new TriggerTypeDialog.OnDataSelectedListener() {
-                    @Override
-                    public void onDataSelected(int data) {
-                        triggerTypeSelected = data;
-                        switch (triggerTypeSelected) {
-                            case 0:
-                                triggerType = 3;
-                                break;
-                            case 1:
-                                triggerType = 4;
-                                break;
-                            case 2:
-                                if (deviceType == 1) {
-                                    triggerType = 5;
-                                } else {
-                                    triggerType = 1;
-                                }
-                                break;
-                            case 3:
-                                triggerType = 1;
-                                break;
-                            case 4:
-                                triggerType = 2;
-                                break;
-                            case 5:
-                                triggerType = 2;
-                                break;
-                            case 6:
+                BottomDialog dialog = new BottomDialog();
+                dialog.setDatas(triggerTypes,triggerTypeSelected);
+                dialog.setListener(value -> {
+                    triggerTypeSelected = value;
+                    switch (triggerTypeSelected) {
+                        case 0:
+                            triggerType = 3;
+                            break;
+                        case 1:
+                            triggerType = 4;
+                            break;
+                        case 2:
+                            if (deviceType == 1) {
                                 triggerType = 5;
-                                break;
-                        }
-                        showTriggerFragment();
-                        switch (triggerTypeSelected) {
-                            case 0:
-                                tappedFragment.setIsDouble(true);
-                                tappedFragment.updateTips();
-                                break;
-                            case 1:
-                                tappedFragment.setIsDouble(false);
-                                tappedFragment.updateTips();
-                                break;
-                            case 2:
-                                if (deviceType != 1) {
-                                    tempFragment.setTempType(true);
-                                }
-                                break;
-                            case 3:
-                                tempFragment.setTempType(false);
-                                break;
-                            case 4:
-                                humidityFragment.setHumidityType(true);
-                                break;
-                            case 5:
-                                humidityFragment.setHumidityType(false);
-                                break;
-                        }
-                        tvTriggerType.setText(triggerArray[triggerTypeSelected]);
-
+                            } else {
+                                triggerType = 1;
+                            }
+                            break;
+                        case 3:
+                            triggerType = 1;
+                            break;
+                        case 4:
+                            triggerType = 2;
+                            break;
+                        case 5:
+                            triggerType = 2;
+                            break;
+                        case 6:
+                            triggerType = 5;
+                            break;
                     }
+                    showTriggerFragment();
+                    switch (triggerTypeSelected) {
+                        case 0:
+                            tappedFragment.setIsDouble(true);
+                            tappedFragment.updateTips();
+                            break;
+                        case 1:
+                            tappedFragment.setIsDouble(false);
+                            tappedFragment.updateTips();
+                            break;
+                        case 2:
+                            if (deviceType != 1) {
+                                tempFragment.setTempType(true);
+                            }
+                            break;
+                        case 3:
+                            tempFragment.setTempType(false);
+                            break;
+                        case 4:
+                            humidityFragment.setHumidityType(true);
+                            break;
+                        case 5:
+                            humidityFragment.setHumidityType(false);
+                            break;
+                    }
+                    tvTriggerType.setText(triggerTypes.get(value));
                 });
-                dialog.setTriggerArray(triggerArray);
-                dialog.setSelected(triggerTypeSelected);
                 dialog.show(getSupportFragmentManager());
                 break;
             case R.id.iv_trigger:

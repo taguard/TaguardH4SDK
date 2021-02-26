@@ -10,18 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="50dp">
 
-        <ImageView
-            android:id="@+id/iv_slot1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:src="@drawable/eddystone_icon" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="40dp"
             android:text="SLOT1"
             android:textColor="@color/black_333333"
             android:textSize="15sp" />
@@ -48,18 +40,10 @@
         android:layout_width="match_parent"
         android:layout_height="50dp">
 
-        <ImageView
-            android:id="@+id/iv_slot2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:src="@drawable/eddystone_icon" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="40dp"
             android:text="SLOT2"
             android:textColor="@color/black_333333"
             android:textSize="15sp" />
@@ -87,18 +71,10 @@
         android:layout_width="match_parent"
         android:layout_height="50dp">
 
-        <ImageView
-            android:id="@+id/iv_slot3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:src="@drawable/eddystone_icon" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="40dp"
             android:text="SLOT3"
             android:textColor="@color/black_333333"
             android:textSize="15sp" />
@@ -125,18 +101,10 @@
         android:layout_width="match_parent"
         android:layout_height="50dp">
 
-        <ImageView
-            android:id="@+id/iv_slot4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:src="@drawable/eddystone_icon" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="40dp"
             android:text="SLOT4"
             android:textColor="@color/black_333333"
             android:textSize="15sp" />
@@ -163,18 +131,10 @@
         android:layout_width="match_parent"
         android:layout_height="50dp">
 
-        <ImageView
-            android:id="@+id/iv_slot5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:src="@drawable/eddystone_icon" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="40dp"
             android:text="SLOT5"
             android:textColor="@color/black_333333"
             android:textSize="15sp" />
@@ -201,18 +161,10 @@
         android:layout_width="match_parent"
         android:layout_height="50dp">
 
-        <ImageView
-            android:id="@+id/iv_slot6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:src="@drawable/eddystone_icon" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="40dp"
             android:text="SLOT6"
             android:textColor="@color/black_333333"
             android:textSize="15sp" />

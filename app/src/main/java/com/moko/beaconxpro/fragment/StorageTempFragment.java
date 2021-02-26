@@ -10,8 +10,10 @@ import android.widget.TextView;
 
 import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.activity.THDataActivity;
-import com.moko.beaconxpro.dialog.StorageTempDialog;
+import com.moko.beaconxpro.dialog.BottomDialog;
 import com.moko.support.utils.MokoUtils;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,6 +26,7 @@ public class StorageTempFragment extends Fragment {
     TextView tvStorageTempOnly;
     @BindView(R.id.tv_temp_only_tips)
     TextView tvTempOnlyTips;
+    private ArrayList<String> mDatas;
 
     private THDataActivity activity;
 
@@ -49,6 +52,10 @@ public class StorageTempFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_storage_temp, container, false);
         ButterKnife.bind(this, view);
         activity = (THDataActivity) getActivity();
+        mDatas = new ArrayList<>();
+        for (int i = 0; i <= 200; i++) {
+            mDatas.add(MokoUtils.getDecimalFormat("0.0").format(i * 0.5));
+        }
         return view;
     }
 
@@ -72,22 +79,17 @@ public class StorageTempFragment extends Fragment {
 
     @OnClick(R.id.tv_storage_temp_only)
     public void onViewClicked() {
-        StorageTempDialog dialog = new StorageTempDialog();
-        dialog.setListener(new StorageTempDialog.OnDataSelectedListener() {
-            @Override
-            public void onDataSelected(String data) {
-                float temp = Float.parseFloat(data);
-                mSelected = (int) (temp * 2);
-                if (mSelected == 0) {
-                    tvTempOnlyTips.setText(R.string.temp_only_tips_0);
-                } else {
-                    tvTempOnlyTips.setText(getString(R.string.temp_only_tips_1, data));
-                }
-                tvStorageTempOnly.setText(data);
-                activity.setSelectedTemp(mSelected);
+        BottomDialog dialog = new BottomDialog();
+        dialog.setListener(value -> {
+            mSelected = value;
+            if (mSelected == 0) {
+                tvTempOnlyTips.setText(R.string.temp_only_tips_0);
+            } else {
+                tvTempOnlyTips.setText(getString(R.string.temp_only_tips_1, mDatas.get(value)));
             }
+            tvStorageTempOnly.setText(mDatas.get(value));
+            activity.setSelectedTemp(mSelected);
         });
-        dialog.setSelected(mSelected);
         dialog.show(activity.getSupportFragmentManager());
     }
 

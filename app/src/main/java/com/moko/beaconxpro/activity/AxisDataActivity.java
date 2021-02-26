@@ -20,8 +20,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.moko.beaconxpro.R;
-import com.moko.beaconxpro.dialog.AxisDataRateDialog;
-import com.moko.beaconxpro.dialog.AxisScaleDialog;
+import com.moko.beaconxpro.dialog.BottomDialog;
 import com.moko.beaconxpro.utils.ToastUtils;
 import com.moko.ble.lib.MokoConstants;
 import com.moko.ble.lib.event.ConnectStatusEvent;
@@ -65,8 +64,8 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
     @BindView(R.id.tv_trigger_sensitivity)
     TextView tvTriggerSensitivity;
     private boolean mReceiverTag = false;
-    private String[] axisDataRate;
-    private String[] axisScales;
+    private ArrayList<String> axisDataRates;
+    private ArrayList<String> axisScales;
     private boolean isSync;
     private int mSelectedRate;
     private int mSelectedScale;
@@ -77,8 +76,17 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_axis);
         ButterKnife.bind(this);
-        axisDataRate = getResources().getStringArray(R.array.axis_data_rate);
-        axisScales = getResources().getStringArray(R.array.axis_scales);
+        axisDataRates = new ArrayList<>();
+        axisDataRates.add("1Hz");
+        axisDataRates.add("10Hz");
+        axisDataRates.add("25Hz");
+        axisDataRates.add("50Hz");
+        axisDataRates.add("100Hz");
+        axisScales = new ArrayList<>();
+        axisScales.add("±2g");
+        axisScales.add("±4g");
+        axisScales.add("±8g");
+        axisScales.add("±16g");
         sbTriggerSensitivity.setOnSeekBarChangeListener(this);
 
         EventBus.getDefault().register(this);
@@ -93,6 +101,8 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
             MokoSupport.getInstance().enableBluetooth();
         } else {
             showSyncingProgressDialog();
+            ArrayList<OrderTask> orderTasks = new ArrayList<>();
+            orderTasks.add(OrderTaskAssembler.getAxisParams());
             MokoSupport.getInstance().sendOrder(OrderTaskAssembler.getAxisParams());
         }
     }
@@ -138,18 +148,18 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
                                 return;
                             }
                             switch (configKeyEnum) {
-                                case GET_AXIX_PARAMS:
+                                case GET_AXIS_PARAMS:
                                     if (value.length > 6) {
                                         mSelectedRate = value[4] & 0xff;
-                                        tvAxisDataRate.setText(axisDataRate[mSelectedRate]);
+                                        tvAxisDataRate.setText(axisDataRates.get(mSelectedRate));
                                         mSelectedScale = value[5] & 0xff;
-                                        tvAxisScale.setText(axisScales[mSelectedScale]);
+                                        tvAxisScale.setText(axisScales.get(mSelectedScale));
                                         mSelectedSensivity = value[6] & 0xff;
                                         tvTriggerSensitivity.setText(mSelectedSensivity + "");
                                         sbTriggerSensitivity.setProgress(mSelectedSensivity - 7);
                                     }
                                     break;
-                                case SET_AXIX_PARAMS:
+                                case SET_AXIS_PARAMS:
                                     if (value.length > 3 && value[3] == 0) {
                                         ToastUtils.showToast(AxisDataActivity.this, "Success");
                                     } else {
@@ -179,9 +189,9 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
                         if (value.length > 5) {
                             String axisHexStr = MokoUtils.bytesToHexString(value);
                             int length = axisHexStr.length();
-                            tvZData.setText(String.format("Z-Data:0x%s", axisHexStr.substring(length - 4).toUpperCase()));
-                            tvYData.setText(String.format("Y-Data:0x%s", axisHexStr.substring(length - 8, length - 4).toUpperCase()));
-                            tvXData.setText(String.format("X-Data:0x%s", axisHexStr.substring(length - 12, length - 8).toUpperCase()));
+                            tvZData.setText(String.format("Z-axis:0x%s", axisHexStr.substring(length - 4).toUpperCase()));
+                            tvYData.setText(String.format("Y-axis:0x%s", axisHexStr.substring(length - 8, length - 4).toUpperCase()));
+                            tvXData.setText(String.format("X-axis:0x%s", axisHexStr.substring(length - 12, length - 8).toUpperCase()));
                         }
                         break;
                 }
@@ -270,28 +280,20 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
                 }
                 break;
             case R.id.tv_axis_data_rate:
-                AxisDataRateDialog dataRateDialog = new AxisDataRateDialog();
-                dataRateDialog.setAxisDataRate(axisDataRate);
-                dataRateDialog.setSelected(mSelectedRate);
-                dataRateDialog.setListener(new AxisDataRateDialog.OnRateSettingListener() {
-                    @Override
-                    public void onRateSelected(int rate) {
-                        mSelectedRate = rate;
-                        tvAxisDataRate.setText(axisDataRate[rate]);
-                    }
+                BottomDialog dataRateDialog = new BottomDialog();
+                dataRateDialog.setDatas(axisDataRates, mSelectedRate);
+                dataRateDialog.setListener(value -> {
+                    mSelectedRate = value;
+                    tvAxisDataRate.setText(axisDataRates.get(value));
                 });
                 dataRateDialog.show(getSupportFragmentManager());
                 break;
             case R.id.tv_axis_scale:
-                AxisScaleDialog scaleDialog = new AxisScaleDialog();
-                scaleDialog.setAxisScale(axisScales);
-                scaleDialog.setSelected(mSelectedScale);
-                scaleDialog.setListener(new AxisScaleDialog.OnScaleSettingListener() {
-                    @Override
-                    public void onScaleSelected(int scale) {
-                        mSelectedScale = scale;
-                        tvAxisScale.setText(axisScales[scale]);
-                    }
+                BottomDialog scaleDialog = new BottomDialog();
+                scaleDialog.setDatas(axisScales, mSelectedScale);
+                scaleDialog.setListener(value -> {
+                    mSelectedScale = value;
+                    tvAxisScale.setText(axisScales.get(value));
                 });
                 scaleDialog.show(getSupportFragmentManager());
                 break;

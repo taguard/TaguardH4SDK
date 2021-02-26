@@ -10,7 +10,9 @@ import android.widget.TextView;
 
 import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.activity.THDataActivity;
-import com.moko.beaconxpro.dialog.StorageTimeDialog;
+import com.moko.beaconxpro.dialog.BottomDialog;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,6 +25,7 @@ public class StorageTimeFragment extends Fragment {
     TextView tvStorageTimeOnly;
     @BindView(R.id.tv_time_tips)
     TextView tvTimeTips;
+    private ArrayList<String> mDatas;
 
     private THDataActivity activity;
 
@@ -49,6 +52,10 @@ public class StorageTimeFragment extends Fragment {
         ButterKnife.bind(this, view);
         activity = (THDataActivity) getActivity();
         tvTimeTips.setText(getString(R.string.time_only_tips, mSelected));
+        mDatas = new ArrayList<>();
+        for (int i = 1; i <= 255; i++) {
+            mDatas.add(i + "");
+        }
         return view;
     }
 
@@ -72,17 +79,13 @@ public class StorageTimeFragment extends Fragment {
 
     @OnClick(R.id.tv_storage_time_only)
     public void onViewClicked() {
-        StorageTimeDialog dialog = new StorageTimeDialog();
-        dialog.setListener(new StorageTimeDialog.OnDataSelectedListener() {
-            @Override
-            public void onDataSelected(String data) {
-                mSelected = Integer.parseInt(data);
-                tvStorageTimeOnly.setText(data);
-                tvTimeTips.setText(getString(R.string.time_only_tips, mSelected));
-                activity.setSelectedTime(mSelected);
-            }
+        BottomDialog dialog = new BottomDialog();
+        dialog.setListener(value -> {
+            mSelected = Integer.parseInt(mDatas.get(value));
+            tvStorageTimeOnly.setText(mDatas.get(value));
+            tvTimeTips.setText(getString(R.string.time_only_tips, mSelected));
+            activity.setSelectedTime(mSelected);
         });
-        dialog.setSelected(mSelected);
         dialog.show(activity.getSupportFragmentManager());
     }
 

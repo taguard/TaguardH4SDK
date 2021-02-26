@@ -10,7 +10,9 @@ import android.widget.TextView;
 
 import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.activity.THDataActivity;
-import com.moko.beaconxpro.dialog.StorageHumidityDialog;
+import com.moko.beaconxpro.dialog.BottomDialog;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,6 +25,7 @@ public class StorageHumidityFragment extends Fragment {
     TextView tvStorageHumidityOnly;
     @BindView(R.id.tv_humidity_only_tips)
     TextView tvHumidityOnlyTips;
+    private ArrayList<String> mDatas;
 
     private THDataActivity activity;
 
@@ -48,6 +51,10 @@ public class StorageHumidityFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_storage_humidity, container, false);
         ButterKnife.bind(this, view);
         activity = (THDataActivity) getActivity();
+        mDatas = new ArrayList<>();
+        for (int i = 0; i <= 100; i++) {
+            mDatas.add(i + "");
+        }
         return view;
     }
 
@@ -71,22 +78,18 @@ public class StorageHumidityFragment extends Fragment {
 
     @OnClick(R.id.tv_storage_humidity_only)
     public void onViewClicked() {
-        StorageHumidityDialog dialog = new StorageHumidityDialog();
-        dialog.setListener(new StorageHumidityDialog.OnDataSelectedListener() {
-            @Override
-            public void onDataSelected(String data) {
-                mSelected = Integer.parseInt(data);
-                if (mSelected == 0) {
-                    tvHumidityOnlyTips.setText(R.string.humidity_only_tips_0);
-                } else {
-                    tvHumidityOnlyTips.setText(getString(R.string.humidity_only_tips_1, mSelected));
-                }
-                tvStorageHumidityOnly.setText(data);
-                activity.setSelectedHumidity(mSelected);
+        BottomDialog dialog = new BottomDialog();
+        dialog.setDatas(mDatas, mSelected);
+        dialog.setListener(value -> {
+            mSelected = value;
+            if (mSelected == 0) {
+                tvHumidityOnlyTips.setText(R.string.humidity_only_tips_0);
+            } else {
+                tvHumidityOnlyTips.setText(getString(R.string.humidity_only_tips_1, value));
             }
+            tvStorageHumidityOnly.setText(String.valueOf(value));
+            activity.setSelectedHumidity(value);
         });
-        dialog.setSelected(mSelected);
-        dialog.show(activity.getSupportFragmentManager());
     }
 
     private int mSelected;

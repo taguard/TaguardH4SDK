@@ -34,38 +34,26 @@ import butterknife.OnClick;
 public class SlotFragment extends Fragment {
 
     private static final String TAG = "SlotFragment";
-    @BindView(R.id.iv_slot1)
-    ImageView ivSlot1;
     @BindView(R.id.tv_slot1)
     TextView tvSlot1;
     @BindView(R.id.rl_slot1)
     RelativeLayout rlSlot1;
-    @BindView(R.id.iv_slot2)
-    ImageView ivSlot2;
     @BindView(R.id.tv_slot2)
     TextView tvSlot2;
     @BindView(R.id.rl_slot2)
     RelativeLayout rlSlot2;
-    @BindView(R.id.iv_slot3)
-    ImageView ivSlot3;
     @BindView(R.id.tv_slot3)
     TextView tvSlot3;
     @BindView(R.id.rl_slot3)
     RelativeLayout rlSlot3;
-    @BindView(R.id.iv_slot4)
-    ImageView ivSlot4;
     @BindView(R.id.tv_slot4)
     TextView tvSlot4;
     @BindView(R.id.rl_slot4)
     RelativeLayout rlSlot4;
-    @BindView(R.id.iv_slot5)
-    ImageView ivSlot5;
     @BindView(R.id.tv_slot5)
     TextView tvSlot5;
     @BindView(R.id.rl_slot5)
     RelativeLayout rlSlot5;
-    @BindView(R.id.iv_slot6)
-    ImageView ivSlot6;
     @BindView(R.id.tv_slot6)
     TextView tvSlot6;
     @BindView(R.id.rl_slot6)
@@ -193,46 +181,19 @@ public class SlotFragment extends Fragment {
 
     // 10 20 50 40 FF FF
     public void updateSlotType(byte[] value) {
-        changeView((int) value[0] & 0xff, tvSlot1, ivSlot1, rlSlot1);
-        changeView((int) value[1] & 0xff, tvSlot2, ivSlot2, rlSlot2);
-        changeView((int) value[2] & 0xff, tvSlot3, ivSlot3, rlSlot3);
-        changeView((int) value[3] & 0xff, tvSlot4, ivSlot4, rlSlot4);
-        changeView((int) value[4] & 0xff, tvSlot5, ivSlot5, rlSlot5);
-        changeView((int) value[5] & 0xff, tvSlot6, ivSlot6, rlSlot6);
+        changeView((int) value[0] & 0xff, tvSlot1, rlSlot1);
+        changeView((int) value[1] & 0xff, tvSlot2, rlSlot2);
+        changeView((int) value[2] & 0xff, tvSlot3, rlSlot3);
+        changeView((int) value[3] & 0xff, tvSlot4, rlSlot4);
+        changeView((int) value[4] & 0xff, tvSlot5, rlSlot5);
+        changeView((int) value[5] & 0xff, tvSlot6, rlSlot6);
 
     }
 
-    private void changeView(int frameType, TextView tvSlot, ImageView ivSlot, RelativeLayout rlSlot) {
+    private void changeView(int frameType, TextView tvSlot, RelativeLayout rlSlot) {
         SlotFrameTypeEnum slotFrameTypeEnum = SlotFrameTypeEnum.fromFrameType(frameType);
         if (slotFrameTypeEnum == null) {
             return;
-        }
-        switch (slotFrameTypeEnum) {
-            case UID:
-                ivSlot.setImageResource(R.drawable.eddystone_icon);
-                break;
-            case URL:
-                ivSlot.setImageResource(R.drawable.eddystone_icon);
-                break;
-            case TLM:
-                ivSlot.setImageResource(R.drawable.eddystone_icon);
-                break;
-            case IBEACON:
-                ivSlot.setImageResource(R.drawable.ibeacon_icon);
-                break;
-            case DEVICE:
-                ivSlot.setImageResource(R.drawable.device_icon);
-                break;
-            case NO_DATA:
-                ivSlot.setImageResource(R.drawable.no_data_icon);
-                break;
-            case TH:
-                ivSlot.setImageResource(R.drawable.th_icon);
-                break;
-            case AXIS:
-                ivSlot.setImageResource(R.drawable.axis_icon);
-                break;
-
         }
         tvSlot.setText(slotFrameTypeEnum.getShowName());
         rlSlot.setTag(slotFrameTypeEnum);
@@ -317,12 +278,12 @@ public class SlotFragment extends Fragment {
                     // URL：10cf014c6f766500
                     BeaconXParser.parseUrlData(slotData, value);
                     break;
-                case TLM:
-                    break;
-                case TH:
-                    break;
-                case AXIS:
-                    break;
+//                case TLM:
+//                    break;
+//                case TH:
+//                    break;
+//                case AXIS:
+//                    break;
                 case UID:
                     BeaconXParser.parseUidData(slotData, value);
                     break;

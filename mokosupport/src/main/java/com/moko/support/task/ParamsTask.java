@@ -24,10 +24,11 @@ public class ParamsTask extends OrderTask {
             case GET_DEVICE_MAC:
 //            case GET_DEVICE_NAME:
             case GET_CONNECTABLE:
+            case GET_BUTTON_POWER:
             case GET_IBEACON_UUID:
             case GET_IBEACON_INFO:
             case SET_CLOSE:
-            case GET_AXIX_PARAMS:
+            case GET_AXIS_PARAMS:
             case GET_TH_PERIOD:
             case GET_STORAGE_CONDITION:
             case GET_DEVICE_TIME:
@@ -60,8 +61,14 @@ public class ParamsTask extends OrderTask {
         data = MokoUtils.hex2bytes(value);
     }
 
+    public void setButtonPower(boolean enable) {
+        String value = "EA" + MokoUtils.int2HexString(ParamsKeyEnum.SET_BUTTON_POWER.getParamsKey()) + "0001"
+                + (enable ? "01" : "00");
+        data = MokoUtils.hex2bytes(value);
+    }
+
     public void setAxisParams(int rate, int scale, int sensitivity) {
-        String value = "EA" + MokoUtils.int2HexString(ParamsKeyEnum.SET_AXIX_PARAMS.getParamsKey()) + "0003"
+        String value = "EA" + MokoUtils.int2HexString(ParamsKeyEnum.SET_AXIS_PARAMS.getParamsKey()) + "0003"
                 + String.format("%02X", rate) + String.format("%02X", scale) + String.format("%02X", sensitivity);
         data = MokoUtils.hex2bytes(value);
     }

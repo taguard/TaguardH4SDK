@@ -189,4 +189,6 @@ public class MokoSupport extends MokoBleLib {
         if (mBleConfig != null)
             mBleConfig.disableThreeAxisNotify();
     }
+
+    public static boolean isNewVersion = false;
 }
