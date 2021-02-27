@@ -21,6 +21,8 @@ import butterknife.OnClick;
 public class ScanFilterDialog extends BaseDialog {
     @BindView(R.id.et_filter_name)
     EditText etFilterName;
+    @BindView(R.id.et_filter_mac)
+    EditText etFilterMac;
     @BindView(R.id.tv_rssi)
     TextView tvRssi;
     @BindView(R.id.sb_rssi)
@@ -28,6 +30,7 @@ public class ScanFilterDialog extends BaseDialog {
 
     private int filterRssi;
     private String filterName;
+    private String filterMac;
 
     public ScanFilterDialog(Context context) {
         super(context);
@@ -44,7 +47,7 @@ public class ScanFilterDialog extends BaseDialog {
         sbRssi.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                int rssi = progress - 100;
+                int rssi = (progress * -1);
                 tvRssi.setText(String.format("%sdBm", rssi + ""));
                 filterRssi = rssi;
             }
@@ -59,22 +62,29 @@ public class ScanFilterDialog extends BaseDialog {
 
             }
         });
-        sbRssi.setProgress(filterRssi + 100);
+        sbRssi.setProgress(Math.abs(filterRssi));
         if (!TextUtils.isEmpty(filterName)) {
             etFilterName.setText(filterName);
             etFilterName.setSelection(filterName.length());
         }
+        if (!TextUtils.isEmpty(filterMac)) {
+            etFilterMac.setText(filterMac);
+            etFilterMac.setSelection(filterMac.length());
+        }
         setDismissEnable(true);
     }
 
-    @OnClick({R.id.iv_filter_delete, R.id.tv_done})
+    @OnClick({R.id.iv_filter_name_delete, R.id.iv_filter_mac_delete, R.id.tv_done})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.iv_filter_delete:
+            case R.id.iv_filter_name_delete:
                 etFilterName.setText("");
                 break;
+            case R.id.iv_filter_mac_delete:
+                etFilterMac.setText("");
+                break;
             case R.id.tv_done:
-                listener.onDone(etFilterName.getText().toString(), filterRssi);
+                listener.onDone(etFilterName.getText().toString(), etFilterMac.getText().toString(), filterRssi);
                 dismiss();
                 break;
         }
@@ -90,11 +100,15 @@ public class ScanFilterDialog extends BaseDialog {
         this.filterName = filterName;
     }
 
+    public void setFilterMac(String filterMac) {
+        this.filterMac = filterMac;
+    }
+
     public void setFilterRssi(int filterRssi) {
         this.filterRssi = filterRssi;
     }
 
     public interface OnScanFilterListener {
-        void onDone(String filterName, int filterRssi);
+        void onDone(String filterName, String filterMac, int filterRssi);
     }
 }

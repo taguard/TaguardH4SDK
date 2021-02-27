@@ -155,8 +155,25 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
                                         mSelectedScale = value[5] & 0xff;
                                         tvAxisScale.setText(axisScales.get(mSelectedScale));
                                         mSelectedSensivity = value[6] & 0xff;
-                                        tvTriggerSensitivity.setText(mSelectedSensivity + "");
-                                        sbTriggerSensitivity.setProgress(mSelectedSensivity - 7);
+                                        if (MokoSupport.isNewVersion) {
+                                            if (mSelectedScale == 0) {
+                                                sbTriggerSensitivity.setMax(19);
+                                            }
+                                            if (mSelectedScale == 1) {
+                                                sbTriggerSensitivity.setMax(39);
+                                            }
+                                            if (mSelectedScale == 2) {
+                                                sbTriggerSensitivity.setMax(79);
+                                            }
+                                            if (mSelectedScale == 3) {
+                                                sbTriggerSensitivity.setMax(159);
+                                            }
+                                            sbTriggerSensitivity.setProgress(mSelectedSensivity - 1);
+                                            tvTriggerSensitivity.setText(MokoUtils.getDecimalFormat("#.#g").format(mSelectedSensivity * 0.1));
+                                        } else {
+                                            sbTriggerSensitivity.setProgress(mSelectedSensivity - 7);
+                                            tvTriggerSensitivity.setText(String.valueOf(mSelectedSensivity));
+                                        }
                                     }
                                     break;
                                 case SET_AXIS_PARAMS:
@@ -294,6 +311,21 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
                 scaleDialog.setListener(value -> {
                     mSelectedScale = value;
                     tvAxisScale.setText(axisScales.get(value));
+                    if (MokoSupport.isNewVersion) {
+                        sbTriggerSensitivity.setProgress(0);
+                        if (mSelectedScale == 0) {
+                            sbTriggerSensitivity.setMax(19);
+                        }
+                        if (mSelectedScale == 1) {
+                            sbTriggerSensitivity.setMax(39);
+                        }
+                        if (mSelectedScale == 2) {
+                            sbTriggerSensitivity.setMax(79);
+                        }
+                        if (mSelectedScale == 3) {
+                            sbTriggerSensitivity.setMax(159);
+                        }
+                    }
                 });
                 scaleDialog.show(getSupportFragmentManager());
                 break;
@@ -324,8 +356,13 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        mSelectedSensivity = progress + 7;
-        tvTriggerSensitivity.setText(mSelectedSensivity + "");
+        if (MokoSupport.isNewVersion) {
+            mSelectedSensivity = progress + 1;
+            tvTriggerSensitivity.setText(MokoUtils.getDecimalFormat("#.#g").format(mSelectedSensivity * 0.1));
+        } else {
+            mSelectedSensivity = progress + 7;
+            tvTriggerSensitivity.setText(mSelectedSensivity + "");
+        }
     }
 
     @Override

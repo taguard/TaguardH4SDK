@@ -362,22 +362,26 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
 
     private void updateDevices() {
         beaconXInfos.clear();
-        if (!TextUtils.isEmpty(filterName) || filterRssi != -100) {
+        if (!TextUtils.isEmpty(filterName)
+                || !TextUtils.isEmpty(filterMac)
+                || filterRssi != -100) {
             ArrayList<BeaconXInfo> beaconXInfosFilter = new ArrayList<>(beaconXInfoHashMap.values());
             Iterator<BeaconXInfo> iterator = beaconXInfosFilter.iterator();
             while (iterator.hasNext()) {
                 BeaconXInfo beaconXInfo = iterator.next();
                 if (beaconXInfo.rssi > filterRssi) {
-                    if (TextUtils.isEmpty(filterName)) {
+                    if (TextUtils.isEmpty(filterName) && TextUtils.isEmpty(filterMac)) {
                         continue;
                     } else {
                         if (TextUtils.isEmpty(beaconXInfo.name) && TextUtils.isEmpty(beaconXInfo.mac)) {
                             iterator.remove();
-                        } else if (TextUtils.isEmpty(beaconXInfo.name) && beaconXInfo.mac.toLowerCase().replaceAll(":", "").contains(filterName.toLowerCase())) {
+                        } else if (TextUtils.isEmpty(beaconXInfo.name) && beaconXInfo.mac.toLowerCase().replaceAll(":", "").contains(filterMac.toLowerCase())) {
                             continue;
                         } else if (TextUtils.isEmpty(beaconXInfo.mac) && beaconXInfo.name.toLowerCase().contains(filterName.toLowerCase())) {
                             continue;
-                        } else if (!TextUtils.isEmpty(beaconXInfo.name) && !TextUtils.isEmpty(beaconXInfo.mac) && (beaconXInfo.name.toLowerCase().contains(filterName.toLowerCase()) || beaconXInfo.mac.toLowerCase().replaceAll(":", "").contains(filterName.toLowerCase()))) {
+                        } else if (!TextUtils.isEmpty(beaconXInfo.name) && !TextUtils.isEmpty(beaconXInfo.mac)
+                                && (beaconXInfo.name.toLowerCase().contains(filterName.toLowerCase())
+                                || beaconXInfo.mac.toLowerCase().replaceAll(":", "").contains(filterMac.toLowerCase()))) {
                             continue;
                         } else {
                             iterator.remove();
@@ -406,6 +410,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
 
     private Animation animation = null;
     public String filterName;
+    public String filterMac;
     public int filterRssi = -100;
 
     @OnClick({R.id.iv_refresh, R.id.iv_about, R.id.rl_edit_filter, R.id.rl_filter, R.id.iv_filter_delete})
@@ -437,34 +442,39 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                 }
                 ScanFilterDialog scanFilterDialog = new ScanFilterDialog(this);
                 scanFilterDialog.setFilterName(filterName);
+                scanFilterDialog.setFilterMac(filterMac);
                 scanFilterDialog.setFilterRssi(filterRssi);
-                scanFilterDialog.setOnScanFilterListener(new ScanFilterDialog.OnScanFilterListener() {
-                    @Override
-                    public void onDone(String filterName, int filterRssi) {
-                        MainActivity.this.filterName = filterName;
-                        MainActivity.this.filterRssi = filterRssi;
-                        if (!TextUtils.isEmpty(filterName) || filterRssi != -100) {
-                            rl_filter.setVisibility(View.VISIBLE);
-                            rl_edit_filter.setVisibility(View.GONE);
-                            StringBuilder stringBuilder = new StringBuilder();
-                            if (!TextUtils.isEmpty(filterName)) {
-                                stringBuilder.append(filterName);
-                                stringBuilder.append(";");
-                            }
-                            if (filterRssi != -100) {
-                                stringBuilder.append(String.format("%sdBm", filterRssi + ""));
-                                stringBuilder.append(";");
-                            }
-                            tv_filter.setText(stringBuilder.toString());
-                        } else {
-                            rl_filter.setVisibility(View.GONE);
-                            rl_edit_filter.setVisibility(View.VISIBLE);
+                scanFilterDialog.setOnScanFilterListener((filterName, filterMac, filterRssi) -> {
+                    MainActivity.this.filterName = filterName;
+                    MainActivity.this.filterMac = filterMac;
+                    MainActivity.this.filterRssi = filterRssi;
+                    if (!TextUtils.isEmpty(filterName)
+                            || !TextUtils.isEmpty(filterMac)
+                            || filterRssi != -100) {
+                        rl_filter.setVisibility(View.VISIBLE);
+                        rl_edit_filter.setVisibility(View.GONE);
+                        StringBuilder stringBuilder = new StringBuilder();
+                        if (!TextUtils.isEmpty(filterName)) {
+                            stringBuilder.append(filterName);
+                            stringBuilder.append(";");
                         }
-                        if (isWindowLocked())
-                            return;
-                        if (animation == null) {
-                            startScan();
+                        if (!TextUtils.isEmpty(filterMac)) {
+                            stringBuilder.append(filterMac);
+                            stringBuilder.append(";");
                         }
+                        if (filterRssi != -100) {
+                            stringBuilder.append(String.format("%sdBm", filterRssi + ""));
+                            stringBuilder.append(";");
+                        }
+                        tv_filter.setText(stringBuilder.toString());
+                    } else {
+                        rl_filter.setVisibility(View.GONE);
+                        rl_edit_filter.setVisibility(View.VISIBLE);
+                    }
+                    if (isWindowLocked())
+                        return;
+                    if (animation == null) {
+                        startScan();
                     }
                 });
                 scanFilterDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -487,6 +497,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                 rl_filter.setVisibility(View.GONE);
                 rl_edit_filter.setVisibility(View.VISIBLE);
                 filterName = "";
+                filterMac = "";
                 filterRssi = -100;
                 if (isWindowLocked())
                     return;
