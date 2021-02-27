@@ -106,8 +106,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:digits="-0123456789abcdefABCDEF"
-                android:hint="11111111-1111-1111-1111-111111111111"
+                android:digits="-0123456789abcdef"
+                android:hint="16bytes"
                 android:maxLength="36"
                 android:singleLine="true"
                 android:textColor="@color/black_333333"
@@ -147,6 +147,7 @@
                 android:id="@+id/adv_interval"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:text="Adv Interval"
                 android:textColor="@color/grey_666666"
                 android:textSize="15sp"
@@ -155,19 +156,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/adv_interval"
-                android:layout_marginTop="5dp"
-                android:text="Min:100ms Max:10s"
-                android:textColor="@color/grey_b3b3b3"
-                android:textSize="12sp" />
-
-
-            <TextView
-                android:id="@+id/adv_interval_range"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:layout_alignBaseline="@id/adv_interval"
                 android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@id/adv_interval"
                 android:text="(1~100)"
                 android:textColor="@color/grey_b3b3b3"
                 android:textSize="12sp" />
@@ -176,9 +168,9 @@
                 android:id="@+id/adv_interval_unit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="5dp"
-                android:layout_toLeftOf="@id/adv_interval_range"
                 android:text="x100ms"
                 android:textColor="@color/grey_666666"
                 android:textSize="12sp"
@@ -220,7 +212,7 @@
                 android:layout_alignBaseline="@id/adv_tx_power"
                 android:layout_marginLeft="10dp"
                 android:layout_toRightOf="@id/adv_tx_power"
-                android:text="(-100dBm~+20dBm)"
+                android:text="(-100dBm~0dBm)"
                 android:textColor="@color/grey_b3b3b3"
                 android:textSize="12sp" />
 
@@ -231,7 +223,7 @@
                 android:layout_below="@id/adv_tx_power"
                 android:layout_marginTop="10dp"
                 android:layout_toLeftOf="@+id/tv_adv_tx_power"
-                android:max="120"
+                android:max="100"
                 android:progress="0" />
 
             <TextView
@@ -261,6 +253,16 @@
                 android:textColor="@color/grey_666666"
                 android:textSize="15sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/tx_power"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@id/tx_power"
+                android:text="(-40, -20, -16, -12, -8, -4, 0, +3, +4)"
+                android:textColor="@color/grey_b3b3b3"
+                android:textSize="12sp" />
 
             <SeekBar
                 android:id="@+id/sb_tx_power"

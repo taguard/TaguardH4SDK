@@ -33,8 +33,8 @@ public class TriggerHumidityFragment extends Fragment implements SeekBar.OnSeekB
     RadioGroup rgAdvertising;
     @BindView(R.id.tv_trigger_tips)
     TextView tvTriggerTips;
-    @BindView(R.id.trigger_humidiy)
-    TextView triggerHumidiy;
+//    @BindView(R.id.trigger_humidiy)
+//    TextView triggerHumidiy;
 
 
     private SlotDataActivity activity;
@@ -71,8 +71,8 @@ public class TriggerHumidityFragment extends Fragment implements SeekBar.OnSeekB
         sbTriggerHumidity.setProgress(mProgress);
         String humidityStr = String.format("%d%%", mProgress);
         tvTriggerTips.setText(getString(R.string.trigger_t_h_tips,
-                mIsStart ? "start" : "stop", "humidity", mIsAbove ? "above" : "below", humidityStr));
-        triggerHumidiy.setText(mIsAbove ? "Humidity Above" : "Humidity Below");
+                mIsStart ? "start to broadcast" : "stop broadcasting", "humidity", mIsAbove ? "above" : "below", humidityStr));
+//        triggerHumidiy.setText(mIsAbove ? "Humidity Above" : "Humidity Below");
         return view;
     }
 
@@ -101,7 +101,7 @@ public class TriggerHumidityFragment extends Fragment implements SeekBar.OnSeekB
         String humidityStr = String.format("%d%%", progress);
         tvTriggerHumidiy.setText(humidityStr);
         tvTriggerTips.setText(getString(R.string.trigger_t_h_tips,
-                mIsStart ? "start" : "stop", "humidity", mIsAbove ? "above" : "below", humidityStr));
+                mIsStart ? "start to broadcast" : "stop broadcasting", "humidity", mIsAbove ? "above" : "below", humidityStr));
     }
 
     @Override
@@ -130,7 +130,7 @@ public class TriggerHumidityFragment extends Fragment implements SeekBar.OnSeekB
         }
         String humidityStr = String.format("%d%%", mProgress);
         tvTriggerTips.setText(getString(R.string.trigger_t_h_tips,
-                mIsStart ? "start" : "stop", "humidity", mIsAbove ? "above" : "below", humidityStr));
+                mIsStart ? "start to broadcast" : "stop broadcasting", "humidity", mIsAbove ? "above" : "below", humidityStr));
     }
 
     public void setStart(boolean isStart) {

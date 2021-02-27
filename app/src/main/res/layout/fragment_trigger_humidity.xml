@@ -9,7 +9,7 @@
         android:id="@+id/trigger_humidiy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Humidity Above"
+        android:text="Humidity threshold"
         android:textColor="@color/grey_666666"
         android:textSize="15sp" />
 
@@ -19,7 +19,7 @@
         android:layout_alignBaseline="@id/trigger_humidiy"
         android:layout_marginLeft="10dp"
         android:layout_toRightOf="@id/trigger_humidiy"
-        android:text="(0%~100%)"
+        android:text="(0%~95%)"
         android:textColor="@color/grey_b3b3b3"
         android:textSize="12sp" />
 
@@ -30,7 +30,7 @@
         android:layout_below="@id/trigger_humidiy"
         android:layout_marginTop="10dp"
         android:layout_toLeftOf="@+id/tv_trigger_humidiy"
-        android:max="100"
+        android:max="95"
         android:progress="0" />
 
     <TextView

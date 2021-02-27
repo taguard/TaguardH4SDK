@@ -32,8 +32,8 @@ public class TriggerTempFragment extends Fragment implements SeekBar.OnSeekBarCh
     RadioGroup rgAdvertising;
     @BindView(R.id.tv_trigger_tips)
     TextView tvTriggerTips;
-    @BindView(R.id.trigger_temp)
-    TextView triggerTemp;
+//    @BindView(R.id.trigger_temp)
+//    TextView triggerTemp;
 
 
     private SlotDataActivity activity;
@@ -70,8 +70,8 @@ public class TriggerTempFragment extends Fragment implements SeekBar.OnSeekBarCh
         sbTriggerTemp.setProgress(mProgress);
         String tempStr = String.format("%d℃", mProgress - 20);
         tvTriggerTips.setText(getString(R.string.trigger_t_h_tips,
-                mIsStart ? "start" : "stop", "temperature", mIsAbove ? "above" : "below", tempStr));
-        triggerTemp.setText(mIsAbove ? "Temperature Above" : "Temperature Below");
+                mIsStart ? "start to broadcast" : "stop broadcasting", "temperature", mIsAbove ? "above" : "below", tempStr));
+//        triggerTemp.setText(mIsAbove ? "Temperature Above" : "Temperature Below");
         return view;
     }
 
@@ -100,7 +100,7 @@ public class TriggerTempFragment extends Fragment implements SeekBar.OnSeekBarCh
         String tempStr = String.format("%d℃", progress - 20);
         tvTriggerTemp.setText(tempStr);
         tvTriggerTips.setText(getString(R.string.trigger_t_h_tips,
-                mIsStart ? "start" : "stop", "temperature", mIsAbove ? "above" : "below", tempStr));
+                mIsStart ? "start to broadcast" : "stop broadcasting", "temperature", mIsAbove ? "above" : "below", tempStr));
     }
 
     @Override
@@ -129,7 +129,7 @@ public class TriggerTempFragment extends Fragment implements SeekBar.OnSeekBarCh
         }
         String tempStr = String.format("%d℃", mProgress - 20);
         tvTriggerTips.setText(getString(R.string.trigger_t_h_tips,
-                mIsStart ? "start" : "stop", "temperature", mIsAbove ? "above" : "below", tempStr));
+                mIsStart ? "start to broadcast" : "stop broadcasting", "temperature", mIsAbove ? "above" : "below", tempStr));
     }
 
     public void setStart(boolean isStart) {

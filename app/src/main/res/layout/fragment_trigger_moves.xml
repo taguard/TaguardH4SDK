@@ -30,14 +30,14 @@
                 android:id="@+id/rb_stop_advertising"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Stop advertising for a static period of time"
+                android:text="Stop advertising after a static period of time"
                 android:textSize="10sp"/>
 
             <RadioButton
                 android:id="@+id/rb_start_advertising"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Start advertising for a static period of time"
+                android:text="Start advertising after a static period of time"
                 android:textSize="10sp"/>
 
         </RadioGroup>

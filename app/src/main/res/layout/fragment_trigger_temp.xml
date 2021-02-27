@@ -9,7 +9,7 @@
         android:id="@+id/trigger_temp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Temperature Above"
+        android:text="Temperature threshold"
         android:textColor="@color/grey_666666"
         android:textSize="15sp" />
 
@@ -19,7 +19,7 @@
         android:layout_alignBaseline="@id/trigger_temp"
         android:layout_marginLeft="10dp"
         android:layout_toRightOf="@id/trigger_temp"
-        android:text="(-20℃~90℃)"
+        android:text="(-20℃~60℃)"
         android:textColor="@color/grey_b3b3b3"
         android:textSize="12sp" />
 
@@ -30,7 +30,7 @@
         android:layout_below="@id/trigger_temp"
         android:layout_marginTop="10dp"
         android:layout_toLeftOf="@+id/tv_trigger_temp"
-        android:max="110"
+        android:max="80"
         android:progress="0" />
 
     <TextView
