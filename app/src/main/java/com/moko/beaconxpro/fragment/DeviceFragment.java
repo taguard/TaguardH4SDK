@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.moko.beaconxpro.R;
-import com.moko.support.utils.MokoUtils;
+import com.moko.ble.lib.utils.MokoUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

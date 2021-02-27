@@ -5,9 +5,9 @@ import android.os.SystemClock;
 import android.text.TextUtils;
 
 import com.moko.beaconxpro.entity.BeaconXInfo;
+import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.support.entity.DeviceInfo;
 import com.moko.support.service.DeviceInfoParseable;
-import com.moko.support.utils.MokoUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;

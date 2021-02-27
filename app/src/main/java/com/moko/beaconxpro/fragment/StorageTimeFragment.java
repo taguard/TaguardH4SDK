@@ -80,6 +80,7 @@ public class StorageTimeFragment extends Fragment {
     @OnClick(R.id.tv_storage_time_only)
     public void onViewClicked() {
         BottomDialog dialog = new BottomDialog();
+        dialog.setDatas(mDatas, mSelected);
         dialog.setListener(value -> {
             mSelected = Integer.parseInt(mDatas.get(value));
             tvStorageTimeOnly.setText(mDatas.get(value));

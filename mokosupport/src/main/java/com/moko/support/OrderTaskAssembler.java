@@ -2,6 +2,7 @@ package com.moko.support;
 
 import com.elvishew.xlog.XLog;
 import com.moko.ble.lib.task.OrderTask;
+import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.support.entity.ParamsKeyEnum;
 import com.moko.support.entity.SlotEnum;
 import com.moko.support.task.GetAdvIntervalTask;
@@ -30,7 +31,6 @@ import com.moko.support.task.SetConnectableTask;
 import com.moko.support.task.SetLockStateTask;
 import com.moko.support.task.SetRadioTxPowerTask;
 import com.moko.support.task.SetUnlockTask;
-import com.moko.support.utils.MokoUtils;
 
 import java.util.Arrays;
 

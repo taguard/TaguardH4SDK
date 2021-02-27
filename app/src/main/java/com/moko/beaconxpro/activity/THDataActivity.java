@@ -33,11 +33,11 @@ import com.moko.ble.lib.event.ConnectStatusEvent;
 import com.moko.ble.lib.event.OrderTaskResponseEvent;
 import com.moko.ble.lib.task.OrderTask;
 import com.moko.ble.lib.task.OrderTaskResponse;
+import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.support.MokoSupport;
 import com.moko.support.OrderTaskAssembler;
 import com.moko.support.entity.OrderCHAR;
 import com.moko.support.entity.ParamsKeyEnum;
-import com.moko.support.utils.MokoUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -388,10 +388,10 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
                         storageData = String.format("%04X", mSelectedTemp * 5);
                         break;
                     case 1:
-                        storageData = String.format("%04X", mSelectedHumidity * 10);
+                        storageData = String.format("%04X", mSelectedHumidity * 5);
                         break;
                     case 2:
-                        storageData = String.format("%04X", mSelectedTemp * 5) + String.format("%04X", mSelectedHumidity * 10);
+                        storageData = String.format("%04X", mSelectedTemp * 5) + String.format("%04X", mSelectedHumidity * 5);
                         break;
                     case 3:
                         storageData = String.format("%02X", mSelectedTime);

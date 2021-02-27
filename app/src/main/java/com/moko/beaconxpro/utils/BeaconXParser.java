@@ -9,12 +9,12 @@ import com.moko.beaconxpro.entity.BeaconXTLM;
 import com.moko.beaconxpro.entity.BeaconXUID;
 import com.moko.beaconxpro.entity.BeaconXURL;
 import com.moko.beaconxpro.entity.BeaconXiBeacon;
+import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.support.entity.AxisRateEnum;
 import com.moko.support.entity.AxisScaleEnum;
 import com.moko.support.entity.SlotData;
 import com.moko.support.entity.UrlExpansionEnum;
 import com.moko.support.entity.UrlSchemeEnum;
-import com.moko.support.utils.MokoUtils;
 
 
 public class BeaconXParser {

@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.activity.THDataActivity;
 import com.moko.beaconxpro.dialog.BottomDialog;
-import com.moko.support.utils.MokoUtils;
+import com.moko.ble.lib.utils.MokoUtils;
 
 import java.util.ArrayList;
 
@@ -56,11 +56,11 @@ public class StorageTHFragment extends Fragment {
         ButterKnife.bind(this, view);
         activity = (THDataActivity) getActivity();
         mHumidityDatas = new ArrayList<>();
-        for (int i = 0; i <= 100; i++) {
-            mHumidityDatas.add(i + "");
+        for (int i = 1; i <= 190; i++) {
+            mHumidityDatas.add(MokoUtils.getDecimalFormat("0.0").format(i * 0.5));
         }
         mTempDatas = new ArrayList<>();
-        for (int i = 0; i <= 200; i++) {
+        for (int i = 1; i <= 120; i++) {
             mTempDatas.add(MokoUtils.getDecimalFormat("0.0").format(i * 0.5));
         }
         return view;
@@ -89,21 +89,24 @@ public class StorageTHFragment extends Fragment {
         switch (view.getId()) {
             case R.id.tv_storage_temp:
                 BottomDialog tempDialog = new BottomDialog();
+                tempDialog.setDatas(mTempDatas, mTempSelected);
                 tempDialog.setListener(value -> {
                     mTempSelected = value;
+                    String tempStr = mTempDatas.get(mTempSelected);
+                    String humiStr = mHumidityDatas.get(mHumiditySelected);
                     if (mTempSelected > 0 && mHumiditySelected > 0) {
-                        tvTHTips.setText(getString(R.string.t_h_tips_0, mTempDatas.get(value), mHumiditySelected));
-                    } else if (mTempSelected == 0 && mHumiditySelected > 0) {
-                        tvTHTips.setText(getString(R.string.t_h_tips_1, mHumiditySelected));
-                    } else if (mTempSelected > 0 && mHumiditySelected == 0) {
-                        tvTHTips.setText(getString(R.string.t_h_tips_2, mTempDatas.get(value)));
-                    } else if (mTempSelected == 0 && mHumiditySelected == 0) {
-                        tvTHTips.setText(R.string.t_h_tips_3);
+                        tvTHTips.setText(getString(R.string.t_h_tips_0, tempStr, humiStr));
                     }
-                    tvStorageTemp.setText(mTempDatas.get(value));
-                    activity.setSelectedTemp(mTempSelected);
+//                    else if (mTempSelected == 0 && mHumiditySelected > 0) {
+//                        tvTHTips.setText(getString(R.string.t_h_tips_1, mHumiditySelected));
+//                    } else if (mTempSelected > 0 && mHumiditySelected == 0) {
+//                        tvTHTips.setText(getString(R.string.t_h_tips_2, mTempDatas.get(value)));
+//                    } else if (mTempSelected == 0 && mHumiditySelected == 0) {
+//                        tvTHTips.setText(R.string.t_h_tips_3);
+//                    }
+                    tvStorageTemp.setText(tempStr);
+                    activity.setSelectedTemp(value + 1);
                 });
-
                 tempDialog.show(activity.getSupportFragmentManager());
                 break;
             case R.id.tv_storage_humidity:
@@ -111,19 +114,21 @@ public class StorageTHFragment extends Fragment {
                 humidityDialog.setDatas(mHumidityDatas, mHumiditySelected);
                 humidityDialog.setListener(value -> {
                     mHumiditySelected = value;
+                    String tempStr = mTempDatas.get(mTempSelected);
+                    String humiStr = mHumidityDatas.get(mHumiditySelected);
                     if (mTempSelected > 0 && mHumiditySelected > 0) {
-                        String tempStr = MokoUtils.getDecimalFormat("0.0").format(mTempSelected * 0.5);
-                        tvTHTips.setText(getString(R.string.t_h_tips_0, tempStr, mHumiditySelected));
-                    } else if (mTempSelected == 0 && mHumiditySelected > 0) {
-                        tvTHTips.setText(getString(R.string.t_h_tips_1, mHumiditySelected));
-                    } else if (mTempSelected > 0 && mHumiditySelected == 0) {
-                        String tempStr = MokoUtils.getDecimalFormat("0.0").format(mTempSelected * 0.5);
-                        tvTHTips.setText(getString(R.string.t_h_tips_2, tempStr));
-                    } else if (mTempSelected == 0 && mHumiditySelected == 0) {
-                        tvTHTips.setText(R.string.t_h_tips_3);
+                        tvTHTips.setText(getString(R.string.t_h_tips_0, tempStr, humiStr));
                     }
-                    tvStorageHumidity.setText(String.valueOf(value));
-                    activity.setSelectedHumidity(value);
+//                    else if (mTempSelected == 0 && mHumiditySelected > 0) {
+//                        tvTHTips.setText(getString(R.string.t_h_tips_1, mHumiditySelected));
+//                    } else if (mTempSelected > 0 && mHumiditySelected == 0) {
+//                        String tempStr = MokoUtils.getDecimalFormat("0.0").format(mTempSelected * 0.5);
+//                        tvTHTips.setText(getString(R.string.t_h_tips_2, tempStr));
+//                    } else if (mTempSelected == 0 && mHumiditySelected == 0) {
+//                        tvTHTips.setText(R.string.t_h_tips_3);
+//                    }
+                    tvStorageHumidity.setText(humiStr);
+                    activity.setSelectedHumidity(value + 1);
                 });
                 humidityDialog.show(activity.getSupportFragmentManager());
                 break;
@@ -134,36 +139,43 @@ public class StorageTHFragment extends Fragment {
     private int mTempSelected;
 
     public void setTempData(int data) {
-        mTempSelected = data / 5;
+        mTempSelected = data / 5 - 1;
+        if (mTempSelected < 0)
+            mTempSelected = 0;
+        String tempStr = mTempDatas.get(mTempSelected);
+        String humiStr = mHumidityDatas.get(mHumiditySelected);
         if (mTempSelected > 0 && mHumiditySelected > 0) {
-            String tempStr = MokoUtils.getDecimalFormat("0.0").format(mTempSelected * 0.5);
-            tvTHTips.setText(getString(R.string.t_h_tips_0, tempStr, mHumiditySelected));
-        } else if (mTempSelected == 0 && mHumiditySelected > 0) {
-            tvTHTips.setText(getString(R.string.t_h_tips_1, mHumiditySelected));
-        } else if (mTempSelected > 0 && mHumiditySelected == 0) {
-            String tempStr = MokoUtils.getDecimalFormat("0.0").format(mTempSelected * 0.5);
-            tvTHTips.setText(getString(R.string.t_h_tips_2, tempStr));
-        } else if (mTempSelected == 0 && mHumiditySelected == 0) {
-            tvTHTips.setText(R.string.t_h_tips_3);
+            tvTHTips.setText(getString(R.string.t_h_tips_0, tempStr, humiStr));
         }
-        tvStorageTemp.setText(MokoUtils.getDecimalFormat("0.0").format(mTempSelected * 0.5));
+//        else if (mTempSelected == 0 && mHumiditySelected > 0) {
+//            tvTHTips.setText(getString(R.string.t_h_tips_1, mHumiditySelected));
+//        } else if (mTempSelected > 0 && mHumiditySelected == 0) {
+//            String tempStr = MokoUtils.getDecimalFormat("0.0").format(mTempSelected * 0.5);
+//            tvTHTips.setText(getString(R.string.t_h_tips_2, tempStr));
+//        } else if (mTempSelected == 0 && mHumiditySelected == 0) {
+//            tvTHTips.setText(R.string.t_h_tips_3);
+//        }
+        tvStorageTemp.setText(tempStr);
     }
 
     private int mHumiditySelected;
 
     public void setHumidityData(int data) {
-        mHumiditySelected = data / 10;
+        mHumiditySelected = data / 5 - 1;
+        if (mHumiditySelected < 0)
+            mHumiditySelected = 0;
+        String tempStr = mTempDatas.get(mTempSelected);
+        String humiStr = mHumidityDatas.get(mHumiditySelected);
         if (mTempSelected > 0 && mHumiditySelected > 0) {
-            String tempStr = MokoUtils.getDecimalFormat("0.0").format(mTempSelected * 0.5);
-            tvTHTips.setText(getString(R.string.t_h_tips_0, tempStr, mHumiditySelected));
-        } else if (mTempSelected == 0 && mHumiditySelected > 0) {
-            tvTHTips.setText(getString(R.string.t_h_tips_1, mHumiditySelected));
-        } else if (mTempSelected > 0 && mHumiditySelected == 0) {
-            String tempStr = MokoUtils.getDecimalFormat("0.0").format(mTempSelected * 0.5);
-            tvTHTips.setText(getString(R.string.t_h_tips_2, tempStr));
-        } else if (mTempSelected == 0 && mHumiditySelected == 0) {
-            tvTHTips.setText(R.string.t_h_tips_3);
+            tvTHTips.setText(getString(R.string.t_h_tips_0, tempStr, humiStr));
         }
-        tvStorageHumidity.setText(mHumiditySelected + "");
+//        else if (mTempSelected == 0 && mHumiditySelected > 0) {
+//            tvTHTips.setText(getString(R.string.t_h_tips_1, humiStr));
+//        } else if (mTempSelected > 0 && mHumiditySelected == 0) {
+//            tvTHTips.setText(getString(R.string.t_h_tips_2, tempStr));
+//        } else if (mTempSelected == 0 && mHumiditySelected == 0) {
+//            tvTHTips.setText(R.string.t_h_tips_3);
+//        }
+        tvStorageHumidity.setText(humiStr);
     }
 }

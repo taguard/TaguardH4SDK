@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.activity.THDataActivity;
 import com.moko.beaconxpro.dialog.BottomDialog;
+import com.moko.ble.lib.utils.MokoUtils;
 
 import java.util.ArrayList;
 
@@ -52,8 +53,8 @@ public class StorageHumidityFragment extends Fragment {
         ButterKnife.bind(this, view);
         activity = (THDataActivity) getActivity();
         mDatas = new ArrayList<>();
-        for (int i = 0; i <= 100; i++) {
-            mDatas.add(i + "");
+        for (int i = 0; i <= 190; i++) {
+            mDatas.add(MokoUtils.getDecimalFormat("0.0").format(i * 0.5));
         }
         return view;
     }
@@ -85,22 +86,24 @@ public class StorageHumidityFragment extends Fragment {
             if (mSelected == 0) {
                 tvHumidityOnlyTips.setText(R.string.humidity_only_tips_0);
             } else {
-                tvHumidityOnlyTips.setText(getString(R.string.humidity_only_tips_1, value));
+                tvHumidityOnlyTips.setText(getString(R.string.humidity_only_tips_1, mDatas.get(value)));
             }
-            tvStorageHumidityOnly.setText(String.valueOf(value));
+            tvStorageHumidityOnly.setText(mDatas.get(mSelected));
             activity.setSelectedHumidity(value);
         });
+        dialog.show(activity.getSupportFragmentManager());
     }
 
     private int mSelected;
 
     public void setHumidityData(int data) {
-        mSelected = data / 10;
+        mSelected = data / 5;
+        String humStr = mDatas.get(mSelected);
+        tvStorageHumidityOnly.setText(humStr);
         if (mSelected == 0) {
             tvHumidityOnlyTips.setText(R.string.humidity_only_tips_0);
         } else {
-            tvHumidityOnlyTips.setText(getString(R.string.humidity_only_tips_1, mSelected));
+            tvHumidityOnlyTips.setText(getString(R.string.humidity_only_tips_1, humStr));
         }
-        tvStorageHumidityOnly.setText(mSelected + "");
     }
 }

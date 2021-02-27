@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -17,12 +16,12 @@ import com.moko.beaconxpro.activity.DeviceInfoActivity;
 import com.moko.beaconxpro.activity.SlotDataActivity;
 import com.moko.beaconxpro.utils.BeaconXParser;
 import com.moko.ble.lib.task.OrderTask;
+import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.support.MokoSupport;
 import com.moko.support.OrderTaskAssembler;
 import com.moko.support.entity.SlotData;
 import com.moko.support.entity.SlotEnum;
 import com.moko.support.entity.SlotFrameTypeEnum;
-import com.moko.support.utils.MokoUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

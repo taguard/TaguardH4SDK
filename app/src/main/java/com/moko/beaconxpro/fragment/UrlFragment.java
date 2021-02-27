@@ -19,13 +19,13 @@ import com.moko.beaconxpro.activity.SlotDataActivity;
 import com.moko.beaconxpro.dialog.UrlSchemeDialog;
 import com.moko.beaconxpro.utils.ToastUtils;
 import com.moko.ble.lib.task.OrderTask;
+import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.support.MokoSupport;
 import com.moko.support.OrderTaskAssembler;
 import com.moko.support.entity.SlotFrameTypeEnum;
 import com.moko.support.entity.TxPowerEnum;
 import com.moko.support.entity.UrlExpansionEnum;
 import com.moko.support.entity.UrlSchemeEnum;
-import com.moko.support.utils.MokoUtils;
 
 import java.util.ArrayList;
 

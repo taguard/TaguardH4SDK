@@ -1,9 +1,9 @@
 package com.moko.support.task;
 
 import com.moko.ble.lib.task.OrderTask;
+import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.support.entity.OrderCHAR;
 import com.moko.support.entity.ParamsKeyEnum;
-import com.moko.support.utils.MokoUtils;
 
 
 public class ParamsTask extends OrderTask {

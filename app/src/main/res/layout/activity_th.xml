@@ -89,7 +89,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBaseline="@id/tv_temp"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignLeft="@id/tv_humidity_unit"
                     android:text="℃"
                     android:textColor="@color/black_333333"
                     android:textSize="15sp" />
@@ -121,11 +121,12 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tv_humidity_unit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBaseline="@id/tv_humidity"
                     android:layout_alignParentRight="true"
-                    android:text="%"
+                    android:text="%RH"
                     android:textColor="@color/black_333333"
                     android:textSize="15sp" />
 
@@ -139,7 +140,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Sampling Period"
+                        android:text="Sampling interval"
                         android:textColor="@color/black_333333"
                         android:textSize="15sp" />
 
@@ -156,7 +157,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="sec(s)"
+                        android:text="sec"
                         android:textColor="@color/black_333333"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -186,8 +187,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/storage_condition"
-                    android:drawablePadding="10dp"
                     android:gravity="center"
                     android:text="@string/storage_condition"
                     android:textColor="@color/black_333333"
@@ -237,8 +236,6 @@
                     android:id="@+id/update_date_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_sync_time"
-                    android:drawablePadding="10dp"
                     android:gravity="center"
                     android:text="@string/update_date"
                     android:textColor="@color/black_333333"
@@ -262,10 +259,10 @@
                 <TextView
                     android:id="@+id/tv_update_date"
                     android:layout_width="wrap_content"
-                    android:text=""
                     android:layout_height="wrap_content"
                     android:layout_below="@id/update_date_title"
                     android:layout_marginTop="20dp"
+                    android:text=""
                     android:textColor="@color/black_333333"
                     android:textSize="15sp" />
             </RelativeLayout>
@@ -284,8 +281,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_download_checked"
-                    android:drawablePadding="10dp"
                     android:gravity="center"
                     android:text="@string/export_data"
                     android:textColor="@color/black_333333"

@@ -64,17 +64,7 @@
                 android:textSize="13sp" />
         </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@id/ll_sync"
-            android:layout_alignBottom="@id/ll_sync"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@id/ll_sync"
-            android:text="@string/export_data"
-            android:textColor="@color/black_333333"
-            android:textSize="15sp"
-            android:textStyle="bold" />
+
 
         <TextView
             android:id="@+id/tv_export"
@@ -137,7 +127,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1.0"
                         android:gravity="center"
-                        android:text="Humidity(%)"
+                        android:text="Humidity(%RH)"
                         android:textSize="11sp" />
                 </LinearLayout>
             </LinearLayout>

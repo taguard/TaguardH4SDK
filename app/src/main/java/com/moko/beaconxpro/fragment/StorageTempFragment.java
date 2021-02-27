@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.activity.THDataActivity;
 import com.moko.beaconxpro.dialog.BottomDialog;
-import com.moko.support.utils.MokoUtils;
+import com.moko.ble.lib.utils.MokoUtils;
 
 import java.util.ArrayList;
 
@@ -53,7 +53,7 @@ public class StorageTempFragment extends Fragment {
         ButterKnife.bind(this, view);
         activity = (THDataActivity) getActivity();
         mDatas = new ArrayList<>();
-        for (int i = 0; i <= 200; i++) {
+        for (int i = 0; i <= 120; i++) {
             mDatas.add(MokoUtils.getDecimalFormat("0.0").format(i * 0.5));
         }
         return view;
@@ -80,6 +80,7 @@ public class StorageTempFragment extends Fragment {
     @OnClick(R.id.tv_storage_temp_only)
     public void onViewClicked() {
         BottomDialog dialog = new BottomDialog();
+        dialog.setDatas(mDatas, mSelected);
         dialog.setListener(value -> {
             mSelected = value;
             if (mSelected == 0) {
@@ -88,7 +89,7 @@ public class StorageTempFragment extends Fragment {
                 tvTempOnlyTips.setText(getString(R.string.temp_only_tips_1, mDatas.get(value)));
             }
             tvStorageTempOnly.setText(mDatas.get(value));
-            activity.setSelectedTemp(mSelected);
+            activity.setSelectedTemp(value);
         });
         dialog.show(activity.getSupportFragmentManager());
     }
@@ -97,7 +98,7 @@ public class StorageTempFragment extends Fragment {
 
     public void setTempData(int data) {
         mSelected = data / 5;
-        String tempStr = MokoUtils.getDecimalFormat("0.0").format(mSelected * 0.5);
+        String tempStr = mDatas.get(mSelected);
         tvStorageTempOnly.setText(tempStr);
         if (mSelected == 0) {
             tvTempOnlyTips.setText(R.string.temp_only_tips_0);

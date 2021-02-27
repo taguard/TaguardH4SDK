@@ -16,7 +16,7 @@ import com.moko.beaconxpro.activity.DeviceInfoActivity;
 import com.moko.beaconxpro.activity.THDataActivity;
 import com.moko.beaconxpro.dialog.AlertMessageDialog;
 import com.moko.beaconxpro.dialog.ModifyPasswordDialog;
-import com.moko.support.utils.MokoUtils;
+import com.moko.ble.lib.utils.MokoUtils;
 
 import java.util.Timer;
 import java.util.TimerTask;
