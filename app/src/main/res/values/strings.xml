@@ -49,6 +49,7 @@
 <!--    <string name="trigger_tapped_tips_3">*The Beacon will always stop advertising after press button %s times.</string>-->
     <string name="trigger_moved_tips_1">*The device will always %s once a movement occurred.</string>
     <string name="trigger_moved_tips_2">*The Beacon will %1$s after a static period of %2$s and it %3$s again once a movement occurred.</string>
+    <string name="rssi_filter_tips">* RSSI filtering is the highest priority filtering condition. BLE Name and MAC Address filtering must first meet the RSSI filtering condition.\n* There is an "OR" relationship between the BLE Name filtering and the MAC Address filtering.</string>
     <string-array name="slot_type_no_sensor">
         <item>TLM</item>
         <item>UID</item>

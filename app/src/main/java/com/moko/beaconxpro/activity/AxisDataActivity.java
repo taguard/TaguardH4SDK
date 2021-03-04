@@ -157,16 +157,16 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
                                         mSelectedSensivity = value[6] & 0xff;
                                         if (MokoSupport.isNewVersion) {
                                             if (mSelectedScale == 0) {
-                                                sbTriggerSensitivity.setMax(19);
+                                                sbTriggerSensitivity.setMax(18);
                                             }
                                             if (mSelectedScale == 1) {
-                                                sbTriggerSensitivity.setMax(39);
+                                                sbTriggerSensitivity.setMax(38);
                                             }
                                             if (mSelectedScale == 2) {
-                                                sbTriggerSensitivity.setMax(79);
+                                                sbTriggerSensitivity.setMax(78);
                                             }
                                             if (mSelectedScale == 3) {
-                                                sbTriggerSensitivity.setMax(159);
+                                                sbTriggerSensitivity.setMax(158);
                                             }
                                             sbTriggerSensitivity.setProgress(mSelectedSensivity - 1);
                                             tvTriggerSensitivity.setText(MokoUtils.getDecimalFormat("#.#g").format(mSelectedSensivity * 0.1));
@@ -314,16 +314,16 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
                     if (MokoSupport.isNewVersion) {
                         sbTriggerSensitivity.setProgress(0);
                         if (mSelectedScale == 0) {
-                            sbTriggerSensitivity.setMax(19);
+                            sbTriggerSensitivity.setMax(18);
                         }
                         if (mSelectedScale == 1) {
-                            sbTriggerSensitivity.setMax(39);
+                            sbTriggerSensitivity.setMax(38);
                         }
                         if (mSelectedScale == 2) {
-                            sbTriggerSensitivity.setMax(79);
+                            sbTriggerSensitivity.setMax(78);
                         }
                         if (mSelectedScale == 3) {
-                            sbTriggerSensitivity.setMax(159);
+                            sbTriggerSensitivity.setMax(158);
                         }
                     }
                 });

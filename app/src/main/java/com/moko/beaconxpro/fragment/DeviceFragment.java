@@ -81,32 +81,32 @@ public class DeviceFragment extends Fragment {
     }
 
     public void setManufacturer(byte[] value) {
-        String manufacturer = MokoUtils.hex2String(MokoUtils.bytesToHexString(value));
+        String manufacturer = new String(value).replaceAll(" ", "");
         tvManufacturer.setText(manufacturer);
     }
 
     public void setDeviceModel(byte[] value) {
-        String deviceModel = MokoUtils.hex2String(MokoUtils.bytesToHexString(value));
+        String deviceModel = new String(value).replaceAll(" ", "");
         tvDeviceModel.setText(deviceModel);
     }
 
     public void setProductDate(byte[] value) {
-        String productDate = MokoUtils.hex2String(MokoUtils.bytesToHexString(value));
+        String productDate = new String(value).replaceAll(" ", "");
         tvProductDate.setText(productDate);
     }
 
     public void setHardwareVersion(byte[] value) {
-        String hardwareVersion = MokoUtils.hex2String(MokoUtils.bytesToHexString(value));
+        String hardwareVersion = new String(value).replaceAll(" ", "");
         tvHardwareVersion.setText(hardwareVersion);
     }
 
     public void setFirmwareVersion(byte[] value) {
-        String firmwareVersion = MokoUtils.hex2String(MokoUtils.bytesToHexString(value));
+        String firmwareVersion = new String(value).replaceAll(" ", "");
         tvFirmwareVersion.setText(firmwareVersion);
     }
 
     public void setSoftwareVersion(byte[] value) {
-        String softwareVersion = MokoUtils.hex2String(MokoUtils.bytesToHexString(value));
+        String softwareVersion = new String(value).replaceAll(" ", "");
         tvSoftwareVersion.setText(softwareVersion);
     }
 

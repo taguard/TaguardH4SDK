@@ -133,40 +133,29 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
     public void onConnectStatusEvent(ConnectStatusEvent event) {
         EventBus.getDefault().cancelEventDelivery(event);
         final String action = event.getAction();
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (MokoConstants.ACTION_DISCONNECTED.equals(action)) {
-                    // 设备断开，通知页面更新
-                    if (mIsClose) {
-                        return;
-                    }
-                    if (MokoSupport.getInstance().isBluetoothOpen() && !isUpgrade) {
-                        AlertMessageDialog dialog = new AlertMessageDialog();
-                        dialog.setTitle("Dismiss");
-                        dialog.setMessage("The device disconnected!");
-                        dialog.setConfirm("Exit");
-                        dialog.setCancelGone();
-                        dialog.setOnAlertConfirmListener(new AlertMessageDialog.OnAlertConfirmListener() {
-                            @Override
-                            public void onClick() {
-                                setResult(RESULT_OK);
-                                finish();
-                            }
-                        });
-                        dialog.show(getSupportFragmentManager());
-                    }
+        runOnUiThread(() -> {
+            if (MokoConstants.ACTION_DISCONNECTED.equals(action)) {
+                // 设备断开，通知页面更新
+                if (mIsClose) {
+                    return;
                 }
-                if (MokoConstants.ACTION_DISCOVER_SUCCESS.equals(action)) {
-                    // 设备连接成功，通知页面更新
-                    showSyncingProgressDialog();
-                    tvTitle.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            MokoSupport.getInstance().sendOrder(OrderTaskAssembler.getLockState());
-                        }
-                    }, 1500);
+                if (MokoSupport.getInstance().isBluetoothOpen() && !isUpgrade) {
+                    AlertMessageDialog dialog = new AlertMessageDialog();
+                    dialog.setTitle("Dismiss");
+                    dialog.setMessage("The device disconnected!");
+                    dialog.setConfirm("Exit");
+                    dialog.setCancelGone();
+                    dialog.setOnAlertConfirmListener(() -> {
+                        setResult(RESULT_OK);
+                        finish();
+                    });
+                    dialog.show(getSupportFragmentManager());
                 }
+            }
+            if (MokoConstants.ACTION_DISCOVER_SUCCESS.equals(action)) {
+                // 设备连接成功，通知页面更新
+                showSyncingProgressDialog();
+                tvTitle.postDelayed(() -> MokoSupport.getInstance().sendOrder(OrderTaskAssembler.getLockState()), 1500);
             }
         });
 
@@ -287,7 +276,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                         break;
                     case CHAR_SERIAL_NUMBER:
                         // 判断新旧版本
-                        String serialNumber = MokoUtils.hex2String(MokoUtils.bytesToHexString(value));
+                        String serialNumber = new String(value);
                         int year = Integer.parseInt(serialNumber.substring(0, 4));
                         MokoSupport.isNewVersion = year >= 2021;
                         deviceFragment.setProductDate(value);
@@ -387,12 +376,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
 
     public void getSlotType() {
         showSyncingProgressDialog();
-        tvTitle.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                MokoSupport.getInstance().sendOrder(OrderTaskAssembler.getSlotType());
-            }
-        }, 1500);
+        tvTitle.postDelayed(() -> MokoSupport.getInstance().sendOrder(OrderTaskAssembler.getSlotType()), 1500);
     }
 
     private void getDeviceInfo() {

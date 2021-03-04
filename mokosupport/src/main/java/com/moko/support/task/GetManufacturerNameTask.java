@@ -2,8 +2,6 @@ package com.moko.support.task;
 
 import com.moko.ble.lib.task.OrderTask;
 import com.moko.support.entity.OrderCHAR;
-import com.moko.support.entity.OrderEnum;
-import com.moko.support.entity.OrderType;
 
 public class GetManufacturerNameTask extends OrderTask {
 

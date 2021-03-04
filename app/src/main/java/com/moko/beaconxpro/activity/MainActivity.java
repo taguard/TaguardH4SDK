@@ -380,8 +380,8 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                         } else if (TextUtils.isEmpty(beaconXInfo.mac) && beaconXInfo.name.toLowerCase().contains(filterName.toLowerCase())) {
                             continue;
                         } else if (!TextUtils.isEmpty(beaconXInfo.name) && !TextUtils.isEmpty(beaconXInfo.mac)
-                                && (beaconXInfo.name.toLowerCase().contains(filterName.toLowerCase())
-                                || beaconXInfo.mac.toLowerCase().replaceAll(":", "").contains(filterMac.toLowerCase()))) {
+                                && (!TextUtils.isEmpty(filterName) && beaconXInfo.name.toLowerCase().contains(filterName.toLowerCase()))
+                                || (!TextUtils.isEmpty(filterMac) && beaconXInfo.mac.toLowerCase().replaceAll(":", "").contains(filterMac.toLowerCase()))) {
                             continue;
                         } else {
                             iterator.remove();
