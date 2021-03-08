@@ -12,21 +12,26 @@ import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.elvishew.xlog.XLog;
 import com.moko.beaconxpro.AppConstants;
 import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.dialog.AlertMessageDialog;
 import com.moko.beaconxpro.utils.ToastUtils;
 import com.moko.beaconxpro.utils.Utils;
+import com.moko.beaconxpro.view.THChartView;
 import com.moko.ble.lib.MokoConstants;
 import com.moko.ble.lib.event.ConnectStatusEvent;
 import com.moko.ble.lib.event.OrderTaskResponseEvent;
@@ -48,6 +53,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -66,12 +72,24 @@ public class ExportDataActivity extends BaseActivity {
     LinearLayout llData;
     @BindView(R.id.tv_sync)
     TextView tvSync;
+    @BindView(R.id.cb_data_show)
+    CheckBox cbDataShow;
+    @BindView(R.id.ll_th_chart_view)
+    LinearLayout llTHChartView;
+    @BindView(R.id.temp_chart_view)
+    THChartView tempChartView;
+    @BindView(R.id.humi_chart_view)
+    THChartView humiChartView;
+    @BindView(R.id.sv_th_data)
+    ScrollView svTHData;
 
     private boolean mReceiverTag = false;
     private StringBuffer storeString = new StringBuffer();
     private boolean mIsShown;
     private boolean isSync;
-
+    private Handler mHandler;
+    private List<Float> mHumiList;
+    private List<Float> mTempList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +104,22 @@ public class ExportDataActivity extends BaseActivity {
             // 如果SD卡不存在，就保存到本应用的目录下
             PATH_LOGCAT = getFilesDir().getAbsolutePath() + File.separator + "mokoBeaconXPro" + File.separator + TRACKED_FILE;
         }
-
+        mHumiList = new ArrayList<>();
+        mTempList = new ArrayList<>();
+        cbDataShow.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                // 绘制折线图并展示
+                svTHData.setVisibility(View.GONE);
+                llTHChartView.setVisibility(View.VISIBLE);
+                tempChartView.setxValue(mTempList);
+                humiChartView.setxValue(mHumiList);
+            } else {
+                // 隐藏折线图
+                svTHData.setVisibility(View.VISIBLE);
+                llTHChartView.setVisibility(View.GONE);
+            }
+        });
+        mHandler = new Handler();
         EventBus.getDefault().register(this);
         // 注册广播接收器
         IntentFilter filter = new IntentFilter();
@@ -102,6 +135,7 @@ public class ExportDataActivity extends BaseActivity {
             ivSync.startAnimation(animation);
             tvSync.setText("Stop");
             isSync = true;
+            cbDataShow.setEnabled(false);
         }
     }
 
@@ -196,9 +230,11 @@ public class ExportDataActivity extends BaseActivity {
                             int minute1 = value1[4] & 0xff;
                             int second1 = value1[5] & 0xff;
                             byte[] tempBytes1 = Arrays.copyOfRange(value1, 6, 8);
-                            float temp1 = MokoUtils.byte2short(tempBytes1) * 0.1f;
+                            float temp1 = (float) (Math.round(MokoUtils.byte2short(tempBytes1) * 0.1f * 10) / 10);
                             byte[] humidityBytes1 = Arrays.copyOfRange(value1, 8, 10);
-                            float humidity1 = MokoUtils.toInt(humidityBytes1) * 0.1f;
+                            float humidity1 = (float) (Math.round(MokoUtils.toInt(humidityBytes1) * 0.1f * 10) / 10);
+                            mTempList.add(temp1);
+                            mHumiList.add(humidity1);
                             Calendar calendar1 = Calendar.getInstance();
                             calendar1.set(Calendar.YEAR, 2000 + year1);
                             calendar1.set(Calendar.MONTH, month1 - 1);
@@ -227,9 +263,11 @@ public class ExportDataActivity extends BaseActivity {
                             int minute2 = value2[4] & 0xff;
                             int second2 = value2[5] & 0xff;
                             byte[] tempBytes2 = Arrays.copyOfRange(value2, 6, 8);
-                            float temp2 = MokoUtils.byte2short(tempBytes2) * 0.1f;
+                            float temp2 = (float) (Math.round(MokoUtils.byte2short(tempBytes2) * 0.1f * 10) / 10);
                             byte[] humidityBytes2 = Arrays.copyOfRange(value2, 8, 10);
-                            float humidity2 = MokoUtils.toInt(humidityBytes2) * 0.1f;
+                            float humidity2 = (float) (Math.round(MokoUtils.toInt(humidityBytes2) * 0.1f * 10) / 10);
+                            mTempList.add(temp2);
+                            mHumiList.add(humidity2);
                             Calendar calendar2 = Calendar.getInstance();
                             calendar2.set(Calendar.YEAR, 2000 + year2);
                             calendar2.set(Calendar.MONTH, month2 - 1);
@@ -258,9 +296,11 @@ public class ExportDataActivity extends BaseActivity {
                             int minute = value[4] & 0xff;
                             int second = value[5] & 0xff;
                             byte[] tempBytes = Arrays.copyOfRange(value, 6, 8);
-                            float temp = MokoUtils.byte2short(tempBytes) * 0.1f;
+                            float temp = (float) (Math.round(MokoUtils.byte2short(tempBytes) * 0.1f * 10) / 10);
                             byte[] humidityBytes = Arrays.copyOfRange(value, 8, 10);
-                            float humidity = MokoUtils.toInt(humidityBytes) * 0.1f;
+                            float humidity = (float) (Math.round(MokoUtils.toInt(humidityBytes) * 0.1f * 10) / 10);
+                            mTempList.add(temp);
+                            mHumiList.add(humidity);
                             Calendar calendar = Calendar.getInstance();
                             calendar.set(Calendar.YEAR, 2000 + year);
                             calendar.set(Calendar.MONTH, month - 1);
@@ -282,6 +322,16 @@ public class ExportDataActivity extends BaseActivity {
                             storeString.append(String.format("%s T%s H%s", time, tempStr, humidityStr));
                             storeString.append("\n");
                         }
+                        if (mHandler.hasMessages(0))
+                            mHandler.removeMessages(0);
+                        mHandler.postDelayed(() -> {
+                            XLog.i("Timeout");
+                            MokoSupport.getInstance().disableStoreNotify();
+                            isSync = false;
+                            ivSync.clearAnimation();
+                            tvSync.setText("Sync");
+                            cbDataShow.setEnabled(true);
+                        }, 10 * 1000);
                         break;
                 }
             }
@@ -320,6 +370,10 @@ public class ExportDataActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mTempList.clear();
+        mTempList = null;
+        mHumiList.clear();
+        mHumiList = null;
         if (mReceiverTag) {
             mReceiverTag = false;
             // 注销广播
@@ -377,11 +431,14 @@ public class ExportDataActivity extends BaseActivity {
                     Animation animation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh);
                     ivSync.startAnimation(animation);
                     tvSync.setText("Stop");
+                    cbDataShow.setChecked(false);
+                    cbDataShow.setEnabled(false);
                 } else {
                     MokoSupport.getInstance().disableStoreNotify();
                     isSync = false;
                     ivSync.clearAnimation();
                     tvSync.setText("Sync");
+                    cbDataShow.setEnabled(true);
                 }
                 break;
             case R.id.tv_export:
