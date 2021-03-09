@@ -51,7 +51,7 @@ public class StorageTimeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_storage_time, container, false);
         ButterKnife.bind(this, view);
         activity = (THDataActivity) getActivity();
-        tvTimeTips.setText(getString(R.string.time_only_tips, mSelected));
+        tvTimeTips.setText(getString(R.string.time_only_tips, mSelected + 1));
         mDatas = new ArrayList<>();
         for (int i = 1; i <= 255; i++) {
             mDatas.add(i + "");
@@ -82,19 +82,19 @@ public class StorageTimeFragment extends Fragment {
         BottomDialog dialog = new BottomDialog();
         dialog.setDatas(mDatas, mSelected);
         dialog.setListener(value -> {
-            mSelected = Integer.parseInt(mDatas.get(value));
+            mSelected = value;
             tvStorageTimeOnly.setText(mDatas.get(value));
-            tvTimeTips.setText(getString(R.string.time_only_tips, mSelected));
-            activity.setSelectedTime(mSelected);
+            tvTimeTips.setText(getString(R.string.time_only_tips, mSelected + 1));
+            activity.setSelectedTime(mSelected + 1);
         });
         dialog.show(activity.getSupportFragmentManager());
     }
 
-    private int mSelected = 1;
+    private int mSelected = 0;
 
     public void setTimeData(int data) {
-        mSelected = data;
-        tvStorageTimeOnly.setText(mSelected + "");
-        tvTimeTips.setText(getString(R.string.time_only_tips, mSelected));
+        mSelected = data - 1;
+        tvStorageTimeOnly.setText(String.valueOf(data));
+        tvTimeTips.setText(getString(R.string.time_only_tips, data));
     }
 }

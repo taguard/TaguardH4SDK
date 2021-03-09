@@ -79,7 +79,7 @@ public final class MokoBleScanner {
                 byte[] scanRecord = result.getScanRecord().getBytes();
                 String name = result.getScanRecord().getDeviceName();
                 int rssi = result.getRssi();
-                if (TextUtils.isEmpty(name) || scanRecord.length == 0 || rssi == 127) {
+                if (scanRecord.length == 0 || rssi == 127) {
                     return;
                 }
                 DeviceInfo deviceInfo = new DeviceInfo();

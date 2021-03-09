@@ -23,11 +23,11 @@ import java.util.List;
 
 public class THChartView extends View {
     //xy坐标轴颜色
-    private int xylinecolor = 0xff000000;
+    private int xylinecolor = Color.GRAY;
     //xy坐标轴宽度
-    private int xylinewidth = dpToPx(1);
+    private int xylinewidth = dpToPx(2);
     //xy坐标轴文字颜色
-    private int xytextcolor = 0xff333333;
+    private int xytextcolor = Color.GRAY;
     //xy坐标轴文字大小
     private int xytextsize = spToPx(12);
     //折线图中折线的颜色
@@ -42,6 +42,7 @@ public class THChartView extends View {
     private Paint xyTextPaint;
     //画折线对应的画笔
     private Paint linePaint;
+    private int bgColor = Color.TRANSPARENT;
     //画背景对应的画笔
     private Paint bgPaint;
     private int width;
@@ -136,7 +137,7 @@ public class THChartView extends View {
         bgPaint.setAntiAlias(true);
         bgPaint.setStrokeWidth(xylinewidth);
         bgPaint.setStrokeCap(Paint.Cap.ROUND);
-        bgPaint.setColor(Color.WHITE);
+        bgPaint.setColor(bgColor);
         bgPaint.setStyle(Paint.Style.FILL);
     }
 
@@ -397,7 +398,7 @@ public class THChartView extends View {
      * @param canvas
      */
     private void drawXY(Canvas canvas) {
-        int length = dpToPx(4);//刻度的长度
+        int length = dpToPx(1);//刻度的长度
         //绘制Y坐标
         canvas.drawLine(xOri - xylinewidth / 2, 0, xOri - xylinewidth / 2, yOri, xyPaint);
 //        //绘制y轴箭头
@@ -411,7 +412,7 @@ public class THChartView extends View {
         int yScale = yOri / (yValue.size() - 1);
         for (int i = 0; i < yValue.size(); i++) {
             //绘制Y轴刻度
-            canvas.drawLine(xOri, yOri - yScale * i + xylinewidth / 2, xOri + length, yOri - yScale * i + xylinewidth / 2, xyPaint);
+            canvas.drawLine(xOri, yOri - yScale * i, xOri + length, yOri - yScale * i, xyPaint);
 //            xyTextPaint.setColor(xytextcolor);
             //绘制Y轴文本
             String text = yValue.get(i);
@@ -428,7 +429,7 @@ public class THChartView extends View {
             }
         }
         //绘制X轴坐标
-        canvas.drawLine(xOri, yOri + xylinewidth / 2, width, yOri + xylinewidth / 2, xyPaint);
+//        canvas.drawLine(xOri, yOri + xylinewidth / 2, width, yOri + xylinewidth / 2, xyPaint);
 //        //绘制x轴箭头
 //        xyPaint.setStyle(Paint.Style.STROKE);
 //        path = new Path();

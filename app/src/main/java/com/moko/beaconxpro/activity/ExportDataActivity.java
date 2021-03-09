@@ -82,6 +82,10 @@ public class ExportDataActivity extends BaseActivity {
     THChartView humiChartView;
     @BindView(R.id.sv_th_data)
     ScrollView svTHData;
+    @BindView(R.id.th_chart_total)
+    TextView thChartTotal;
+    @BindView(R.id.th_chart_display)
+    TextView thChartDisplay;
 
     private boolean mReceiverTag = false;
     private StringBuffer storeString = new StringBuffer();
@@ -113,6 +117,9 @@ public class ExportDataActivity extends BaseActivity {
                 llTHChartView.setVisibility(View.VISIBLE);
                 tempChartView.setxValue(mTempList);
                 humiChartView.setxValue(mHumiList);
+                int length = mTempList.size();
+                thChartTotal.setText(getString(R.string.th_chart_total, length));
+                thChartDisplay.setText(getString(R.string.th_chart_display, length > 1000 ? 1000 : length));
             } else {
                 // 隐藏折线图
                 svTHData.setVisibility(View.VISIBLE);

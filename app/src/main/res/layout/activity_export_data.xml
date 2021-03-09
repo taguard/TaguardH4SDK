@@ -71,10 +71,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="40dp"
-            android:layout_marginTop="10dp"
             android:layout_toRightOf="@id/ll_sync"
-            android:button="@drawable/selector_data_show"
-            android:checked="false" />
+            android:button="@null"
+            android:checked="false"
+            android:drawableTop="@drawable/selector_data_show"
+            android:text="Display"
+            android:textColor="@color/black_333333"
+            android:textSize="13sp" />
 
 
         <TextView
@@ -157,8 +160,27 @@
                 android:id="@+id/ll_th_chart_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/white_ffffff"
                 android:orientation="vertical"
                 android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/th_chart_total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:text="@string/th_chart_total"
+                    android:textColor="@color/blue_2f84d0"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/th_chart_display"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:text="@string/th_chart_display"
+                    android:textColor="@color/blue_2f84d0"
+                    android:textSize="13sp" />
 
                 <com.moko.beaconxpro.view.THChartView
                     android:id="@+id/temp_chart_view"
