@@ -51,8 +51,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.concurrent.ConcurrentHashMap;
 
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -78,7 +78,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
     @BindView(R.id.tv_filter)
     TextView tv_filter;
     private boolean mReceiverTag = false;
-    private HashMap<String, BeaconXInfo> beaconXInfoHashMap;
+    private ConcurrentHashMap<String, BeaconXInfo> beaconXInfoHashMap;
     private ArrayList<BeaconXInfo> beaconXInfos;
     private BeaconXListAdapter adapter;
     private boolean mInputPassword;
@@ -91,7 +91,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        beaconXInfoHashMap = new HashMap<>();
+        beaconXInfoHashMap = new ConcurrentHashMap<>();
         beaconXInfos = new ArrayList<>();
         adapter = new BeaconXListAdapter();
         adapter.replaceData(beaconXInfos);
@@ -395,6 +395,7 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
         } else {
             beaconXInfos.addAll(beaconXInfoHashMap.values());
         }
+        System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
         Collections.sort(beaconXInfos, new Comparator<BeaconXInfo>() {
             @Override
             public int compare(BeaconXInfo lhs, BeaconXInfo rhs) {

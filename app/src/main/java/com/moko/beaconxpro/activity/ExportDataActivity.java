@@ -29,6 +29,7 @@ import com.elvishew.xlog.XLog;
 import com.moko.beaconxpro.AppConstants;
 import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.dialog.AlertMessageDialog;
+import com.moko.beaconxpro.dialog.LoadingMessageDialog;
 import com.moko.beaconxpro.utils.ToastUtils;
 import com.moko.beaconxpro.utils.Utils;
 import com.moko.beaconxpro.view.THChartView;
@@ -389,24 +390,18 @@ public class ExportDataActivity extends BaseActivity {
         EventBus.getDefault().unregister(this);
     }
 
-    private ProgressDialog syncingDialog;
+    private LoadingMessageDialog mLoadingMessageDialog;
 
     public void showSyncingProgressDialog() {
-        syncingDialog = new ProgressDialog(this);
-        syncingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        syncingDialog.setCanceledOnTouchOutside(false);
-        syncingDialog.setCancelable(false);
-        syncingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        syncingDialog.setMessage("Syncing...");
-        if (!isFinishing() && syncingDialog != null && !syncingDialog.isShowing()) {
-            syncingDialog.show();
-        }
+        mLoadingMessageDialog = new LoadingMessageDialog();
+        mLoadingMessageDialog.setMessage("Syncing..");
+        mLoadingMessageDialog.show(getSupportFragmentManager());
+
     }
 
     public void dismissSyncProgressDialog() {
-        if (!isFinishing() && syncingDialog != null && syncingDialog.isShowing()) {
-            syncingDialog.dismiss();
-        }
+        if (mLoadingMessageDialog != null)
+            mLoadingMessageDialog.dismissAllowingStateLoss();
     }
 
     @OnClick({R.id.tv_back, R.id.tv_empty, R.id.ll_sync, R.id.tv_export})

@@ -2,7 +2,6 @@ package com.moko.beaconxpro.activity;
 
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,7 +11,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -21,6 +19,7 @@ import android.widget.TextView;
 
 import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.dialog.BottomDialog;
+import com.moko.beaconxpro.dialog.LoadingMessageDialog;
 import com.moko.beaconxpro.utils.ToastUtils;
 import com.moko.ble.lib.MokoConstants;
 import com.moko.ble.lib.event.ConnectStatusEvent;
@@ -256,24 +255,18 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
         EventBus.getDefault().unregister(this);
     }
 
-    private ProgressDialog syncingDialog;
+    private LoadingMessageDialog mLoadingMessageDialog;
 
     public void showSyncingProgressDialog() {
-        syncingDialog = new ProgressDialog(this);
-        syncingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        syncingDialog.setCanceledOnTouchOutside(false);
-        syncingDialog.setCancelable(false);
-        syncingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        syncingDialog.setMessage("Syncing...");
-        if (!isFinishing() && syncingDialog != null && !syncingDialog.isShowing()) {
-            syncingDialog.show();
-        }
+        mLoadingMessageDialog = new LoadingMessageDialog();
+        mLoadingMessageDialog.setMessage("Syncing..");
+        mLoadingMessageDialog.show(getSupportFragmentManager());
+
     }
 
     public void dismissSyncProgressDialog() {
-        if (!isFinishing() && syncingDialog != null && syncingDialog.isShowing()) {
-            syncingDialog.dismiss();
-        }
+        if (mLoadingMessageDialog != null)
+            mLoadingMessageDialog.dismissAllowingStateLoss();
     }
 
     @OnClick({R.id.tv_back, R.id.ll_sync, R.id.iv_save, R.id.tv_axis_scale, R.id.tv_axis_data_rate})

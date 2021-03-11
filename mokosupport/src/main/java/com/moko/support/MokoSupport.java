@@ -64,15 +64,15 @@ public class MokoSupport extends MokoBleLib {
     @Override
     public void onDeviceConnected(BluetoothGatt gatt) {
         mCharacteristicMap = new MokoCharacteristicHandler().getCharacteristics(gatt);
-        com.moko.ble.lib.event.ConnectStatusEvent connectStatusEvent = new com.moko.ble.lib.event.ConnectStatusEvent();
-        connectStatusEvent.setAction(com.moko.ble.lib.MokoConstants.ACTION_DISCOVER_SUCCESS);
+        ConnectStatusEvent connectStatusEvent = new ConnectStatusEvent();
+        connectStatusEvent.setAction(MokoConstants.ACTION_DISCOVER_SUCCESS);
         EventBus.getDefault().post(connectStatusEvent);
     }
 
     @Override
     public void onDeviceDisconnected(BluetoothDevice device) {
-        com.moko.ble.lib.event.ConnectStatusEvent connectStatusEvent = new ConnectStatusEvent();
-        connectStatusEvent.setAction(com.moko.ble.lib.MokoConstants.ACTION_DISCONNECTED);
+        ConnectStatusEvent connectStatusEvent = new ConnectStatusEvent();
+        connectStatusEvent.setAction(MokoConstants.ACTION_DISCONNECTED);
         EventBus.getDefault().post(connectStatusEvent);
     }
 
@@ -96,23 +96,23 @@ public class MokoSupport extends MokoBleLib {
 
     @Override
     public void orderFinish() {
-        com.moko.ble.lib.event.OrderTaskResponseEvent event = new com.moko.ble.lib.event.OrderTaskResponseEvent();
-        event.setAction(com.moko.ble.lib.MokoConstants.ACTION_ORDER_FINISH);
+        OrderTaskResponseEvent event = new OrderTaskResponseEvent();
+        event.setAction(MokoConstants.ACTION_ORDER_FINISH);
         EventBus.getDefault().post(event);
     }
 
     @Override
     public void orderTimeout(OrderTaskResponse response) {
-        com.moko.ble.lib.event.OrderTaskResponseEvent event = new com.moko.ble.lib.event.OrderTaskResponseEvent();
-        event.setAction(com.moko.ble.lib.MokoConstants.ACTION_ORDER_TIMEOUT);
+        OrderTaskResponseEvent event = new OrderTaskResponseEvent();
+        event.setAction(MokoConstants.ACTION_ORDER_TIMEOUT);
         event.setResponse(response);
         EventBus.getDefault().post(event);
     }
 
     @Override
     public void orderResult(OrderTaskResponse response) {
-        com.moko.ble.lib.event.OrderTaskResponseEvent event = new com.moko.ble.lib.event.OrderTaskResponseEvent();
-        event.setAction(com.moko.ble.lib.MokoConstants.ACTION_ORDER_RESULT);
+        OrderTaskResponseEvent event = new OrderTaskResponseEvent();
+        event.setAction(MokoConstants.ACTION_ORDER_RESULT);
         event.setResponse(response);
         EventBus.getDefault().post(event);
     }
@@ -153,7 +153,7 @@ public class MokoSupport extends MokoBleLib {
         OrderTaskResponse response = new OrderTaskResponse();
         response.orderCHAR = orderCHAR;
         response.responseValue = value;
-        com.moko.ble.lib.event.OrderTaskResponseEvent event = new OrderTaskResponseEvent();
+        OrderTaskResponseEvent event = new OrderTaskResponseEvent();
         event.setAction(MokoConstants.ACTION_CURRENT_DATA);
         event.setResponse(response);
         EventBus.getDefault().post(event);

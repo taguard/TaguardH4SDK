@@ -2,7 +2,6 @@ package com.moko.beaconxpro.activity;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,7 +10,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -22,6 +20,7 @@ import com.moko.beaconxpro.AppConstants;
 import com.moko.beaconxpro.R;
 import com.moko.beaconxpro.able.ISlotDataAction;
 import com.moko.beaconxpro.dialog.BottomDialog;
+import com.moko.beaconxpro.dialog.LoadingMessageDialog;
 import com.moko.beaconxpro.fragment.AxisFragment;
 import com.moko.beaconxpro.fragment.DeviceInfoFragment;
 import com.moko.beaconxpro.fragment.IBeaconFragment;
@@ -433,24 +432,17 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
         EventBus.getDefault().unregister(this);
     }
 
-    private ProgressDialog syncingDialog;
+    private LoadingMessageDialog mLoadingMessageDialog;
 
     public void showSyncingProgressDialog() {
-        syncingDialog = new ProgressDialog(this);
-        syncingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        syncingDialog.setCanceledOnTouchOutside(false);
-        syncingDialog.setCancelable(false);
-        syncingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        syncingDialog.setMessage("Syncing...");
-        if (!isFinishing() && syncingDialog != null && !syncingDialog.isShowing()) {
-            syncingDialog.show();
-        }
+        mLoadingMessageDialog = new LoadingMessageDialog();
+        mLoadingMessageDialog.setMessage("Syncing..");
+        mLoadingMessageDialog.show(getSupportFragmentManager());
     }
 
     public void dismissSyncProgressDialog() {
-        if (!isFinishing() && syncingDialog != null && syncingDialog.isShowing()) {
-            syncingDialog.dismiss();
-        }
+        if (mLoadingMessageDialog != null)
+            mLoadingMessageDialog.dismissAllowingStateLoss();
     }
 
     @OnClick({R.id.tv_back, R.id.iv_save, R.id.tv_trigger_type, R.id.iv_trigger})
