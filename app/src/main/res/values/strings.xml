@@ -3,6 +3,7 @@
 
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
+    <string name="ok">OK</string>
 
     <string name="permission_storage_close_title">Storage permission is not available</string>
     <string name="permission_storage_close_content">Please find it in cellphone setting- permission, and allow BeaconXPro use the Storage permission</string>

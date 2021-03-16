@@ -412,7 +412,7 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
                     switch (blueState) {
                         case BluetoothAdapter.STATE_TURNING_OFF:
                             // 蓝牙断开
-                            SlotDataActivity.this.finish();
+                            finish();
                             break;
 
                     }

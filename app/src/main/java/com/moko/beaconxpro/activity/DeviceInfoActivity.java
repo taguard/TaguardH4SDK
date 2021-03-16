@@ -1,14 +1,12 @@
 package com.moko.beaconxpro.activity;
 
 
-import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
@@ -90,6 +88,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
     private int validCount;
     private int lockState;
     private boolean mReceiverTag = false;
+    private int mDisconnectType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,9 +135,10 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
         runOnUiThread(() -> {
             if (MokoConstants.ACTION_DISCONNECTED.equals(action)) {
                 // 设备断开，通知页面更新
-                if (mIsClose) {
+                if (mIsClose)
                     return;
-                }
+                if (mDisconnectType > 0)
+                    return;
                 if (MokoSupport.getInstance().isBluetoothOpen() && !isUpgrade) {
                     AlertMessageDialog dialog = new AlertMessageDialog();
                     dialog.setTitle("Dismiss");
@@ -170,6 +170,40 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
         final String action = event.getAction();
         runOnUiThread(() -> {
             if (MokoConstants.ACTION_CURRENT_DATA.equals(action)) {
+                OrderTaskResponse response = event.getResponse();
+                OrderCHAR orderCHAR = (OrderCHAR) response.orderCHAR;
+                int responseType = response.responseType;
+                byte[] value = response.responseValue;
+                switch (orderCHAR) {
+                    case CHAR_DISCONNECT:
+                        if (value.length >= 1) {
+                            mDisconnectType = value[0] & 0xff;
+                            if (mDisconnectType == 1 && isModifyPassword) {
+                                isModifyPassword = false;
+                                dismissSyncProgressDialog();
+                                AlertMessageDialog dialog = new AlertMessageDialog();
+                                dialog.setMessage("Modify password success!\nPlease reconnect the Device.");
+                                dialog.setCancelGone();
+                                dialog.setConfirm(R.string.ok);
+                                dialog.setOnAlertConfirmListener(() -> {
+                                    setResult(RESULT_OK);
+                                    finish();
+                                });
+                                dialog.show(getSupportFragmentManager());
+                            } else if (mDisconnectType == 2) {
+                                AlertMessageDialog dialog = new AlertMessageDialog();
+                                dialog.setMessage("Reset success!\nPlease reconnect the Device.");
+                                dialog.setCancelGone();
+                                dialog.setConfirm(R.string.ok);
+                                dialog.setOnAlertConfirmListener(() -> {
+                                    setResult(RESULT_OK);
+                                    finish();
+                                });
+                                dialog.show(getSupportFragmentManager());
+                            }
+                        }
+                        break;
+                }
             }
             if (MokoConstants.ACTION_ORDER_TIMEOUT.equals(action)) {
             }
@@ -321,24 +355,24 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                     case CHAR_LOCK_STATE:
                         String valueHexStr = MokoUtils.bytesToHexString(value);
                         if (responseType == OrderTask.RESPONSE_TYPE_WRITE) {
-                            if ("eb63000100".equals(valueHexStr.toLowerCase())) {
-                                // 设备上锁
-                                if (isModifyPassword) {
-                                    isModifyPassword = false;
-                                    dismissSyncProgressDialog();
-                                    AlertMessageDialog dialog = new AlertMessageDialog();
-                                    dialog.setMessage("Modify password success!\nPlease reconnect the Device.");
-                                    dialog.setCancelGone();
-                                    dialog.setOnAlertConfirmListener(new AlertMessageDialog.OnAlertConfirmListener() {
-                                        @Override
-                                        public void onClick() {
-                                            DeviceInfoActivity.this.setResult(DeviceInfoActivity.this.RESULT_OK);
-                                            back();
-                                        }
-                                    });
-                                    dialog.show(getSupportFragmentManager());
-                                }
-                            }
+//                            if ("eb63000100".equals(valueHexStr.toLowerCase())) {
+//                                // 设备上锁
+//                                if (isModifyPassword) {
+//                                    isModifyPassword = false;
+//                                    dismissSyncProgressDialog();
+//                                    AlertMessageDialog dialog = new AlertMessageDialog();
+//                                    dialog.setMessage("Modify password success!\nPlease reconnect the Device.");
+//                                    dialog.setCancelGone();
+//                                    dialog.setOnAlertConfirmListener(new AlertMessageDialog.OnAlertConfirmListener() {
+//                                        @Override
+//                                        public void onClick() {
+//                                            DeviceInfoActivity.this.setResult(DeviceInfoActivity.this.RESULT_OK);
+//                                            back();
+//                                        }
+//                                    });
+//                                    dialog.show(getSupportFragmentManager());
+//                                }
+//                            }
                         }
                         if (responseType == OrderTask.RESPONSE_TYPE_READ) {
                             if ("01".equals(valueHexStr.toLowerCase())) {
@@ -362,13 +396,13 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                             MokoSupport.getInstance().sendOrder(OrderTaskAssembler.getLockState());
                         }
                         break;
-                    case CHAR_RESET_DEVICE:
-                        if (lockState == 2) {
-                            ToastUtils.showToast(DeviceInfoActivity.this, "Communication Timeout!");
-                        } else {
-                            ToastUtils.showToast(DeviceInfoActivity.this, "Reset successfully!\nPlease reconnect the Device.");
-                        }
-                        break;
+//                    case CHAR_RESET_DEVICE:
+//                        if (lockState == 2) {
+//                            ToastUtils.showToast(DeviceInfoActivity.this, "Communication Timeout!");
+//                        } else {
+//                            ToastUtils.showToast(DeviceInfoActivity.this, "Reset successfully!\nPlease reconnect the Device.");
+//                        }
+//                        break;
                 }
             }
         });
@@ -410,17 +444,15 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                     switch (blueState) {
                         case BluetoothAdapter.STATE_TURNING_OFF:
                             dismissSyncProgressDialog();
-                            AlertDialog.Builder builder = new AlertDialog.Builder(DeviceInfoActivity.this);
-                            builder.setTitle("Dismiss");
-                            builder.setCancelable(false);
-                            builder.setMessage("The current system of bluetooth is not available!");
-                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    back();
-                                }
+                            AlertMessageDialog dialog = new AlertMessageDialog();
+                            dialog.setTitle("Dismiss");
+                            dialog.setCancelGone();
+                            dialog.setMessage("The current system of bluetooth is not available!");
+                            dialog.setConfirm(R.string.ok);
+                            dialog.setOnAlertConfirmListener(() -> {
+                                finish();
                             });
-                            builder.show();
+                            dialog.show(getSupportFragmentManager());
                             break;
                         case BluetoothAdapter.STATE_TURNING_ON:
                             showSyncingProgressDialog();
@@ -660,18 +692,16 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
         if (!isFinishing() && mDFUDialog != null && mDFUDialog.isShowing()) {
             mDFUDialog.dismiss();
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(DeviceInfoActivity.this);
-        builder.setTitle("Dismiss");
-        builder.setCancelable(false);
-        builder.setMessage("The device disconnected!");
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                isUpgrade = false;
-                back();
-            }
+        AlertMessageDialog dialog = new AlertMessageDialog();
+        dialog.setTitle("Dismiss");
+        dialog.setCancelGone();
+        dialog.setMessage("The device disconnected!");
+        dialog.setConfirm(R.string.ok);
+        dialog.setOnAlertConfirmListener(() -> {
+            isUpgrade = false;
+            back();
         });
-        builder.show();
+        dialog.show(getSupportFragmentManager());
     }
 
     @Override
@@ -695,7 +725,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
             XLog.w("onDeviceConnecting...");
             mDeviceConnectCount++;
             if (mDeviceConnectCount > 3) {
-                Toast.makeText(DeviceInfoActivity.this, "Error:DFU Failed", Toast.LENGTH_SHORT).show();
+                ToastUtils.showToast(DeviceInfoActivity.this, "Error:DFU Failed");
                 dismissDFUProgressDialog();
                 final LocalBroadcastManager manager = LocalBroadcastManager.getInstance(DeviceInfoActivity.this);
                 final Intent abortAction = new Intent(DfuService.BROADCAST_ACTION);
@@ -728,8 +758,20 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
 
         @Override
         public void onDfuCompleted(String deviceAddress) {
-            ToastUtils.showToast(DeviceInfoActivity.this, "DFU Successfully!\nPlease reconnect the Device.");
-            dismissDFUProgressDialog();
+            mDeviceConnectCount = 0;
+            if (!isFinishing() && mDFUDialog != null && mDFUDialog.isShowing()) {
+                mDFUDialog.dismiss();
+            }
+            AlertMessageDialog dialog = new AlertMessageDialog();
+            dialog.setCancelGone();
+            dialog.setMessage("DFU Successfully!\nPlease reconnect the device.");
+            dialog.setConfirm(R.string.ok);
+            dialog.setOnAlertConfirmListener(() -> {
+                isUpgrade = false;
+                DeviceInfoActivity.this.setResult(RESULT_OK);
+                finish();
+            });
+            dialog.show(getSupportFragmentManager());
         }
 
         @Override
@@ -744,9 +786,17 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
 
         @Override
         public void onError(String deviceAddress, int error, int errorType, String message) {
-            ToastUtils.showToast(DeviceInfoActivity.this, "Opps!DFU Failed.\nPlease try again!");
             XLog.i("Error:" + message);
-            dismissDFUProgressDialog();
+            AlertMessageDialog dialog = new AlertMessageDialog();
+            dialog.setCancelGone();
+            dialog.setMessage("Opps!DFU Failed.\nPlease try again!");
+            dialog.setConfirm(R.string.ok);
+            dialog.setOnAlertConfirmListener(() -> {
+                isUpgrade = false;
+                DeviceInfoActivity.this.setResult(RESULT_OK);
+                finish();
+            });
+            dialog.show(getSupportFragmentManager());
         }
     };
 }

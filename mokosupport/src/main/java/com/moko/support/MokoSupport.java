@@ -147,6 +147,9 @@ public class MokoSupport extends MokoBleLib {
         if (responseUUID.equals(OrderCHAR.CHAR_THREE_AXIS_NOTIFY.getUuid())) {
             orderCHAR = OrderCHAR.CHAR_THREE_AXIS_NOTIFY;
         }
+        if (responseUUID.equals(OrderCHAR.CHAR_DISCONNECT.getUuid())) {
+            orderCHAR = OrderCHAR.CHAR_DISCONNECT;
+        }
         if (orderCHAR == null)
             return false;
         XLog.i(orderCHAR.name());

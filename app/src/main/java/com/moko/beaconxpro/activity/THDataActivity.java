@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.elvishew.xlog.XLog;
 import com.moko.beaconxpro.AppConstants;
 import com.moko.beaconxpro.R;
+import com.moko.beaconxpro.dialog.AlertMessageDialog;
 import com.moko.beaconxpro.dialog.LoadingMessageDialog;
 import com.moko.beaconxpro.fragment.StorageHumidityFragment;
 import com.moko.beaconxpro.fragment.StorageTHFragment;
@@ -338,17 +339,7 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
                     switch (blueState) {
                         case BluetoothAdapter.STATE_TURNING_OFF:
                             dismissSyncProgressDialog();
-                            AlertDialog.Builder builder = new AlertDialog.Builder(THDataActivity.this);
-                            builder.setTitle("Dismiss");
-                            builder.setCancelable(false);
-                            builder.setMessage("The current system of bluetooth is not available!");
-                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    back();
-                                }
-                            });
-                            builder.show();
+                            finish();
                             break;
                     }
                 }

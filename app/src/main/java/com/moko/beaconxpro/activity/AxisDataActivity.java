@@ -1,11 +1,9 @@
 package com.moko.beaconxpro.activity;
 
 
-import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -18,6 +16,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.moko.beaconxpro.R;
+import com.moko.beaconxpro.dialog.AlertMessageDialog;
 import com.moko.beaconxpro.dialog.BottomDialog;
 import com.moko.beaconxpro.dialog.LoadingMessageDialog;
 import com.moko.beaconxpro.utils.ToastUtils;
@@ -226,17 +225,7 @@ public class AxisDataActivity extends BaseActivity implements SeekBar.OnSeekBarC
                     switch (blueState) {
                         case BluetoothAdapter.STATE_TURNING_OFF:
                             dismissSyncProgressDialog();
-                            AlertDialog.Builder builder = new AlertDialog.Builder(AxisDataActivity.this);
-                            builder.setTitle("Dismiss");
-                            builder.setCancelable(false);
-                            builder.setMessage("The current system of bluetooth is not available!");
-                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    back();
-                                }
-                            });
-                            builder.show();
+                            finish();
                             break;
                     }
                 }

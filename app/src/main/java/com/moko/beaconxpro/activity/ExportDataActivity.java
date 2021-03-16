@@ -357,17 +357,7 @@ public class ExportDataActivity extends BaseActivity {
                     switch (blueState) {
                         case BluetoothAdapter.STATE_TURNING_OFF:
                             dismissSyncProgressDialog();
-                            AlertDialog.Builder builder = new AlertDialog.Builder(ExportDataActivity.this);
-                            builder.setTitle("Dismiss");
-                            builder.setCancelable(false);
-                            builder.setMessage("The current system of bluetooth is not available!");
-                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    back();
-                                }
-                            });
-                            builder.show();
+                            finish();
                             break;
                     }
                 }
@@ -414,6 +404,7 @@ public class ExportDataActivity extends BaseActivity {
                 AlertMessageDialog dialog = new AlertMessageDialog();
                 dialog.setTitle("Warning!");
                 dialog.setMessage("Are you sure to empty the saved T&H data?");
+                dialog.setConfirm(R.string.ok);
                 dialog.setOnAlertConfirmListener(new AlertMessageDialog.OnAlertConfirmListener() {
                     @Override
                     public void onClick() {

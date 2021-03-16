@@ -195,9 +195,9 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
             } else {
                 MokoSupport.getInstance().disConnectBle();
                 AlertMessageDialog dialog = new AlertMessageDialog();
-                dialog.setMessage("Oops! Something went wrong. Please check the device version or contact MOKO.");
+                dialog.setMessage("Oops!Something went wrong. Please check the device version.");
+                dialog.setConfirm(R.string.ok);
                 dialog.show(getSupportFragmentManager());
-
             }
         }
     }

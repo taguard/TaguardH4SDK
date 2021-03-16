@@ -24,6 +24,7 @@ final class MokoBleConfig extends MokoBleManager {
     private BluetoothGattCharacteristic lockedCharacteristic;
     private BluetoothGattCharacteristic threeAxisCharacteristic;
     private BluetoothGattCharacteristic storeCharacteristic;
+    private BluetoothGattCharacteristic disconnectCharacteristic;
 
     public MokoBleConfig(@NonNull Context context, MokoResponseCallback callback) {
         super(context);
@@ -38,6 +39,8 @@ final class MokoBleConfig extends MokoBleManager {
             lockedCharacteristic = service.getCharacteristic(OrderCHAR.CHAR_LOCKED_NOTIFY.getUuid());
             threeAxisCharacteristic = service.getCharacteristic(OrderCHAR.CHAR_THREE_AXIS_NOTIFY.getUuid());
             storeCharacteristic = service.getCharacteristic(OrderCHAR.CHAR_STORE_NOTIFY.getUuid());
+            disconnectCharacteristic = service.getCharacteristic(OrderCHAR.CHAR_DISCONNECT.getUuid());
+            enableDisconnectNotify();
             enableLockedNotify();
             return true;
         }
@@ -146,5 +149,19 @@ final class MokoBleConfig extends MokoBleManager {
 
     public void disableLockedNotify() {
         disableNotifications(lockedCharacteristic).enqueue();
+    }
+
+    public void enableDisconnectNotify() {
+        setIndicationCallback(disconnectCharacteristic).with((device, data) -> {
+            final byte[] value = data.getValue();
+            XLog.e("onDataReceived");
+            XLog.e("device to app : " + MokoUtils.bytesToHexString(value));
+            mMokoResponseCallback.onCharacteristicChanged(disconnectCharacteristic, value);
+        });
+        enableNotifications(disconnectCharacteristic).enqueue();
+    }
+
+    public void disableDisconnectNotify() {
+        disableNotifications(disconnectCharacteristic).enqueue();
     }
 }

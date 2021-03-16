@@ -122,6 +122,7 @@ public class SettingFragment extends Fragment {
             case R.id.rl_reset_facotry:
                 final AlertMessageDialog resetDeviceDialog = new AlertMessageDialog();
                 resetDeviceDialog.setMessage("Are you sure to reset the device？");
+                resetDeviceDialog.setConfirm(R.string.ok);
                 resetDeviceDialog.setOnAlertConfirmListener(new AlertMessageDialog.OnAlertConfirmListener() {
                     @Override
                     public void onClick() {
@@ -134,6 +135,7 @@ public class SettingFragment extends Fragment {
                 if (isConneacted) {
                     final AlertMessageDialog connectAlertDialog = new AlertMessageDialog();
                     connectAlertDialog.setMessage("Are you sure to set the device non-connectable？");
+                    connectAlertDialog.setConfirm(R.string.ok);
                     connectAlertDialog.setOnAlertConfirmListener(() -> {
                         activity.setConnectable(false);
                     });
@@ -145,6 +147,7 @@ public class SettingFragment extends Fragment {
             case R.id.iv_power:
                 final AlertMessageDialog powerAlertDialog = new AlertMessageDialog();
                 powerAlertDialog.setMessage("Are you sure to turn off the device?Please make sure the device has a button to turn on!");
+                powerAlertDialog.setConfirm(R.string.ok);
                 powerAlertDialog.setOnAlertConfirmListener(new AlertMessageDialog.OnAlertConfirmListener() {
                     @Override
                     public void onClick() {
@@ -157,6 +160,7 @@ public class SettingFragment extends Fragment {
                 if (enableButtonPower) {
                     final AlertMessageDialog buttonPowerAlertDialog = new AlertMessageDialog();
                     buttonPowerAlertDialog.setMessage("If disable Button Power OFF, then it  cannot power off beacon by press button operation.");
+                    buttonPowerAlertDialog.setConfirm(R.string.ok);
                     buttonPowerAlertDialog.setOnAlertConfirmListener(new AlertMessageDialog.OnAlertConfirmListener() {
                         @Override
                         public void onClick() {
@@ -172,6 +176,7 @@ public class SettingFragment extends Fragment {
                 if (passwordVerify) {
                     final AlertMessageDialog directAlertDialog = new AlertMessageDialog();
                     directAlertDialog.setMessage("Are you sure to disable password verification？");
+                    directAlertDialog.setConfirm(R.string.ok);
                     directAlertDialog.setOnAlertConfirmListener(() -> {
                         activity.setDirectedConnectable(true);
                     });

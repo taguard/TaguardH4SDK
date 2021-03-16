@@ -6,7 +6,7 @@ import com.moko.support.entity.OrderCHAR;
 
 public class ResetDeviceTask extends OrderTask {
 
-    public byte[] data;
+    public byte[] data = new byte[]{0x0b};
 
     public ResetDeviceTask() {
         super(OrderCHAR.CHAR_RESET_DEVICE, OrderTask.RESPONSE_TYPE_WRITE);
