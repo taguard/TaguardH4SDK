@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:text="3-axis"
+            android:text="3-axis Acceleration"
             android:textColor="@color/black_333333"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -117,6 +117,28 @@
             android:textColor="@color/grey_666666"
             android:textSize="12sp" />
     </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="Sensitivity"
+            android:textColor="@color/grey_999999"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_sensitivity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="170dp"
+            android:text=""
+            android:textColor="@color/grey_666666"
+            android:textSize="12sp" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -127,7 +149,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:text="Acceleration data"
+            android:text="Acceleration"
             android:textColor="@color/grey_999999"
             android:textSize="12sp" />
 

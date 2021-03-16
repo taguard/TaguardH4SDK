@@ -133,6 +133,26 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
         XLog.i(newVal + "");
         mStorageType = newVal;
         XLog.i(picker.getContentByCurrValue());
+        switch (newVal) {
+            case 0:
+                mSelectedTemp = 0;
+                tempFragment.setTempData(mSelectedTemp);
+                break;
+            case 1:
+                mSelectedHumidity = 0;
+                humidityFragment.setHumidityData(mSelectedHumidity);
+                break;
+            case 2:
+                mSelectedTemp = 1;
+                mSelectedHumidity = 1;
+                thFragment.setTempData(mSelectedTemp);
+                thFragment.setHumidityData(mSelectedHumidity);
+                break;
+            case 3:
+                mSelectedTime = 1;
+                timeFragment.setTimeData(mSelectedTime);
+                break;
+        }
         showFragment(newVal);
     }
 
@@ -209,23 +229,28 @@ public class THDataActivity extends BaseActivity implements NumberPickerView.OnV
                                         mStorageType = 0;
                                         npvStorageCondition.setValue(0);
                                         byte[] temp = Arrays.copyOfRange(value, 5, 7);
-                                        tempFragment.setTempData(MokoUtils.toInt(temp));
+                                        mSelectedTemp = MokoUtils.toInt(temp) / 5;
+                                        tempFragment.setTempData(mSelectedTemp);
                                     } else if (value.length > 6 && (value[4] & 0xff) == 1) {
                                         mStorageType = 1;
                                         npvStorageCondition.setValue(1);
                                         byte[] humidity = Arrays.copyOfRange(value, 5, 7);
-                                        humidityFragment.setHumidityData(MokoUtils.toInt(humidity));
+                                        mSelectedHumidity = MokoUtils.toInt(humidity) / 5;
+                                        humidityFragment.setHumidityData(mSelectedHumidity);
                                     } else if (value.length > 8 && (value[4] & 0xff) == 2) {
                                         mStorageType = 2;
                                         npvStorageCondition.setValue(2);
                                         byte[] temp = Arrays.copyOfRange(value, 5, 7);
                                         byte[] humidity = Arrays.copyOfRange(value, 7, 9);
-                                        thFragment.setTempData(MokoUtils.toInt(temp));
-                                        thFragment.setHumidityData(MokoUtils.toInt(humidity));
+                                        mSelectedTemp = MokoUtils.toInt(temp) / 5;
+                                        thFragment.setTempData(mSelectedTemp);
+                                        mSelectedHumidity = MokoUtils.toInt(humidity) / 5;
+                                        thFragment.setHumidityData(mSelectedHumidity);
                                     } else if (value.length > 5 && (value[4] & 0xff) == 3) {
                                         mStorageType = 3;
                                         npvStorageCondition.setValue(3);
-                                        timeFragment.setTimeData(value[5] & 0xff);
+                                        mSelectedTime = value[5] & 0xff;
+                                        timeFragment.setTimeData(mSelectedTime);
                                     }
                                     showFragment(mStorageType);
                                     break;

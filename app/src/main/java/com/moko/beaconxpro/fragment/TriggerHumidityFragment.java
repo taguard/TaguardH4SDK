@@ -151,6 +151,9 @@ public class TriggerHumidityFragment extends Fragment implements SeekBar.OnSeekB
 
     public void setHumidityType(boolean isAbove) {
         mIsAbove = isAbove;
+        String humidityStr = String.format("%d%%", mProgress);
+        tvTriggerTips.setText(getString(R.string.trigger_t_h_tips,
+                mIsStart ? "start to broadcast" : "stop broadcasting", "humidity", mIsAbove ? "above" : "below", humidityStr));
     }
 
     public boolean getHumidityType() {

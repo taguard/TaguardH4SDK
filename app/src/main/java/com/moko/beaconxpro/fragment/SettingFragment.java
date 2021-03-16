@@ -36,8 +36,8 @@ public class SettingFragment extends Fragment {
     ImageView ivButtonPower;
     @BindView(R.id.rl_password)
     RelativeLayout rlPassword;
-    @BindView(R.id.iv_no_password)
-    ImageView ivNoPassowrd;
+    @BindView(R.id.iv_password_verify)
+    ImageView ivPasswordVerify;
     @BindView(R.id.rl_axis)
     RelativeLayout rlAxis;
     @BindView(R.id.rl_th)
@@ -90,7 +90,7 @@ public class SettingFragment extends Fragment {
     }
 
     @OnClick({R.id.rl_password, R.id.rl_update_firmware, R.id.rl_reset_facotry, R.id.iv_connectable,
-            R.id.iv_power, R.id.iv_button_power, R.id.iv_no_password, R.id.rl_axis, R.id.rl_th})
+            R.id.iv_power, R.id.iv_button_power, R.id.iv_password_verify, R.id.rl_axis, R.id.rl_th})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.rl_password:
@@ -168,8 +168,8 @@ public class SettingFragment extends Fragment {
                     activity.setButtonPower(true);
                 }
                 break;
-            case R.id.iv_no_password:
-                if (!noPassowrd) {
+            case R.id.iv_password_verify:
+                if (passwordVerify) {
                     final AlertMessageDialog directAlertDialog = new AlertMessageDialog();
                     directAlertDialog.setMessage("Are you sure to disable password verification？");
                     directAlertDialog.setOnAlertConfirmListener(() -> {
@@ -207,11 +207,11 @@ public class SettingFragment extends Fragment {
         ivPower.setImageResource(R.drawable.connectable_unchecked);
     }
 
-    private boolean noPassowrd;
+    private boolean passwordVerify;
 
-    public void setNoPassword(boolean noPassword) {
-        this.noPassowrd = noPassword;
-        ivNoPassowrd.setImageResource(noPassword ? R.drawable.connectable_checked : R.drawable.connectable_unchecked);
+    public void setPasswordVerify(boolean passwordVerify) {
+        this.passwordVerify = passwordVerify;
+        ivPasswordVerify.setImageResource(passwordVerify ? R.drawable.connectable_checked : R.drawable.connectable_unchecked);
     }
 
     private boolean enableButtonPower;
@@ -223,7 +223,7 @@ public class SettingFragment extends Fragment {
 
     public void setModifyPasswordVisiable(boolean isSupportModifyPassword) {
         rlPassword.setVisibility(isSupportModifyPassword ? View.VISIBLE : View.GONE);
-        rlResetFacotry.setVisibility(noPassowrd ? View.GONE : View.VISIBLE);
+        rlResetFacotry.setVisibility(passwordVerify ? View.VISIBLE : View.GONE);
     }
 
     public void setDeviceType(int deviceType) {

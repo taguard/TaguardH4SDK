@@ -1,6 +1,5 @@
 # BeaconXPro Android SDK Guide（English）
 
-
 ## Intro
 
 Please read the part of this document which you need.
@@ -212,7 +211,7 @@ public void onOrderTaskResponseEvent(OrderTaskResponseEvent event) {
         ...
     }
     if (MokoConstants.ACTION_CURRENT_DATA.equals(action)) {
-    // notiy data
+    // notify data
     }
 }
 ```
@@ -228,6 +227,7 @@ public void onOrderTaskResponseEvent(OrderTaskResponseEvent event) {
 > `ACTION_ORDER_FINISH`
 >
 > When the task in the queue is empty, `onOrderFinish` will be called back.
+
 > `ACTION_CURRENT_DATA`
 >
 > The data from device notify.
@@ -278,8 +278,9 @@ orderTasks.add(OrderTaskAssembler.getAdvInterval());
 MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
 
 ```
+How to parse the returned results, please refer to the code of the sample project and documentation.
 
-The real-time data of T&H, 3-Axes and storage are sent to APP by notification. you need to turn on and off the notification function of characteristic
+The current data of T&H, 3-Axes and storage are sent to APP by notification. you need to turn on and off the notification function of characteristic
 
 ```
 MokoSupport.getInstance().enableTHNotify();
@@ -289,6 +290,30 @@ MokoSupport.getInstance().disableStoreNotify();
 MokoSupport.getInstance().enableThreeAxisNotify();
 MokoSupport.getInstance().disableThreeAxisNotify();
 ```
+
+**OTA**
+
+We used the Nordic DFU for the OTA,dependencies have been added to build.gradle.
+
+```
+dependencies {
+    api 'no.nordicsemi.android:dfu:0.6.2'
+}
+```
+
+The OTA requires three important parameters:the path of firmware file,the adv name of device and the mac address of device.You can use it like this:
+
+```
+DfuServiceInitiator starter = new DfuServiceInitiator(deviceMac)
+    .setDeviceName(deviceName)
+    .setKeepBond(false)
+    .setDisableNotification(true);
+starter.setZip(null, firmwareFilePath);
+starter.start(this, DfuService.class);
+```
+you can get progress of OTA through `DfuProgressListener`,the examples can be referred to demo project.
+
+At the end of this part, you can refer all code above to develop. If there is something new, we will update this document.
 
 ## Notes
 
@@ -330,43 +355,23 @@ public void orderResult(OrderTaskResponse response) {
 
 @Override
 public boolean orderNotify(BluetoothGattCharacteristic characteristic, byte[] value) {
-    final UUID responseUUID = characteristic.getUuid();
-    OrderCHAR orderCHAR = null;
-    if (responseUUID.equals(OrderCHAR.CHAR_LOCKED_NOTIFY.getUuid())) {
-        orderCHAR = OrderCHAR.CHAR_LOCKED_NOTIFY;
-        int key = value[1] & 0xff;
-        if (key != 0x63) {
-            return false;
-        }
-    }
-    if (responseUUID.equals(OrderCHAR.CHAR_TH_NOTIFY.getUuid())) {
-        orderCHAR = OrderCHAR.CHAR_TH_NOTIFY;
-    }
-    if (responseUUID.equals(OrderCHAR.CHAR_STORE_NOTIFY.getUuid())) {
-        orderCHAR = OrderCHAR.CHAR_STORE_NOTIFY;
-    }
-    if (responseUUID.equals(OrderCHAR.CHAR_THREE_AXIS_NOTIFY.getUuid())) {
-        orderCHAR = OrderCHAR.CHAR_THREE_AXIS_NOTIFY;
-    }
-    if (orderCHAR == null)
-        return false;
-    XLog.i(orderCHAR.name());
-    OrderTaskResponse response = new OrderTaskResponse();
-    response.orderCHAR = orderCHAR;
-    response.responseValue = value;
+    ...
     OrderTaskResponseEvent event = new OrderTaskResponseEvent();
     event.setAction(MokoConstants.ACTION_CURRENT_DATA);
     event.setResponse(response);
     EventBus.getDefault().post(event);
-    return true;
+    ...
 }
 ```
 3.In order to record log files, `XLog` is used in the SDK, and the permission `WRITE_EXTERNAL_STORAGE` is applied. If you do not want to use it, you can modify it in `BaseApplication`, and only keep `XLog.init(config)`.
+
 
 ## Change log
 
 * 2021.03.11 mokosupport version:2.0
 	* Change the SDK structure
+    * Support Android API 29
+    * Support androidx
 	* Optimize document content
 * 2020.01.18 mokosupport version:1.0
 	* First commit

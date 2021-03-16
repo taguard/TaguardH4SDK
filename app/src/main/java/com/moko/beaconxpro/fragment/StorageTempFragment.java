@@ -97,7 +97,7 @@ public class StorageTempFragment extends Fragment {
     private int mSelected;
 
     public void setTempData(int data) {
-        mSelected = data / 5;
+        mSelected = data;
         String tempStr = mDatas.get(mSelected);
         tvStorageTempOnly.setText(tempStr);
         if (mSelected == 0) {

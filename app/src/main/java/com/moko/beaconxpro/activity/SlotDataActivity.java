@@ -122,21 +122,21 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
             npvSlotType.setDisplayedValues(getResources().getStringArray(R.array.slot_type_no_sensor));
             npvSlotType.setMinValue(0);
             npvSlotType.setMaxValue(5);
-            triggerTypes.add("Button double tapped");
-            triggerTypes.add("Button triple tapped");
+            triggerTypes.add("Press button twice");
+            triggerTypes.add("Press button three times");
         } else if (deviceType == 1) {
             npvSlotType.setDisplayedValues(getResources().getStringArray(R.array.slot_type_axis));
             npvSlotType.setMinValue(0);
             npvSlotType.setMaxValue(6);
-            triggerTypes.add("Button double tapped");
-            triggerTypes.add("Button triple tapped");
+            triggerTypes.add("Press button twice");
+            triggerTypes.add("Press button three times");
             triggerTypes.add("Device moves");
         } else if (deviceType == 2) {
             npvSlotType.setDisplayedValues(getResources().getStringArray(R.array.slot_type_th));
             npvSlotType.setMinValue(0);
             npvSlotType.setMaxValue(6);
-            triggerTypes.add("Button double tapped");
-            triggerTypes.add("Button triple tapped");
+            triggerTypes.add("Press button twice");
+            triggerTypes.add("Press button three times");
             triggerTypes.add("Temperature above");
             triggerTypes.add("Temperature below");
             triggerTypes.add("Humidity above");
@@ -145,8 +145,8 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
             npvSlotType.setDisplayedValues(getResources().getStringArray(R.array.slot_type_all));
             npvSlotType.setMinValue(0);
             npvSlotType.setMaxValue(7);
-            triggerTypes.add("Button double tapped");
-            triggerTypes.add("Button triple tapped");
+            triggerTypes.add("Press button twice");
+            triggerTypes.add("Press button three times");
             triggerTypes.add("Temperature above");
             triggerTypes.add("Temperature below");
             triggerTypes.add("Humidity above");
@@ -499,7 +499,7 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
             case R.id.tv_trigger_type:
                 // 选择触发条件
                 BottomDialog dialog = new BottomDialog();
-                dialog.setDatas(triggerTypes,triggerTypeSelected);
+                dialog.setDatas(triggerTypes, triggerTypeSelected);
                 dialog.setListener(value -> {
                     triggerTypeSelected = value;
                     switch (triggerTypeSelected) {

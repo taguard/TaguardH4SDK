@@ -89,13 +89,13 @@ public class ModifyPasswordDialog extends BaseDialog {
         });
     }
 
-    @OnClick({R.id.tv_cancel, R.id.tv_ensure})
+    @OnClick({R.id.tv_cancel, R.id.tv_password_ensure})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_cancel:
                 dismiss();
                 break;
-            case R.id.tv_ensure:
+            case R.id.tv_password_ensure:
                 String newPassword = etNewPassword.getText().toString();
                 String newPasswordRe = etNewPasswordRe.getText().toString();
                 if (!newPasswordRe.equals(newPassword)) {

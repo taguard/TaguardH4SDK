@@ -343,10 +343,10 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                         if (responseType == OrderTask.RESPONSE_TYPE_READ) {
                             if ("01".equals(valueHexStr.toLowerCase())) {
                                 lockState = 1;
-                                settingFragment.setNoPassword(false);
+                                settingFragment.setPasswordVerify(true);
                             } else if ("02".equals(valueHexStr.toLowerCase())) {
                                 lockState = 2;
-                                settingFragment.setNoPassword(true);
+                                settingFragment.setPasswordVerify(false);
                             }
                             settingFragment.setModifyPasswordVisiable(!TextUtils.isEmpty(mPassword));
                         }

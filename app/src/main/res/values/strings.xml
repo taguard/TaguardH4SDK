@@ -30,15 +30,15 @@
     <string name="setting_title">SETTING</string>
     <string name="device_title">DEVICE</string>
     <string name="h_t"><![CDATA[T&H]]></string>
+    <string name="humi_temp"><![CDATA[Temperature & Humidity]]></string>
     <string name="storage_condition">Storage trigger</string>
-    <string name="update_date"><![CDATA[Update Date&Time]]></string>
     <string name="export_data"><![CDATA[Export T&H Data]]></string>
     <string name="password_null">Password cannot be empty!</string>
     <string name="temp_only_tips_1"><![CDATA[*The device stores T&H data when the temperature changed ≥ %s ℃.]]></string>
     <string name="temp_only_tips_0"><![CDATA[*The device stores all sampled T&H data.]]></string>
     <string name="humidity_only_tips_1"><![CDATA[*The device stores T&H data when the humidity changed ≥ %s%%RH.]]></string>
     <string name="humidity_only_tips_0"><![CDATA[*The device stores all sampled T&H data.]]></string>
-    <string name="time_only_tips"><![CDATA[*The device stores T&H data every %d minute(s).]]></string>
+    <string name="time_only_tips"><![CDATA[*The device stores T&H data every %d minutes.]]></string>
     <string name="t_h_tips_0"><![CDATA[*The device stores T&H data when the temperature changed ≥ %s ℃ or humidity changed ≥ %s%%RH.]]></string>
 <!--    <string name="t_h_tips_1"><![CDATA[*The device stores T&H data when the temperature changes arbitrarily or humidity changed ≥ %s%%.]]></string>-->
 <!--    <string name="t_h_tips_2"><![CDATA[*The device stores T&H data when the temperature changed ≥ %s ℃ or humidity changes arbitrarily.]]></string>-->

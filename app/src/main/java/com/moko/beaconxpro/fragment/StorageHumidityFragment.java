@@ -97,7 +97,7 @@ public class StorageHumidityFragment extends Fragment {
     private int mSelected;
 
     public void setHumidityData(int data) {
-        mSelected = data / 5;
+        mSelected = data;
         String humStr = mDatas.get(mSelected);
         tvStorageHumidityOnly.setText(humStr);
         if (mSelected == 0) {

@@ -75,7 +75,7 @@ public class BeaconXParser {
         seconds -= hours * 60 * 60;
         minutes = (int) (seconds / 60);
         seconds -= minutes * 60;
-        tlm.sec_cnt = String.format("%dD%dh%dm%ds", day, hours, minutes, seconds);
+        tlm.sec_cnt = String.format("%dd%dh%dm%ds", day, hours, minutes, seconds);
         return tlm;
     }
 
@@ -117,6 +117,7 @@ public class BeaconXParser {
         beaconXAxis.rangingData = (byte) rssi_0m + "";
         beaconXAxis.dataRate = AxisRateEnum.fromEnumOrdinal(Integer.parseInt(data.substring(6, 8), 16)).getRate();
         beaconXAxis.scale = AxisScaleEnum.fromEnumOrdinal(Integer.parseInt(data.substring(8, 10), 16)).getScale();
+        beaconXAxis.sensitivity = MokoUtils.getDecimalFormat("#.#g").format(Integer.parseInt(data.substring(10, 12), 16) * 0.1);
         beaconXAxis.x_data = data.substring(12, 16);
         beaconXAxis.y_data = data.substring(16, 20);
         beaconXAxis.z_data = data.substring(20, 24);

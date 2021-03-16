@@ -94,9 +94,7 @@ public class StorageTHFragment extends Fragment {
                     mTempSelected = value;
                     String tempStr = mTempDatas.get(mTempSelected);
                     String humiStr = mHumidityDatas.get(mHumiditySelected);
-                    if (mTempSelected > 0 && mHumiditySelected > 0) {
-                        tvTHTips.setText(getString(R.string.t_h_tips_0, tempStr, humiStr));
-                    }
+                    tvTHTips.setText(getString(R.string.t_h_tips_0, tempStr, humiStr));
 //                    else if (mTempSelected == 0 && mHumiditySelected > 0) {
 //                        tvTHTips.setText(getString(R.string.t_h_tips_1, mHumiditySelected));
 //                    } else if (mTempSelected > 0 && mHumiditySelected == 0) {
@@ -116,9 +114,7 @@ public class StorageTHFragment extends Fragment {
                     mHumiditySelected = value;
                     String tempStr = mTempDatas.get(mTempSelected);
                     String humiStr = mHumidityDatas.get(mHumiditySelected);
-                    if (mTempSelected > 0 && mHumiditySelected > 0) {
-                        tvTHTips.setText(getString(R.string.t_h_tips_0, tempStr, humiStr));
-                    }
+                    tvTHTips.setText(getString(R.string.t_h_tips_0, tempStr, humiStr));
 //                    else if (mTempSelected == 0 && mHumiditySelected > 0) {
 //                        tvTHTips.setText(getString(R.string.t_h_tips_1, mHumiditySelected));
 //                    } else if (mTempSelected > 0 && mHumiditySelected == 0) {
@@ -136,17 +132,15 @@ public class StorageTHFragment extends Fragment {
 
     }
 
-    private int mTempSelected;
+    private int mTempSelected = 1;
 
     public void setTempData(int data) {
-        mTempSelected = data / 5 - 1;
+        mTempSelected = data - 1;
         if (mTempSelected < 0)
             mTempSelected = 0;
         String tempStr = mTempDatas.get(mTempSelected);
         String humiStr = mHumidityDatas.get(mHumiditySelected);
-        if (mTempSelected > 0 && mHumiditySelected > 0) {
-            tvTHTips.setText(getString(R.string.t_h_tips_0, tempStr, humiStr));
-        }
+        tvTHTips.setText(getString(R.string.t_h_tips_0, tempStr, humiStr));
 //        else if (mTempSelected == 0 && mHumiditySelected > 0) {
 //            tvTHTips.setText(getString(R.string.t_h_tips_1, mHumiditySelected));
 //        } else if (mTempSelected > 0 && mHumiditySelected == 0) {
@@ -158,17 +152,15 @@ public class StorageTHFragment extends Fragment {
         tvStorageTemp.setText(tempStr);
     }
 
-    private int mHumiditySelected;
+    private int mHumiditySelected = 1;
 
     public void setHumidityData(int data) {
-        mHumiditySelected = data / 5 - 1;
+        mHumiditySelected = data - 1;
         if (mHumiditySelected < 0)
             mHumiditySelected = 0;
         String tempStr = mTempDatas.get(mTempSelected);
         String humiStr = mHumidityDatas.get(mHumiditySelected);
-        if (mTempSelected > 0 && mHumiditySelected > 0) {
-            tvTHTips.setText(getString(R.string.t_h_tips_0, tempStr, humiStr));
-        }
+        tvTHTips.setText(getString(R.string.t_h_tips_0, tempStr, humiStr));
 //        else if (mTempSelected == 0 && mHumiditySelected > 0) {
 //            tvTHTips.setText(getString(R.string.t_h_tips_1, humiStr));
 //        } else if (mTempSelected > 0 && mHumiditySelected == 0) {

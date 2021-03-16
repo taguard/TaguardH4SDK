@@ -165,12 +165,14 @@ public class BeaconXListAdapter extends BaseQuickAdapter<BeaconXInfo, BaseViewHo
         TextView tv_rssi_0m = view.findViewById(R.id.tv_rssi_0m);
         TextView tv_data_rate = view.findViewById(R.id.tv_data_rate);
         TextView tv_scale = view.findViewById(R.id.tv_scale);
+        TextView tv_sensitivity = view.findViewById(R.id.tv_sensitivity);
         TextView tv_sampled_data = view.findViewById(R.id.tv_sampled_data);
 
-        tv_rssi_0m.setText(String.format("RSSI@0m:%sdBm", beaconXAxis.rangingData));
+        tv_rssi_0m.setText(String.format("%sdBm", beaconXAxis.rangingData));
         tv_tx_power.setText(String.format("%sdBm", beaconXAxis.txPower));
         tv_data_rate.setText(beaconXAxis.dataRate);
         tv_scale.setText(beaconXAxis.scale);
+        tv_sensitivity.setText(beaconXAxis.sensitivity);
         tv_sampled_data.setText(String.format("X:0x%s Y:0x%s Z:0x%s", beaconXAxis.x_data.toUpperCase(), beaconXAxis.y_data.toUpperCase(), beaconXAxis.z_data.toUpperCase()));
         return view;
     }
