@@ -96,13 +96,13 @@ public class ModifyPasswordDialog extends BaseDialog {
                 dismiss();
                 break;
             case R.id.tv_password_ensure:
+                dismiss();
                 String newPassword = etNewPassword.getText().toString();
                 String newPasswordRe = etNewPasswordRe.getText().toString();
                 if (!newPasswordRe.equals(newPassword)) {
                     ToastUtils.showToast(getContext(), "Password do not match! Please try again.");
                     return;
                 }
-                dismiss();
                 if (modifyPasswordClickListener != null)
                     modifyPasswordClickListener.onEnsureClicked(etNewPassword.getText().toString());
                 break;

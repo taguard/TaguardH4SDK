@@ -139,17 +139,21 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                     return;
                 if (mDisconnectType > 0)
                     return;
-                if (MokoSupport.getInstance().isBluetoothOpen() && !isUpgrade) {
-                    AlertMessageDialog dialog = new AlertMessageDialog();
-                    dialog.setTitle("Dismiss");
-                    dialog.setMessage("The device disconnected!");
-                    dialog.setConfirm("Exit");
-                    dialog.setCancelGone();
-                    dialog.setOnAlertConfirmListener(() -> {
-                        setResult(RESULT_OK);
-                        finish();
-                    });
-                    dialog.show(getSupportFragmentManager());
+                if (MokoSupport.getInstance().isBluetoothOpen()) {
+                    if (isUpgrading) {
+                        dismissDFUProgressDialog();
+                    } else {
+                        AlertMessageDialog dialog = new AlertMessageDialog();
+                        dialog.setTitle("Dismiss");
+                        dialog.setMessage("The device disconnected!");
+                        dialog.setConfirm("Exit");
+                        dialog.setCancelGone();
+                        dialog.setOnAlertConfirmListener(() -> {
+                            setResult(RESULT_OK);
+                            finish();
+                        });
+                        dialog.show(getSupportFragmentManager());
+                    }
                 }
             }
             if (MokoConstants.ACTION_DISCOVER_SUCCESS.equals(action)) {
@@ -366,7 +370,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
 //                                    dialog.setOnAlertConfirmListener(new AlertMessageDialog.OnAlertConfirmListener() {
 //                                        @Override
 //                                        public void onClick() {
-//                                            DeviceInfoActivity.this.setResult(DeviceInfoActivity.this.RESULT_OK);
+//                                            setResult(RESULT_OK);
 //                                            back();
 //                                        }
 //                                    });
@@ -693,16 +697,21 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
             mDFUDialog.dismiss();
         }
         AlertMessageDialog dialog = new AlertMessageDialog();
-        dialog.setTitle("Dismiss");
+        if (isUpgradeCompleted) {
+            dialog.setMessage("DFU Successfully!\nPlease reconnect the device.");
+        } else {
+            dialog.setMessage("Opps!DFU Failed.\nPlease try again!");
+        }
         dialog.setCancelGone();
-        dialog.setMessage("The device disconnected!");
         dialog.setConfirm(R.string.ok);
         dialog.setOnAlertConfirmListener(() -> {
-            isUpgrade = false;
-            back();
+            isUpgrading = false;
+            setResult(RESULT_OK);
+            finish();
         });
         dialog.show(getSupportFragmentManager());
     }
+
 
     @Override
     protected void onResume() {
@@ -717,7 +726,8 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
     }
 
     private int mDeviceConnectCount;
-    private boolean isUpgrade;
+    private boolean isUpgrading;
+    private boolean isUpgradeCompleted;
 
     private final DfuProgressListener mDfuProgressListener = new DfuProgressListenerAdapter() {
         @Override
@@ -726,7 +736,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
             mDeviceConnectCount++;
             if (mDeviceConnectCount > 3) {
                 ToastUtils.showToast(DeviceInfoActivity.this, "Error:DFU Failed");
-                dismissDFUProgressDialog();
+                MokoSupport.getInstance().disConnectBle();
                 final LocalBroadcastManager manager = LocalBroadcastManager.getInstance(DeviceInfoActivity.this);
                 final Intent abortAction = new Intent(DfuService.BROADCAST_ACTION);
                 abortAction.putExtra(DfuService.EXTRA_ACTION, DfuService.ACTION_ABORT);
@@ -741,7 +751,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
 
         @Override
         public void onDfuProcessStarting(String deviceAddress) {
-            isUpgrade = true;
+            isUpgrading = true;
             mDFUDialog.setMessage("DfuProcessStarting...");
         }
 
@@ -758,20 +768,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
 
         @Override
         public void onDfuCompleted(String deviceAddress) {
-            mDeviceConnectCount = 0;
-            if (!isFinishing() && mDFUDialog != null && mDFUDialog.isShowing()) {
-                mDFUDialog.dismiss();
-            }
-            AlertMessageDialog dialog = new AlertMessageDialog();
-            dialog.setCancelGone();
-            dialog.setMessage("DFU Successfully!\nPlease reconnect the device.");
-            dialog.setConfirm(R.string.ok);
-            dialog.setOnAlertConfirmListener(() -> {
-                isUpgrade = false;
-                DeviceInfoActivity.this.setResult(RESULT_OK);
-                finish();
-            });
-            dialog.show(getSupportFragmentManager());
+            isUpgradeCompleted = true;
         }
 
         @Override
@@ -781,22 +778,14 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
 
         @Override
         public void onProgressChanged(String deviceAddress, int percent, float speed, float avgSpeed, int currentPart, int partsTotal) {
-            mDFUDialog.setMessage("Progress:" + percent + "%");
+            String progress = String.format("Progress:%d%%", percent);
+            XLog.i(progress);
+            mDFUDialog.setMessage(progress);
         }
 
         @Override
         public void onError(String deviceAddress, int error, int errorType, String message) {
-            XLog.i("Error:" + message);
-            AlertMessageDialog dialog = new AlertMessageDialog();
-            dialog.setCancelGone();
-            dialog.setMessage("Opps!DFU Failed.\nPlease try again!");
-            dialog.setConfirm(R.string.ok);
-            dialog.setOnAlertConfirmListener(() -> {
-                isUpgrade = false;
-                DeviceInfoActivity.this.setResult(RESULT_OK);
-                finish();
-            });
-            dialog.show(getSupportFragmentManager());
+            XLog.i("DFU Error:" + message);
         }
     };
 }

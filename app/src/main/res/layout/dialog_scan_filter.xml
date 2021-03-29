@@ -89,6 +89,7 @@
                 android:background="@color/transparent"
                 android:gravity="center_vertical"
                 android:hint="1-6bytes HEX"
+                android:digits="0123456789abcdefABCDEF"
                 android:maxLength="12"
                 android:paddingLeft="10dp"
                 android:singleLine="true"

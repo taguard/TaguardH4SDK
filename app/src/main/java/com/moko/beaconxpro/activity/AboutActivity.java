@@ -43,7 +43,7 @@ public class AboutActivity extends BaseActivity {
                 startActivity(intent);
                 break;
             case R.id.tv_feedback_log:
-                File trackerLog = new File(BaseApplication.PATH_LOGCAT + File.separator + "mokoBeaconXPro+.txt");
+                File trackerLog = new File(BaseApplication.PATH_LOGCAT + File.separator + "mokoBeaconXPro.txt");
                 File trackerLogBak = new File(BaseApplication.PATH_LOGCAT + File.separator + "mokoBeaconXPro.txt.bak");
                 File trackerCrashLog = new File(BaseApplication.PATH_LOGCAT + File.separator + "crash_log.txt");
                 if (!trackerLog.exists() || !trackerLog.canRead()) {

@@ -33,7 +33,7 @@ public class BeaconXInfoParseableImpl implements DeviceInfoParseable<BeaconXInfo
     @Override
     public BeaconXInfo parseDeviceInfo(DeviceInfo deviceInfo) {
         int battery = -1;
-        int connectState = -1;
+//        int connectState = -1;
         int lockState = -1;
         ScanResult result = deviceInfo.scanResult;
         ScanRecord record = result.getScanRecord();
@@ -84,7 +84,7 @@ public class BeaconXInfoParseableImpl implements DeviceInfoParseable<BeaconXInfo
                                 type = BeaconXInfo.VALID_DATA_FRAME_TYPE_INFO;
                                 battery = MokoUtils.toInt(Arrays.copyOfRange(bytes, 3, 5));
                                 lockState = bytes[5] & 0xff;
-                                connectState = bytes[6] & 0xff;
+//                                connectState = bytes[6] & 0xff;
                                 // 40000a0d0d0001ff02030405063001
                                 break;
                             case BeaconXInfo.VALID_DATA_FRAME_TYPE_IBEACON:
@@ -125,7 +125,7 @@ public class BeaconXInfoParseableImpl implements DeviceInfoParseable<BeaconXInfo
                                 type = BeaconXInfo.VALID_DATA_FRAME_TYPE_INFO;
                                 battery = MokoUtils.toInt(Arrays.copyOfRange(bytes, 3, 5));
                                 lockState = bytes[5] & 0xff;
-                                connectState = bytes[6] & 0xff;
+//                                connectState = bytes[6] & 0xff;
                                 // 40000a0d0d0001ff02030405063001
                                 break;
                         }
@@ -152,9 +152,8 @@ public class BeaconXInfoParseableImpl implements DeviceInfoParseable<BeaconXInfo
             if (lockState >= 0) {
                 beaconXInfo.lockState = lockState;
             }
-            if (connectState >= 0) {
-                beaconXInfo.connectState = connectState;
-            }
+            if (result.isConnectable())
+                beaconXInfo.connectState = 1;
             beaconXInfo.scanRecord = deviceInfo.scanRecord;
             long currentTime = SystemClock.elapsedRealtime();
             long intervalTime = currentTime - beaconXInfo.scanTime;
@@ -175,10 +174,10 @@ public class BeaconXInfoParseableImpl implements DeviceInfoParseable<BeaconXInfo
             } else {
                 beaconXInfo.lockState = lockState;
             }
-            if (connectState < 0) {
-                beaconXInfo.connectState = -1;
+            if (result.isConnectable()) {
+                beaconXInfo.connectState = 1;
             } else {
-                beaconXInfo.connectState = connectState;
+                beaconXInfo.connectState = 0;
             }
             beaconXInfo.scanRecord = deviceInfo.scanRecord;
             beaconXInfo.scanTime = SystemClock.elapsedRealtime();

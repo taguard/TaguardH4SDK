@@ -1,12 +1,9 @@
 package com.moko.beaconxpro.activity;
 
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
@@ -16,7 +13,6 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
@@ -62,7 +58,7 @@ import butterknife.OnClick;
 
 public class ExportDataActivity extends BaseActivity {
 
-    private static final String TRACKED_FILE = "tracked.txt";
+    private static final String TRACKED_FILE = "th.txt";
 
     private static String PATH_LOGCAT;
     @BindView(R.id.iv_sync)
@@ -104,10 +100,10 @@ public class ExportDataActivity extends BaseActivity {
 
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             // 优先保存到SD卡中
-            PATH_LOGCAT = Environment.getExternalStorageDirectory().getAbsolutePath() + "mokoBeaconXPro" + File.separator + TRACKED_FILE;
+            PATH_LOGCAT = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "mokoBeaconXPro" + File.separator + TRACKED_FILE;
         } else {
             // 如果SD卡不存在，就保存到本应用的目录下
-            PATH_LOGCAT = getFilesDir().getAbsolutePath() + File.separator + "mokoBeaconXPro" + File.separator + TRACKED_FILE;
+            PATH_LOGCAT = getFilesDir().getAbsolutePath() + File.separator + File.separator + "mokoBeaconXPro" + File.separator + TRACKED_FILE;
         }
         mHumiList = new ArrayList<>();
         mTempList = new ArrayList<>();
@@ -372,6 +368,8 @@ public class ExportDataActivity extends BaseActivity {
         mTempList = null;
         mHumiList.clear();
         mHumiList = null;
+        if (mHandler.hasMessages(0))
+            mHandler.removeMessages(0);
         if (mReceiverTag) {
             mReceiverTag = false;
             // 注销广播

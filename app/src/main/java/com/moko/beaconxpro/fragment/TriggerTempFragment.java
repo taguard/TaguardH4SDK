@@ -150,6 +150,10 @@ public class TriggerTempFragment extends Fragment implements SeekBar.OnSeekBarCh
 
     public void setTempType(boolean isAbove) {
         mIsAbove = isAbove;
+    }
+
+    public void setTempTypeAndRefresh(boolean isAbove) {
+        mIsAbove = isAbove;
         String tempStr = String.format("%d℃", mProgress - 20);
         tvTriggerTips.setText(getString(R.string.trigger_t_h_tips,
                 mIsStart ? "start to broadcast" : "stop broadcasting", "temperature", mIsAbove ? "above" : "below", tempStr));

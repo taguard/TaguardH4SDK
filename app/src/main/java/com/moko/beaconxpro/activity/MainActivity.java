@@ -373,15 +373,13 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                     if (TextUtils.isEmpty(filterName) && TextUtils.isEmpty(filterMac)) {
                         continue;
                     } else {
-                        if (TextUtils.isEmpty(beaconXInfo.name) && TextUtils.isEmpty(beaconXInfo.mac)) {
+                        if (!TextUtils.isEmpty(filterMac) && TextUtils.isEmpty(beaconXInfo.mac)) {
                             iterator.remove();
-                        } else if (TextUtils.isEmpty(beaconXInfo.name) && beaconXInfo.mac.toLowerCase().replaceAll(":", "").contains(filterMac.toLowerCase())) {
+                        } else if (!TextUtils.isEmpty(filterMac) && beaconXInfo.mac.toLowerCase().replaceAll(":", "").contains(filterMac.toLowerCase())) {
                             continue;
-                        } else if (TextUtils.isEmpty(beaconXInfo.mac) && beaconXInfo.name.toLowerCase().contains(filterName.toLowerCase())) {
-                            continue;
-                        } else if (!TextUtils.isEmpty(beaconXInfo.name) && !TextUtils.isEmpty(beaconXInfo.mac)
-                                && (!TextUtils.isEmpty(filterName) && beaconXInfo.name.toLowerCase().contains(filterName.toLowerCase()))
-                                || (!TextUtils.isEmpty(filterMac) && beaconXInfo.mac.toLowerCase().replaceAll(":", "").contains(filterMac.toLowerCase()))) {
+                        } else if (!TextUtils.isEmpty(filterName) && TextUtils.isEmpty(beaconXInfo.name)) {
+                            iterator.remove();
+                        } else if (!TextUtils.isEmpty(filterName) && beaconXInfo.name.toLowerCase().contains(filterName.toLowerCase())) {
                             continue;
                         } else {
                             iterator.remove();
@@ -448,9 +446,21 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                 scanFilterDialog.setOnScanFilterListener((filterName, filterMac, filterRssi) -> {
                     MainActivity.this.filterName = filterName;
                     MainActivity.this.filterMac = filterMac;
+                    String showFilterMac = "";
+                    if (filterMac.length() == 12) {
+                        StringBuffer stringBuffer = new StringBuffer(filterMac);
+                        stringBuffer.insert(2, ":");
+                        stringBuffer.insert(5, ":");
+                        stringBuffer.insert(8, ":");
+                        stringBuffer.insert(11, ":");
+                        stringBuffer.insert(14, ":");
+                        showFilterMac = stringBuffer.toString();
+                    } else {
+                        showFilterMac = filterMac;
+                    }
                     MainActivity.this.filterRssi = filterRssi;
                     if (!TextUtils.isEmpty(filterName)
-                            || !TextUtils.isEmpty(filterMac)
+                            || !TextUtils.isEmpty(showFilterMac)
                             || filterRssi != -100) {
                         rl_filter.setVisibility(View.VISIBLE);
                         rl_edit_filter.setVisibility(View.GONE);
@@ -459,8 +469,8 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                             stringBuilder.append(filterName);
                             stringBuilder.append(";");
                         }
-                        if (!TextUtils.isEmpty(filterMac)) {
-                            stringBuilder.append(filterMac);
+                        if (!TextUtils.isEmpty(showFilterMac)) {
+                            stringBuilder.append(showFilterMac);
                             stringBuilder.append(";");
                         }
                         if (filterRssi != -100) {

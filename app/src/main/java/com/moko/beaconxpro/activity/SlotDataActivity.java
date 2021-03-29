@@ -541,17 +541,17 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
                             break;
                         case 2:
                             if (deviceType != 1) {
-                                tempFragment.setTempType(true);
+                                tempFragment.setTempTypeAndRefresh(true);
                             }
                             break;
                         case 3:
-                            tempFragment.setTempType(false);
+                            tempFragment.setTempTypeAndRefresh(false);
                             break;
                         case 4:
-                            humidityFragment.setHumidityType(true);
+                            humidityFragment.setHumidityTypeAndRefresh(true);
                             break;
                         case 5:
-                            humidityFragment.setHumidityType(false);
+                            humidityFragment.setHumidityTypeAndRefresh(false);
                             break;
                     }
                     tvTriggerType.setText(triggerTypes.get(value));
