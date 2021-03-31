@@ -164,13 +164,7 @@ public class UrlFragment extends Fragment implements SeekBar.OnSeekBarChangeList
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (activity.slotData.frameTypeEnum == SlotFrameTypeEnum.URL) {
-            upgdateData(seekBar.getId(), progress);
-            activity.onProgressChanged(seekBar.getId(), progress);
-        }
-        if (activity.slotData.frameTypeEnum == SlotFrameTypeEnum.NO_DATA) {
-            upgdateData(seekBar.getId(), progress);
-        }
+        upgdateData(seekBar.getId(), progress);
     }
 
     public void upgdateData(int viewId, int progress) {
@@ -292,5 +286,41 @@ public class UrlFragment extends Fragment implements SeekBar.OnSeekBarChangeList
         orderTasks.add(OrderTaskAssembler.setAdvTxPower(advTxPowerBytes));
         orderTasks.add(OrderTaskAssembler.setAdvInterval(advIntervalBytes));
         MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+    }
+
+    @Override
+    public void resetParams() {
+        if (activity.slotData.frameTypeEnum == activity.currentFrameTypeEnum) {
+            int advIntervalProgress = activity.slotData.advInterval / 100;
+            etAdvInterval.setText(advIntervalProgress + "");
+            etAdvInterval.setSelection(etAdvInterval.getText().toString().length());
+            advIntervalBytes = MokoUtils.toByteArray(activity.slotData.advInterval, 2);
+
+            int advTxPowerProgress = activity.slotData.rssi_0m + 100;
+            sbAdvTxPower.setProgress(advTxPowerProgress);
+
+            int txPowerProgress = TxPowerEnum.fromTxPower(activity.slotData.txPower).ordinal();
+            sbTxPower.setProgress(txPowerProgress);
+
+            mUrlSchemeHex = MokoUtils.int2HexString(activity.slotData.urlSchemeEnum.getUrlType());
+            tvUrlScheme.setText(activity.slotData.urlSchemeEnum.getUrlDesc());
+            String url = activity.slotData.urlContent;
+            String urlExpansionStr = url.substring(url.length() - 2);
+            int urlExpansionType = Integer.parseInt(urlExpansionStr, 16);
+            UrlExpansionEnum urlEnum = UrlExpansionEnum.fromUrlExpanType(urlExpansionType);
+            if (urlEnum == null) {
+                etUrl.setText(MokoUtils.hex2String(url));
+            } else {
+                etUrl.setText(MokoUtils.hex2String(url.substring(0, url.length() - 2)) + urlEnum.getUrlExpanDesc());
+            }
+            etUrl.setSelection(etUrl.getText().toString().length());
+        } else {
+            etAdvInterval.setText("10");
+            etAdvInterval.setSelection(etAdvInterval.getText().toString().length());
+            sbAdvTxPower.setProgress(100);
+            sbTxPower.setProgress(6);
+
+            etUrl.setText("");
+        }
     }
 }

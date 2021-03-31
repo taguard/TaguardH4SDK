@@ -5,5 +5,5 @@ public interface ISlotDataAction {
 
     void sendData();
 
-    void upgdateProgress(int viewId, int progress);
+    void resetParams();
 }

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.text.method.ReplacementTransformationMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -197,13 +196,7 @@ public class IBeaconFragment extends Fragment implements SeekBar.OnSeekBarChange
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (activity.slotData.frameTypeEnum == SlotFrameTypeEnum.IBEACON) {
-            upgdateData(seekBar.getId(), progress);
-            activity.onProgressChanged(seekBar.getId(), progress);
-        }
-        if (activity.slotData.frameTypeEnum == SlotFrameTypeEnum.NO_DATA) {
-            upgdateData(seekBar.getId(), progress);
-        }
+        upgdateData(seekBar.getId(), progress);
     }
 
 
@@ -308,4 +301,41 @@ public class IBeaconFragment extends Fragment implements SeekBar.OnSeekBarChange
 //            return cc;
 //        }
 //    }
+
+    @Override
+    public void resetParams() {
+        if (activity.slotData.frameTypeEnum == activity.currentFrameTypeEnum) {
+            int advIntervalProgress = activity.slotData.advInterval / 100;
+            etAdvInterval.setText(advIntervalProgress + "");
+            etAdvInterval.setSelection(etAdvInterval.getText().toString().length());
+            advIntervalBytes = MokoUtils.toByteArray(activity.slotData.advInterval, 2);
+
+            int advTxPowerProgress = activity.slotData.rssi_1m + 100;
+            sbAdvTxPower.setProgress(advTxPowerProgress);
+
+            int txPowerProgress = TxPowerEnum.fromTxPower(activity.slotData.txPower).ordinal();
+            sbTxPower.setProgress(txPowerProgress);
+
+            etMajor.setText(Integer.parseInt(activity.slotData.major, 16) + "");
+            etMinor.setText(Integer.parseInt(activity.slotData.minor, 16) + "");
+            StringBuilder stringBuilder = new StringBuilder(activity.slotData.iBeaconUUID);
+            stringBuilder.insert(8, "-");
+            stringBuilder.insert(13, "-");
+            stringBuilder.insert(18, "-");
+            stringBuilder.insert(23, "-");
+            etUuid.setText(stringBuilder.toString().toUpperCase());
+            etMajor.setSelection(etMajor.getText().toString().length());
+            etMinor.setSelection(etMinor.getText().toString().length());
+            etUuid.setSelection(etUuid.getText().toString().length());
+        } else {
+            etAdvInterval.setText("10");
+            etAdvInterval.setSelection(etAdvInterval.getText().toString().length());
+            sbAdvTxPower.setProgress(41);
+            sbTxPower.setProgress(6);
+
+            etMajor.setText("");
+            etMinor.setText("");
+            etUuid.setText("");
+        }
+    }
 }

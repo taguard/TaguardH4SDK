@@ -88,7 +88,6 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
     private THFragment thFragment;
     public SlotData slotData;
     private ISlotDataAction slotDataActionImpl;
-    private HashMap<Integer, Integer> seekBarProgressHashMap;
     public int deviceType;
     private TriggerTempFragment tempFragment;
     private TriggerHumidityFragment humidityFragment;
@@ -99,6 +98,7 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
     private byte[] triggerData;
     private ArrayList<String> triggerTypes;
     private int triggerTypeSelected;
+    public SlotFrameTypeEnum currentFrameTypeEnum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +107,7 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
         ButterKnife.bind(this);
         if (getIntent() != null && getIntent().getExtras() != null) {
             slotData = (SlotData) getIntent().getSerializableExtra(AppConstants.EXTRA_KEY_SLOT_DATA);
+            currentFrameTypeEnum = slotData.frameTypeEnum;
             deviceType = getIntent().getIntExtra(AppConstants.EXTRA_KEY_DEVICE_TYPE, 0);
             triggerType = getIntent().getIntExtra(AppConstants.EXTRA_KEY_TRIGGER_TYPE, 0);
             String triggerDataStr = getIntent().getStringExtra(AppConstants.EXTRA_KEY_TRIGGER_DATA);
@@ -167,7 +168,6 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
             }
         }
         tvSlotTitle.setText(slotData.slotEnum.getTitle());
-        seekBarProgressHashMap = new HashMap<>();
         if (slotData.frameTypeEnum != SlotFrameTypeEnum.NO_DATA) {
             rlTriggerSwitch.setVisibility(View.VISIBLE);
         } else {
@@ -578,15 +578,13 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
         XLog.i(newVal + "");
         XLog.i(picker.getContentByCurrValue());
         showFragment(newVal);
+        if (slotDataActionImpl != null) {
+            slotDataActionImpl.resetParams();
+        }
         if (SlotFrameTypeEnum.fromEnumOrdinal(newVal) != SlotFrameTypeEnum.NO_DATA) {
             rlTriggerSwitch.setVisibility(View.VISIBLE);
         } else {
             rlTriggerSwitch.setVisibility(View.GONE);
-        }
-        if (!seekBarProgressHashMap.isEmpty() && slotDataActionImpl != null) {
-            for (int key : seekBarProgressHashMap.keySet()) {
-                slotDataActionImpl.upgdateProgress(key, seekBarProgressHashMap.get(key));
-            }
         }
     }
 
@@ -706,10 +704,5 @@ public class SlotDataActivity extends FragmentActivity implements NumberPickerVi
         } else {
             slotData.frameTypeEnum = SlotFrameTypeEnum.fromEnumOrdinal(newVal);
         }
-    }
-
-
-    public void onProgressChanged(int viewId, int progress) {
-        seekBarProgressHashMap.put(viewId, progress);
     }
 }

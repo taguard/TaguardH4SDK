@@ -63,11 +63,11 @@ public class TlmFragment extends Fragment implements SeekBar.OnSeekBarChangeList
         ButterKnife.bind(this, view);
         activity = (SlotDataActivity) getActivity();
         sbTxPower.setOnSeekBarChangeListener(this);
-        setValue();
+        setDefault();
         return view;
     }
 
-    private void setValue() {
+    private void setDefault() {
         if (activity.slotData.frameTypeEnum == SlotFrameTypeEnum.NO_DATA) {
             etAdvInterval.setText("10");
             etAdvInterval.setSelection(etAdvInterval.getText().toString().length());
@@ -108,13 +108,7 @@ public class TlmFragment extends Fragment implements SeekBar.OnSeekBarChangeList
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (activity.slotData.frameTypeEnum == SlotFrameTypeEnum.TLM) {
-            upgdateData(seekBar.getId(), progress);
-            activity.onProgressChanged(seekBar.getId(), progress);
-        }
-        if (activity.slotData.frameTypeEnum == SlotFrameTypeEnum.NO_DATA) {
-            upgdateData(seekBar.getId(), progress);
-        }
+        upgdateData(seekBar.getId(), progress);
     }
 
     private void upgdateData(int viewId, int progress) {
@@ -173,5 +167,22 @@ public class TlmFragment extends Fragment implements SeekBar.OnSeekBarChangeList
         orderTasks.add(OrderTaskAssembler.setRadioTxPower(txPowerBytes));
         orderTasks.add(OrderTaskAssembler.setAdvInterval(advIntervalBytes));
         MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+    }
+
+    @Override
+    public void resetParams() {
+        if (activity.slotData.frameTypeEnum == activity.currentFrameTypeEnum) {
+            int advIntervalProgress = activity.slotData.advInterval / 100;
+            etAdvInterval.setText(advIntervalProgress + "");
+            etAdvInterval.setSelection(etAdvInterval.getText().toString().length());
+            advIntervalBytes = MokoUtils.toByteArray(activity.slotData.advInterval, 2);
+
+            int txPowerProgress = TxPowerEnum.fromTxPower(activity.slotData.txPower).ordinal();
+            sbTxPower.setProgress(txPowerProgress);
+        } else {
+            etAdvInterval.setText("10");
+            etAdvInterval.setSelection(etAdvInterval.getText().toString().length());
+            sbTxPower.setProgress(6);
+        }
     }
 }

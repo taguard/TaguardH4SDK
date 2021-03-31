@@ -73,11 +73,11 @@ public class UidFragment extends Fragment implements SeekBar.OnSeekBarChangeList
         sbTxPower.setOnSeekBarChangeListener(this);
         etNamespace.setTransformationMethod(new A2bigA());
         etInstanceId.setTransformationMethod(new A2bigA());
-        setValue();
+        setDefault();
         return view;
     }
 
-    private void setValue() {
+    private void setDefault() {
         if (activity.slotData.frameTypeEnum == SlotFrameTypeEnum.NO_DATA) {
             etAdvInterval.setText("10");
             etAdvInterval.setSelection(etAdvInterval.getText().toString().length());
@@ -137,13 +137,13 @@ public class UidFragment extends Fragment implements SeekBar.OnSeekBarChangeList
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (activity.slotData.frameTypeEnum == SlotFrameTypeEnum.UID) {
-            upgdateData(seekBar.getId(), progress);
-            activity.onProgressChanged(seekBar.getId(), progress);
-        }
-        if (activity.slotData.frameTypeEnum == SlotFrameTypeEnum.NO_DATA) {
-            upgdateData(seekBar.getId(), progress);
-        }
+//        if (activity.slotData.frameTypeEnum == SlotFrameTypeEnum.UID) {
+//            upgdateData(seekBar.getId(), progress);
+//            activity.onProgressChanged(seekBar.getId(), progress);
+//        }
+//        if (activity.slotData.frameTypeEnum == SlotFrameTypeEnum.NO_DATA) {
+        upgdateData(seekBar.getId(), progress);
+//        }
     }
 
     public void upgdateData(int viewId, int progress) {
@@ -238,6 +238,35 @@ public class UidFragment extends Fragment implements SeekBar.OnSeekBarChangeList
         protected char[] getReplacement() {
             char[] cc = {'A', 'B', 'C', 'D', 'E', 'F'};
             return cc;
+        }
+    }
+
+    @Override
+    public void resetParams() {
+        if (activity.slotData.frameTypeEnum == activity.currentFrameTypeEnum) {
+            int advIntervalProgress = activity.slotData.advInterval / 100;
+            etAdvInterval.setText(advIntervalProgress + "");
+            etAdvInterval.setSelection(etAdvInterval.getText().toString().length());
+            advIntervalBytes = MokoUtils.toByteArray(activity.slotData.advInterval, 2);
+
+            int advTxPowerProgress = activity.slotData.rssi_0m + 100;
+            sbAdvTxPower.setProgress(advTxPowerProgress);
+
+            int txPowerProgress = TxPowerEnum.fromTxPower(activity.slotData.txPower).ordinal();
+            sbTxPower.setProgress(txPowerProgress);
+
+            etNamespace.setText(activity.slotData.namespace);
+            etInstanceId.setText(activity.slotData.instanceId);
+            etNamespace.setSelection(etNamespace.getText().toString().length());
+            etInstanceId.setSelection(etInstanceId.getText().toString().length());
+        } else {
+            etAdvInterval.setText("10");
+            etAdvInterval.setSelection(etAdvInterval.getText().toString().length());
+            sbAdvTxPower.setProgress(100);
+            sbTxPower.setProgress(6);
+
+            etNamespace.setText("");
+            etInstanceId.setText("");
         }
     }
 }

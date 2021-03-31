@@ -147,13 +147,7 @@ public class DeviceInfoFragment extends Fragment implements SeekBar.OnSeekBarCha
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (activity.slotData.frameTypeEnum == SlotFrameTypeEnum.DEVICE) {
-            upgdateData(seekBar.getId(), progress);
-            activity.onProgressChanged(seekBar.getId(), progress);
-        }
-        if (activity.slotData.frameTypeEnum == SlotFrameTypeEnum.NO_DATA) {
-            upgdateData(seekBar.getId(), progress);
-        }
+        upgdateData(seekBar.getId(), progress);
     }
 
     public void upgdateData(int viewId, int progress) {
@@ -230,5 +224,30 @@ public class DeviceInfoFragment extends Fragment implements SeekBar.OnSeekBarCha
         orderTasks.add(OrderTaskAssembler.setAdvTxPower(advTxPowerBytes));
         orderTasks.add(OrderTaskAssembler.setAdvInterval(advIntervalBytes));
         MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+    }
+
+    @Override
+    public void resetParams() {
+        if (activity.slotData.frameTypeEnum == activity.currentFrameTypeEnum) {
+            int advIntervalProgress = activity.slotData.advInterval / 100;
+            etAdvInterval.setText(advIntervalProgress + "");
+            etAdvInterval.setSelection(etAdvInterval.getText().toString().length());
+            advIntervalBytes = MokoUtils.toByteArray(activity.slotData.advInterval, 2);
+
+            int advTxPowerProgress = activity.slotData.rssi_0m + 100;
+            sbAdvTxPower.setProgress(advTxPowerProgress);
+
+            int txPowerProgress = TxPowerEnum.fromTxPower(activity.slotData.txPower).ordinal();
+            sbTxPower.setProgress(txPowerProgress);
+
+            etDeviceName.setText(activity.slotData.deviceName);
+            etDeviceName.setSelection(etDeviceName.getText().toString().length());
+        } else {
+            etAdvInterval.setText("10");
+            etAdvInterval.setSelection(etAdvInterval.getText().toString().length());
+            sbAdvTxPower.setProgress(100);
+            sbTxPower.setProgress(6);
+            etDeviceName.setText("");
+        }
     }
 }
