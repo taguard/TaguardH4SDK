@@ -217,18 +217,6 @@ public class IBeaconFragment extends Fragment implements SeekBar.OnSeekBarChange
     }
 
     @Override
-    public void upgdateProgress(int viewId, int progress) {
-        switch (viewId) {
-            case R.id.sb_adv_tx_power:
-                sbAdvTxPower.setProgress(progress);
-                break;
-            case R.id.sb_tx_power:
-                sbTxPower.setProgress(progress);
-                break;
-        }
-    }
-
-    @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
 
     }

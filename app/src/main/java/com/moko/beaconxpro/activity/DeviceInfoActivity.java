@@ -141,7 +141,9 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                     return;
                 if (MokoSupport.getInstance().isBluetoothOpen()) {
                     if (isUpgrading) {
-                        dismissDFUProgressDialog();
+                        tvTitle.postDelayed(() -> {
+                            dismissDFUProgressDialog();
+                        }, 1000);
                     } else {
                         AlertMessageDialog dialog = new AlertMessageDialog();
                         dialog.setTitle("Dismiss");
