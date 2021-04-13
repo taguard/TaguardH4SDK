@@ -135,7 +135,6 @@ public class MainActivity extends BaseActivity implements MokoScanDeviceCallback
                             if (animation != null) {
                                 mHandler.removeMessages(0);
                                 mokoBleScanner.stopScanDevice();
-                                mokoBleScanner.stopScanDevice();
                                 onStopScan();
                             }
                             break;
